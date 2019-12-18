@@ -1,0 +1,24 @@
+{
+  "env": {
+    "browser": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 11,
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "sourceType": "module"
+  },
+  "extends": ["airbnb", "prettier", "plugin:node/recommended"],
+  "plugins": ["prettier", "import", "jsx-a11y", "node", "react", "react-hooks"],
+  "rules": {
+    "prettier/prettier": "warn",
+    "node/no-unpublished-require": "off",
+    "node/no-unsupported-features/es-syntax": "off",
+    "no-console": "off",
+    "func-names": "off",
+    "no-unused-vars": "warn",
+    "semi": "error",
+    "react/jsx-uses-vars": "error"
+  }
+}
