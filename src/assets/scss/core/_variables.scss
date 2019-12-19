@@ -19,3 +19,80 @@ $elevation8: "#2D2D2D" !default;
 $elevation12: "#323232" !default;
 $elevation16: "#353535" !default;
 $elevation24: "#383838" !default;
+
+.primary {
+  color: $primary;
+}
+
+.primary-variant {
+  color: $primary-variant;
+}
+
+.secondary {
+  color: $secondary;
+}
+
+.complementary {
+  color: $complementary;
+}
+
+.analogous-1 {
+  color: $analogous-1;
+}
+
+.analogous-2 {
+  color: $analogous-2;
+}
+
+.error {
+  color: $error;
+}
+
+.triadic-1 {
+  color: $triadic-1;
+}
+
+.triadic-2 {
+  color: $triadic-2;
+}
+
+.elevation0 {
+  background-color: $elevation0;
+}
+
+.elevation1 {
+  background-color: $elevation1;
+}
+
+.elevation2 {
+  background-color: $elevation2;
+}
+
+.elevation3 {
+  background-color: $elevation3;
+}
+
+.elevation4 {
+  background-color: $elevation4;
+}
+
+.elevation6 {
+  background-color: $elevation6;
+}
+
+.elevation8 {
+  background-color: $elevation8;
+}
+
+.elevation12 {
+  background-color: $elevation12;
+}
+
+.elevation16 {
+  background-color: $elevation16;
+}
+
+.elevation24 {
+  background-color: $elevation24;
+}
+

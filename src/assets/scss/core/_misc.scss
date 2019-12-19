@@ -3,6 +3,15 @@ html * {
   -moz-osx-font-smoothing: grayscale;
 }
 
+* {
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  &:focus {
+    outline: 0;
+  }
+}
+
 body,
 h1,
 h2,
@@ -74,6 +83,7 @@ body {
 }
 
 a {
+  color: $primary;
   text-decoration: none;
   background-color: transparent;
   &:hover,
