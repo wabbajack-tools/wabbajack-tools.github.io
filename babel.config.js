@@ -8,14 +8,6 @@ const presets = [
   ]
 ];
 
-const plugins = [
-  [
-    '@babel/plugin-transform-react-jsx',
-    {
-      pragma: 'h',
-      pragmaFrag: 'Fragment'
-    }
-  ]
-];
+const plugins = [['@babel/plugin-transform-react-jsx']];
 
 module.exports = { presets, plugins };
