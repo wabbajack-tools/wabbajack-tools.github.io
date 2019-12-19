@@ -1,5 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const RobotsPlugin = require('@tanepiper/robots-webpack-plugin');
+const ManifestPlugin = require('webpack-manifest-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
@@ -52,6 +54,25 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/index.html',
       favicon: './src/assets/img/wabbajack.ico'
+    }),
+    new RobotsPlugin({
+      userAgents: [
+        {
+          name: '*',
+          disallow: ['/']
+        }
+      ]
+    }),
+    new ManifestPlugin({
+      seed: {
+        short_name: 'Wabbajack',
+        name: 'Wabbajack',
+        start_url: '.',
+        dispaly: 'standalone',
+        theme_color: '#121212',
+        background_color: '#121212',
+        author: 'The Wabbajack Team'
+      }
     })
   ],
 
