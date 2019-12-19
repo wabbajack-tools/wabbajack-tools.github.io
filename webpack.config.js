@@ -24,14 +24,17 @@ module.exports = {
       },
       {
         test: /\.css$/i,
+        exclude: /node_modules/,
         use: ['style-loader', 'css-loader']
       },
       {
         test: /\.s[ac]ss$/i,
+        exclude: /node_modules/,
         use: ['style-loader', 'css-loader', 'sass-loader']
       },
       {
-        test: /\.(png|jpe?g|gif)$/i,
+        test: /\.(png|jpe?g|gif|ico)$/i,
+        exclude: /node_modules/,
         use: [
           {
             loader: 'url-loader',
@@ -47,7 +50,8 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      template: './src/index.html'
+      template: './src/index.html',
+      favicon: './src/assets/img/wabbajack.ico'
     })
   ],
 
