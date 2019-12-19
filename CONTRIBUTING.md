@@ -5,7 +5,6 @@
 1. [Node](https://nodejs.org/en/)
 2. [Yarn](https://yarnpkg.com/lang/en/)
 3. [VS Code](https://code.visualstudio.com)
-4. [Redux DevTools](https://extension.remotedev.io/)
 
 ## Installing
 
