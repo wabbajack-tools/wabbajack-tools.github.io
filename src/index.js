@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import App from './App';
-import store from './store';
-import history from './history';
+import store from './store/store';
+import history from './store/history';
 
 import './assets/scss/wabbajack.scss';
 

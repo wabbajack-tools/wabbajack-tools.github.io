@@ -52,7 +52,7 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      template: './src/index.html',
+      template: './src/assets/html/index.html',
       favicon: './src/assets/img/wabbajack.ico'
     }),
     new RobotsPlugin({
