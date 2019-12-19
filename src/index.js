@@ -1,5 +1,11 @@
-import { h, Component, render } from 'preact';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-const app = h('div', null, 'Hello World');
+import App from './App';
+import store from './store';
+import history from './history';
 
-render(app, document.getElementById('root'));
+ReactDOM.render(
+  <App store={store} history={history} />,
+  document.getElementById('root')
+);
