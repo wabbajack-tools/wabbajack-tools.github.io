@@ -25,7 +25,7 @@ export default function Footer() {
 
   return (
     <footer>
-      <Container maxWidth="xl">
+      <Container>
         <div style={left}>
           <List style={flexContainer}>
             <FooterItem
