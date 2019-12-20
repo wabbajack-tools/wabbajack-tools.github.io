@@ -16,9 +16,12 @@
   },
   "rules": {
     "prettier/prettier": "warn",
+    "import/no-unresolved": "off",
     "node/no-unpublished-require": "off",
     "node/no-unsupported-features/es-syntax": "off",
+    "node/no-missing-import": "off",
     "react/jsx-filename-extension": "off",
+    "react/jsx-one-expression-per-line": "off",
     "react/forbid-prop-types": "off",
     "react/no-unused-prop-types": "warn",
     "react/jsx-tag-spacing": "warn",
