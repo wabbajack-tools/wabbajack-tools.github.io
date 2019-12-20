@@ -6,7 +6,10 @@ import teal from '@material-ui/core/colors/teal';
 const theme = createMuiTheme({
   palette: {
     primary: deepPurple,
-    secondary: teal
+    secondary: teal,
+    text: {
+      primary: '#FFFFFF'
+    }
   },
   overrides: {
     MuiLink: {

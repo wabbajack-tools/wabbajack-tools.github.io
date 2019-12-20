@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'redux-zero/react';
-import { Router } from 'react-router-dom';
+import { Router, Route } from 'react-router-dom';
 
 import { ThemeProvider } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 
-import Footer from './Components/Footer';
+import Footer from 'Components/Footer';
+import Header from 'Components/Header';
 
 import { theme, elevation2 } from './assets/jss/theme';
 
@@ -26,6 +27,7 @@ export default function App(props) {
       <Router history={history}>
         <ThemeProvider theme={theme}>
           <div>
+            <Header />
             <Container style={mainRaised}>
               <Typography variant="h1">Hi</Typography>
               <Typography variant="body1">
