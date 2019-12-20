@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const RobotsPlugin = require('@tanepiper/robots-webpack-plugin');
@@ -53,7 +54,8 @@ module.exports = {
   resolve: {
     alias: {
       Assets: path.resolve(__dirname, 'src/assets/'),
-      Components: path.resolve(__dirname, 'src/components/')
+      Components: path.resolve(__dirname, 'src/components/'),
+      Sections: path.resolve(__dirname, 'src/sections')
     }
   },
 
