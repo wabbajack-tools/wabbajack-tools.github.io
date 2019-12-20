@@ -2,14 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import ListItem from '@material-ui/core/ListItem';
+import Link from '@material-ui/core/Link';
 
 export default function FooterItem(props) {
   const { link, name } = props;
   return (
-    <ListItem className="listItem">
-      <a href={link} className="link" target="_blank" rel="noopener noreferrer">
+    <ListItem>
+      <Link href={link} target="_blank" rel="noopener noreferrer">
         {name}
-      </a>
+      </Link>
     </ListItem>
   );
 }

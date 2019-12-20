@@ -6,7 +6,7 @@ import store from './store/store';
 import history from './store/history';
 
 import 'Assets/scss/wabbajack.scss';
-import 'Assets/css/global.css';
+// import 'Assets/css/global.css';
 
 ReactDOM.render(
   <App store={store} history={history} />,

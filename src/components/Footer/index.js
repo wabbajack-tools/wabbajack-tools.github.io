@@ -1,14 +1,33 @@
 import React from 'react';
+
+import Container from '@material-ui/core/Container';
 import List from '@material-ui/core/List';
+import Link from '@material-ui/core/Link';
 
 import FooterItem from './FooterItem';
 
 export default function Footer() {
+  const flexContainer = {
+    display: 'flex',
+    flexDirection: 'row',
+    padding: 0
+  };
+
+  const left = {
+    float: 'left'
+  };
+
+  const right = {
+    padding: '15px 0',
+    margin: 0,
+    float: 'right'
+  };
+
   return (
-    <footer className="footer">
-      <div className="container">
-        <div className="left">
-          <List className="left">
+    <footer>
+      <Container maxWidth="xl">
+        <div style={left}>
+          <List style={flexContainer}>
             <FooterItem
               name="GitHub"
               link="https://github.com/wabbajack-tools/wabbajack"
@@ -20,17 +39,17 @@ export default function Footer() {
             />
           </List>
         </div>
-        <div className="right">
+        <div style={right}>
           &copy; {1900 + new Date().getYear()}, made by the{' '}
-          <a
+          <Link
             href="https://github.com/wabbajack-tools"
             target="_blank"
             rel="noopener noreferrer"
           >
             Wabbajack Team
-          </a>
+          </Link>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 }
