@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 
 import ListItem from '@material-ui/core/ListItem';
 
-import 'Assets/css/components/FooterItem.css';
-
 export default function FooterItem(props) {
   const { link, name } = props;
   return (

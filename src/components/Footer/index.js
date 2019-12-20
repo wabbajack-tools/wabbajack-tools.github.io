@@ -3,8 +3,6 @@ import List from '@material-ui/core/List';
 
 import FooterItem from './FooterItem';
 
-import 'Assets/css/components/Footer.css';
-
 export default function Footer() {
   return (
     <footer className="footer">
