@@ -29,6 +29,7 @@
     "react/jsx-indent": "warn",
     "react/self-closing-comp": "off",
     "react/jsx-closing-tag-location": "warn",
+    "import/extensions": "warn",
     "object-shorthand": "warn",
     "global-require": "off",
     "no-console": "off",

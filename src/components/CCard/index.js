@@ -37,7 +37,13 @@ export default function CCard(props) {
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <Button size="small" color="secondary" href={link}>
+        <Button
+          size="small"
+          color="secondary"
+          href={link}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           {linkText}
         </Button>
       </CardActions>
