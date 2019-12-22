@@ -9,7 +9,8 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: path.join(__dirname, '/dist'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    publicPath: '/'
   },
 
   module: {
@@ -88,6 +89,7 @@ module.exports = {
 
   devServer: {
     contentBase: path.join(__dirname, 'dist'),
+    historyApiFallback: true,
     compress: true,
     port: 3000
   }
