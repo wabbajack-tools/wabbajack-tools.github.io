@@ -25,6 +25,17 @@ const mainRaised = {
 export default function App(props) {
   const { store, history } = props;
 
+  const { userAgent } = window.navigator;
+  const isIE = /MSIE|Trident/.test(userAgent);
+
+  if (isIE)
+    return (
+      <div>
+        <h1>Stop using IE!</h1>
+        <img src="https://i.imgflip.com/ywgpb.jpg" alt="STOP IT!"></img>
+      </div>
+    );
+
   return (
     <Provider store={store}>
       <Router history={history}>

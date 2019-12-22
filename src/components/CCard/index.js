@@ -53,7 +53,7 @@ export default function CCard(props) {
 
 CCard.propTypes = {
   title: PropTypes.string.isRequired,
-  media: PropTypes.object.isRequired,
+  media: PropTypes.any.isRequired,
   body: PropTypes.string.isRequired,
   link: PropTypes.string.isRequired,
   linkText: PropTypes.string.isRequired
