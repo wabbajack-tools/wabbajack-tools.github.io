@@ -12,6 +12,7 @@ import Header from 'Components/Header';
 // import Parallax from 'Components/Parallax';
 
 import StartSection from 'Sections/StartSection';
+import InfoSections from 'Sections/InfoSections';
 
 import { theme, elevation2 } from './assets/jss/theme';
 
@@ -45,6 +46,10 @@ export default function App(props) {
             {/* <Parallax /> */}
             <Box style={mainRaised} m={4}>
               <Route exact path="/" render={() => <StartSection />} />
+              <Route
+                path="/info/:url"
+                render={url => <InfoSections url={url} />}
+              />
             </Box>
             <Footer />
           </div>
