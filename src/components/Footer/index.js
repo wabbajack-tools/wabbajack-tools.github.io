@@ -4,6 +4,7 @@ import Container from '@material-ui/core/Container';
 import List from '@material-ui/core/List';
 import Link from '@material-ui/core/Link';
 
+import Tooltip from '@material-ui/core/Tooltip';
 import FooterItem from './FooterItem';
 
 export default function Footer() {
@@ -41,13 +42,18 @@ export default function Footer() {
         </div>
         <div style={right}>
           &copy; {1900 + new Date().getYear()}, made by the{' '}
-          <Link
-            href="https://github.com/wabbajack-tools"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Tooltip
+            title="Website actually only made by erri120 :p (dont tell anyone)"
+            enterDelay={1000}
           >
-            Wabbajack Team
-          </Link>
+            <Link
+              href="https://github.com/wabbajack-tools"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Wabbajack Team
+            </Link>
+          </Tooltip>
         </div>
       </Container>
     </footer>
