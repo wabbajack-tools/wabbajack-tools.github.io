@@ -1,3 +1,6 @@
+# Webpack stats
+stats.json
+
 # Logs
 logs
 *.log
