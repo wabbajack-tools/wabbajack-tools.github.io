@@ -22,12 +22,15 @@ const elevation12 = '#323232';
 const elevation16 = '#353535';
 const elevation24 = '#383838';
 
+const white = '#FFFFFF';
+// const black = '#000000';
+
 const theme = createMuiTheme({
   palette: {
     primary,
     secondary,
     text: {
-      primary: '#FFFFFF',
+      primary: white,
       secondary: '#EEEEEE',
       disabled: '#DDDDDD'
     }
@@ -66,7 +69,7 @@ const theme = createMuiTheme({
     MuiChip: {
       colorPrimary: {
         backgroundColor: deepPurple[900],
-        color: '#FFFFFF'
+        color: white
       }
     }
   }

@@ -1,6 +1,6 @@
 import createStore from 'redux-zero';
 
-const initialStore = { modlists: [] };
+const initialStore = { modlists: [], selectedGame: '' };
 
 const store = createStore(initialStore);
 
