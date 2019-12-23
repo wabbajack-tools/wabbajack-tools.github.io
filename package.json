@@ -7,7 +7,8 @@
     "dev": "webpack-dev-server --mode development --open --hot",
     "build": "webpack --config webpack.config.client.js",
     "prestart": "yarn run build",
-    "start": "yarn run nodemon"
+    "start": "yarn run nodemon",
+    "heroku-prebuild": "yarn"
   },
   "author": "erri120 <erri120@protonmail.com>",
   "license": "GPL-3.0-only",
