@@ -14,6 +14,7 @@ import Header from 'Components/Header';
 import StartSection from 'Sections/StartSection';
 import InfoSections from 'Sections/InfoSections';
 import Gallery from 'Sections/Gallery';
+import Modlist from 'Sections/Modlist';
 
 import { theme, elevation2 } from './assets/jss/theme';
 
@@ -52,6 +53,10 @@ export default function App(props) {
                 render={url => <InfoSections url={url} />}
               />
               <Route exact path="/gallery" render={() => <Gallery />} />
+              <Route
+                path="/modlist/:url"
+                render={url => <Modlist url={url} />}
+              />
             </Box>
             <Footer />
           </div>
