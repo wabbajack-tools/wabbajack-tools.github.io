@@ -2,10 +2,12 @@
   "name": "wabbajack.org",
   "version": "1.0.0",
   "description": "Website for Wabbajack",
-  "main": "src/index.js",
+  "main": "express.js",
   "scripts": {
     "dev": "webpack-dev-server --mode development --open --hot",
-    "build": "webpack --mode production"
+    "build": "webpack --config webpack.config.client.js",
+    "prestart": "yarn run build",
+    "start": "yarn run nodemon"
   },
   "author": "erri120 <erri120@protonmail.com>",
   "license": "GPL-3.0-only",
@@ -20,6 +22,7 @@
     "@material-ui/lab": "^4.0.0-alpha.36",
     "axios": "^0.19.0",
     "core-js": "3",
+    "express": "^4.17.1",
     "history": "^4.10.1",
     "markdown-to-jsx": "^6.10.3",
     "prop-types": "^15.7.2",
@@ -55,6 +58,7 @@
     "file-loader": "^5.0.2",
     "html-webpack-plugin": "^3.2.0",
     "node-sass": "^4.13.0",
+    "nodemon": "^2.0.2",
     "prettier": "^1.19.1",
     "sass-loader": "^8.0.0",
     "style-loader": "^1.0.2",
