@@ -13,6 +13,7 @@ import Header from 'Components/Header';
 
 import StartSection from 'Sections/StartSection';
 import InfoSections from 'Sections/InfoSections';
+import Gallery from 'Sections/Gallery';
 
 import { theme, elevation2 } from './assets/jss/theme';
 
@@ -50,6 +51,7 @@ export default function App(props) {
                 path="/info/:url"
                 render={url => <InfoSections url={url} />}
               />
+              <Route exact path="/gallery" render={() => <Gallery />} />
             </Box>
             <Footer />
           </div>

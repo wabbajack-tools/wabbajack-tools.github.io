@@ -1,8 +1,11 @@
+// This is the global material-ui theme
+
 import { createMuiTheme } from '@material-ui/core/styles';
 
 import deepPurple from '@material-ui/core/colors/deepPurple';
 import teal from '@material-ui/core/colors/teal';
 import cyan from '@material-ui/core/colors/cyan';
+import green from '@material-ui/core/colors/green';
 
 const primary = deepPurple;
 const secondary = teal;
@@ -24,13 +27,26 @@ const theme = createMuiTheme({
     primary,
     secondary,
     text: {
-      primary: '#FFFFFF'
+      primary: '#FFFFFF',
+      secondary: '#EEEEEE',
+      disabled: '#DDDDDD'
     }
   },
   overrides: {
+    MuiDivider: {
+      root: {
+        backgroundColor: '#AAAAAA'
+      }
+    },
     MuiLink: {
       root: {
         color: teal.A400
+      }
+    },
+    MuiCardHeader: {
+      title: {
+        textAlign: 'center',
+        color: green.A400
       }
     },
     MuiPaper: {
@@ -43,7 +59,14 @@ const theme = createMuiTheme({
         color: tertiary.A400
       },
       h4: {
-        color: tertiary.A400
+        color: tertiary.A400,
+        textAlign: 'center'
+      }
+    },
+    MuiChip: {
+      colorPrimary: {
+        backgroundColor: deepPurple[900],
+        color: '#FFFFFF'
       }
     }
   }
