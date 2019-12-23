@@ -5,14 +5,16 @@ import { connect } from 'redux-zero/react';
 import uuid from 'uuid';
 import underscore from 'underscore';
 
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import Typography from '@material-ui/core/Typography';
-import Link from '@material-ui/core/Link';
+import {
+  Container,
+  Grid,
+  FormControl,
+  FormHelperText,
+  MenuItem,
+  Select,
+  Typography,
+  Link
+} from '@material-ui/core';
 
 import config from 'Config';
 

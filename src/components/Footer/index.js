@@ -1,14 +1,10 @@
 import React from 'react';
 
-import Container from '@material-ui/core/Container';
-import List from '@material-ui/core/List';
-import Link from '@material-ui/core/Link';
-import Tooltip from '@material-ui/core/Tooltip';
+import { Container, List, Link, Tooltip } from '@material-ui/core';
 
 import config from 'Config';
 
 import FooterItem from './FooterItem';
-
 
 export default function Footer() {
   const flexContainer = {

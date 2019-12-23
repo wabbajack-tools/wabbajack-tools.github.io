@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import AppBar from '@material-ui/core/AppBar';
-import ToolBar from '@material-ui/core/Toolbar';
-import Button from '@material-ui/core/Button';
-import Slide from '@material-ui/core/Slide';
-import useScrollTrigger from '@material-ui/core/useScrollTrigger';
-import Typography from '@material-ui/core/Typography';
+import {
+  AppBar,
+  ToolBar,
+  Button,
+  Slide,
+  useScrollTrigger,
+  Typography
+} from '@material-ui/core';
 
 function HideOnScroll(props) {
   const { children } = props;

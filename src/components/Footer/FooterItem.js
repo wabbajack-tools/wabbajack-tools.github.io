@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ListItem from '@material-ui/core/ListItem';
-import Link from '@material-ui/core/Link';
+import { ListItem, Link } from '@material-ui/core';
 
 export default function FooterItem(props) {
   const { link, name } = props;

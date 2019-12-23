@@ -5,7 +5,7 @@ import { Provider } from 'redux-zero/react';
 import { Router, Route } from 'react-router-dom';
 
 import { ThemeProvider } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
+import { Box } from '@material-ui/core';
 
 import Footer from 'Components/Footer';
 import Header from 'Components/Header';
