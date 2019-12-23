@@ -11,9 +11,9 @@
   "license": "GPL-3.0-only",
   "private": true,
   "engines": {
-    "node": ">= 13.0.0",
-    "npm": ">= 6.0.0",
-    "yarn": ">= 1.20.0"
+    "node": "13.3.x",
+    "npm": "6.13.x",
+    "yarn": "1.21.x"
   },
   "dependencies": {
     "@material-ui/core": "^4.8.0",
