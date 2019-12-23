@@ -33,7 +33,7 @@
     "react/jsx-wrap-multilines": "warn",
     "react/prop-types": "warn",
     "react/destructuring-assignment": "warn",
-    "import/extensions": "warn",
+    "import/extensions": "off",
     "object-shorthand": "warn",
     "global-require": "off",
     "no-console": "off",

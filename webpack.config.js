@@ -57,7 +57,9 @@ module.exports = {
       Assets: path.resolve(__dirname, 'src/assets/'),
       Components: path.resolve(__dirname, 'src/components/'),
       Sections: path.resolve(__dirname, 'src/sections/'),
-      Src: path.resolve(__dirname, 'src/')
+      Src: path.resolve(__dirname, 'src/'),
+      Config: path.resolve(__dirname, 'wabbajack.config.js'),
+      Utils: path.resolve(__dirname, 'src/utils/')
     }
   },
 
