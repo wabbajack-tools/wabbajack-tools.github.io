@@ -3,9 +3,12 @@ import React from 'react';
 import Container from '@material-ui/core/Container';
 import List from '@material-ui/core/List';
 import Link from '@material-ui/core/Link';
-
 import Tooltip from '@material-ui/core/Tooltip';
+
+import config from 'Config';
+
 import FooterItem from './FooterItem';
+
 
 export default function Footer() {
   const flexContainer = {
@@ -33,7 +36,7 @@ export default function Footer() {
               name="GitHub"
               link="https://github.com/wabbajack-tools/wabbajack"
             />
-            <FooterItem name="Discord" link="https://discord.gg/wabbajack" />
+            <FooterItem name="Discord" link={config.discord} />
             <FooterItem
               name="Patreon"
               link="https://www.patreon.com/user?u=11907933"

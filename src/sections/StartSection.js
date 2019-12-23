@@ -6,6 +6,8 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 
+import config from 'Config';
+
 import CCard from 'Components/CCard';
 
 export default function StartSection() {
@@ -14,9 +16,7 @@ export default function StartSection() {
       {/* TOP GRID */}
 
       <Grid item xs={12}>
-        <Typography variant="h4" style={{ textAlign: 'center' }}>
-          An automated Modlist installer
-        </Typography>
+        <Typography variant="h4">An automated Modlist installer</Typography>
         <Container maxWidth="lg" style={{ marginTop: '16px' }}>
           <Typography variant="body1">
             Modding requires a lot of knowledge and time. Most people do not
@@ -63,6 +63,7 @@ export default function StartSection() {
                 body="We offer a list of currated Modlist on this Website in a gallery"
                 link="/gallery"
                 linkText="Browse"
+                openNew={false}
               />
             </Grid>
             <Grid item xs={12} sm={4} md={4} lg={4} xl={4}>
@@ -85,10 +86,9 @@ export default function StartSection() {
           </Typography>
           <Typography variant="body1">
             If you have trouble installing a Modlist, head over to our{' '}
-            <Link href="https://discord.gg/wabbajack">Discord</Link> and ask for
-            help in the respective channels. If your installed a Modlist which
-            is not in the gallery than ask the person who compiled it for
-            support.{' '}
+            <Link href={config.discord}>Discord</Link> and ask for help in the
+            respective channels. If your installed a Modlist which is not in the
+            gallery than ask the person who compiled it for support.{' '}
             <b>Do not ask for support on other Discord servers or on reddit!</b>
           </Typography>
         </Container>
@@ -100,13 +100,21 @@ export default function StartSection() {
             Further Information:
           </Typography>
           <Typography variant="body1">
-            For <Link href="/info/modauthors">Mod Authors</Link>
+            <Link href="/info/general">General Information</Link> about how
+            Wabbajack works.
           </Typography>
           <Typography variant="body1">
-            For <Link href="/info/modlistauthors">Modlist Authors</Link>
+            For <Link href="/info/modauthors">Mod Authors</Link>.
           </Typography>
           <Typography variant="body1">
-            For <Link href="/info/contributors">Contributors</Link>
+            For <Link href="/info/modlistauthors">Modlist Authors</Link>.
+          </Typography>
+          <Typography variant="body1">
+            For{' '}
+            <Link href="https://github.com/wabbajack-tools/wabbajack/blob/master/CONTRIBUTING.md">
+              Contributors
+            </Link>
+            .
           </Typography>
         </Container>
         {/* TOP GRID END */}

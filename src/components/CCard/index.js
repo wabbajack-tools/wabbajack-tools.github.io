@@ -16,7 +16,7 @@ const cardMedia = {
 };
 
 export default function CCard(props) {
-  const { title, media, body, link, linkText } = props;
+  const { title, media, body, link, linkText, openNew } = props;
   return (
     <Card style={{ maxWidth: '345px' }}>
       <CardActionArea disableRipple disableTouchRipple>
@@ -37,15 +37,21 @@ export default function CCard(props) {
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <Button
-          size="small"
-          color="secondary"
-          href={link}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {linkText}
-        </Button>
+        {openNew ? (
+          <Button
+            size="small"
+            color="secondary"
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {linkText}
+          </Button>
+        ) : (
+          <Button size="small" color="secondary" href={link}>
+            {linkText}
+          </Button>
+        )}
       </CardActions>
     </Card>
   );
@@ -56,5 +62,10 @@ CCard.propTypes = {
   media: PropTypes.any.isRequired,
   body: PropTypes.string.isRequired,
   link: PropTypes.string.isRequired,
-  linkText: PropTypes.string.isRequired
+  linkText: PropTypes.string.isRequired,
+  openNew: PropTypes.bool
+};
+
+CCard.defaultProps = {
+  openNew: true
 };
