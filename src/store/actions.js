@@ -1,8 +1,5 @@
 import axios from 'axios';
 
-const status = require('./status.json');
-const statusPage = require('./Ultimate Skyrim.json');
-
 const actions = () => ({
   loadModlists: state =>
     axios
@@ -18,16 +15,14 @@ const actions = () => ({
       .then(res => res.data)
       .then(readme => ({ ...state, readme })),
   loadStatus: state =>
-    /* axios
+    axios
       .get('http://build.wabbajack.org/lists/status.json')
       .then(res => res.data)
-      .then(status => ({ ...state, status })), */
-    ({ ...state, status }),
+      .then(status => ({ ...state, status })),
   loadModlistStatus: (state, link) =>
-    /* axios
-      .get(`http://build.wabbajack.org/${link}`)
+    axios
+      .get(`http://build.wabbajack.org/lists/status/${link}.json`)
       .then(res => res.data)
-      .then(modlistStatus => ({ ...state, modlistStatus })) */
-    ({ ...state, modlistStatus: statusPage })
+      .then(modlistStatus => ({ ...state, modlistStatus }))
 });
 export default actions;

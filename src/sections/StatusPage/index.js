@@ -3,8 +3,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'redux-zero/react';
-import underscore from 'underscore';
-import uuid from 'uuid';
 
 import { Box, Container, Typography, Button } from '@material-ui/core';
 
@@ -16,23 +14,24 @@ const mapToProps = ({ modlistStatus }) => ({ modlistStatus });
 
 class StatusDashboard extends Component {
   componentDidMount() {
-    if (this.props.modlistStatus.length === 0) this.props.loadModlistStatus('');
+    if (this.props.modlistStatus.length === 0)
+      this.props.loadModlistStatus(this.props.url.match.params.url);
   }
 
   render() {
-    const { url } = this.props.url.match.params;
+    // const { url } = this.props.url.match.params;
     const { Name, Checked, Failed, Passed } = this.props.modlistStatus;
-    const hasFailed = Failed !== undefined && Failed.length !== 0;
+    const hasFailed = Failed !== undefined && Failed.$values.length !== 0;
     return (
       <Box m={2} style={{ padding: '16px 0' }}>
         <Button href="/status">Back to the Dashboard</Button>
         <Typography variant="h4">{Name}</Typography>
         <Container maxWidth="xl">
-          <Typography variant="h6" color={hasFailed ? 'error' : 'initial'}>
+          <Typography variant="h6" color={hasFailed ? 'error' : 'secondary'}>
             Status: {hasFailed ? 'Failing' : 'Working'}
           </Typography>
           <Typography variant="h6">Last Checked: {Checked}</Typography>
-          {Failed !== undefined ? (
+          {hasFailed ? (
             <div>
               <Typography variant="h6" style={{ marginBottom: '8px' }}>
                 Failing:{' '}

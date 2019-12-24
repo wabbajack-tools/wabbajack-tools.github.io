@@ -22,7 +22,7 @@ export default function VirtualizedList(props) {
   return (
     <FixedSizeList
       itemCount={list.length}
-      height={list.length >= 256 ? 400 : list.length * 20}
+      height={list.length >= 100 ? 400 : list.length * 20}
       width="100%"
       itemSize={20}
     >
