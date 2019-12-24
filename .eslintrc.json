@@ -1,6 +1,7 @@
 {
   "env": {
-    "browser": true
+    "browser": true,
+    "jest/globals": "true"
   },
   "parserOptions": {
     "ecmaVersion": 11,
@@ -10,7 +11,7 @@
     "sourceType": "module"
   },
   "extends": ["airbnb", "prettier", "plugin:node/recommended"],
-  "plugins": ["prettier", "import", "jsx-a11y", "node", "react", "react-hooks"],
+  "plugins": ["prettier", "import", "jsx-a11y", "node", "react", "react-hooks", "jest"],
   "settings": {
     "import/resolver": "webpack"
   },

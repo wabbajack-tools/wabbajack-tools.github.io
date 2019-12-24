@@ -1,6 +1,9 @@
 # Webpack stats
 stats.json
 
+#temp folder
+temp
+
 # Logs
 logs
 *.log
