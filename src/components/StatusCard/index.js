@@ -28,7 +28,7 @@ const redDot = {
 
 export default function StatusCard(props) {
   const { status } = props;
-  const { Name, Checked, Failed, Passed, HasFailures } = status;
+  const { Name, MachineName, Checked, Failed, Passed, HasFailures } = status;
   return (
     <Paper style={{ marginTop: '8px', marginBottom: '8px' }}>
       <Grid style={{ padding: '8px' }}>
@@ -36,7 +36,7 @@ export default function StatusCard(props) {
         <Typography
           variant="h6"
           component="a"
-          href={`/status/${Name}`}
+          href={`/status/${MachineName}`}
           style={clickableTitle}
         >
           {Name}
