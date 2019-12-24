@@ -15,6 +15,8 @@ import StartSection from 'Sections/StartSection';
 import InfoSections from 'Sections/InfoSections';
 import Gallery from 'Sections/Gallery';
 import Modlist from 'Sections/Modlist';
+import StatusDashboard from 'Sections/StatusDashboard';
+import StatusPage from 'Sections/StatusPage';
 
 import { theme, elevation2 } from './assets/jss/theme';
 
@@ -56,6 +58,11 @@ export default function App(props) {
               <Route
                 path="/modlist/:url"
                 render={url => <Modlist url={url} />}
+              />
+              <Route exact path="/status" render={() => <StatusDashboard />} />
+              <Route
+                path="/status/:url"
+                render={url => <StatusPage url={url} />}
               />
             </Box>
             <Footer />
