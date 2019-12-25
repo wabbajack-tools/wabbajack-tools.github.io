@@ -24,7 +24,7 @@ export default function StartSection() {
         <img
           src={require('Assets/img/wabbajack_transparent.png').default}
           alt="logo"
-          style={{ width: '220px', height: '220px', marginRight: '64px' }}
+          style={{ paddingRight: '64px', maxWidth: '300px' }}
         />
         <div>
           <Typography
