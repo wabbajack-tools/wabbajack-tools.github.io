@@ -22,7 +22,7 @@ export default function StartSection() {
         }}
       >
         <img
-          src={require('Assets/img/wabbajack_transparent.png').default}
+          src={require('Assets/img/new/wabbajack_transparent.png').default}
           alt="logo"
           style={{ paddingRight: '64px', maxWidth: '300px' }}
         />
@@ -60,7 +60,7 @@ export default function StartSection() {
             <Grid item xs={12} sm={4} md={4} lg={4} xl={4}>
               <CCard
                 title="Wabbajack"
-                media={require('Assets/img/banner.png').default}
+                media={require('Assets/img/new/banner.png').default}
                 body="You can download the latest release from GitHub"
                 link="https://www.github.com/wabbajack-tools/wabbajack/releases"
                 linkText="Download"
@@ -69,7 +69,7 @@ export default function StartSection() {
             <Grid item xs={12} sm={4} md={4} lg={4} xl={4}>
               <CCard
                 title="A Modlist"
-                media={require('Assets/img/banner.png').default}
+                media={require('Assets/img/new/banner.png').default}
                 body="We offer a list of curated Modlist on this Website in a gallery"
                 link="/gallery"
                 linkText="Browse"
@@ -79,7 +79,7 @@ export default function StartSection() {
             <Grid item xs={12} sm={4} md={4} lg={4} xl={4}>
               <CCard
                 title="Nexus Premium Account"
-                media={require('Assets/img/nexus.png').default}
+                media={require('Assets/img/new/nexus.png').default}
                 body="The Nexus API only provides download links for Premium Accounts"
                 link="https://forums.nexusmods.com/index.php?/store/category/1-premium-membership/"
                 linkText="Buy"
