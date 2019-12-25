@@ -71,6 +71,11 @@ const theme = createMuiTheme({
         backgroundColor: deepPurple[900],
         color: white
       }
+    },
+    MuiListItemIcon: {
+      root: {
+        color: white
+      }
     }
   }
 });
