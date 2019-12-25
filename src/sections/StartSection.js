@@ -65,7 +65,7 @@ export default function StartSection() {
             <Grid item xs={12} sm={4} md={4} lg={4} xl={4}>
               <CCard
                 title="Nexus Premium Account"
-                media={require('Assets/img/banner.png').default}
+                media={require('Assets/img/nexus.png').default}
                 body="The Nexus API only provides download links for Premium Accounts"
                 link="https://forums.nexusmods.com/index.php?/store/category/1-premium-membership/"
                 linkText="Buy"
@@ -116,15 +116,15 @@ export default function StartSection() {
         {/* TOP GRID END */}
       </Grid>
 
-      {/* LEFT GRID */}
+      {/* LEFT GRID
       <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
         <Paper elevation={12}>Left</Paper>
-      </Grid>
+      </Grid> */}
 
-      {/* RIGHT GRID */}
+      {/* RIGHT GRID
       <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
         <Paper elevation={12}>Right</Paper>
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 }
