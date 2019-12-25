@@ -2,14 +2,10 @@
 
 import { createMuiTheme } from '@material-ui/core/styles';
 
-import deepPurple from '@material-ui/core/colors/deepPurple';
-import teal from '@material-ui/core/colors/teal';
-import cyan from '@material-ui/core/colors/cyan';
-import green from '@material-ui/core/colors/green';
+// import { deepPurple, teal, cyan, blueGrey } from '@material-ui/core/colors';
 
-const primary = deepPurple;
-const secondary = teal;
-const tertiary = cyan;
+const white = '#FFFFFF';
+const black = '#000000';
 
 const elevation0 = '#121212';
 const elevation1 = '#1E1E1E';
@@ -22,34 +18,72 @@ const elevation12 = '#323232';
 const elevation16 = '#353535';
 const elevation24 = '#383838';
 
-const white = '#FFFFFF';
-// const black = '#000000';
+const whiteTheme = {
+  primary: '#6200EE', // 500
+  primaryVariant: '#3700B3', // 700
+  secondary: '#03DAC6', // 200
+  secondaryVariant: '#018786', // 900
+  background: white,
+  surface: white,
+  error: '#B00020',
+  onPrimary: white,
+  onSecondary: black,
+  onBackground: black,
+  onSurface: black,
+  onError: white
+};
+
+const darkTheme = {
+  primary: '#BB86FC', // 200
+  primaryVariant: '#3700B3', // 700
+  secondary: '#03DAC6', // 200
+  secondaryVariant: '#03DAC6', // 200
+  background: elevation0,
+  surface: elevation0,
+  error: '#CF6679',
+  onPrimary: black,
+  onSecondary: black,
+  onBackground: white,
+  onSurface: white,
+  onError: black
+};
+
+const currentTheme = darkTheme;
 
 const theme = createMuiTheme({
   palette: {
-    primary,
-    secondary,
+    primary: {
+      main: currentTheme.primary,
+      light: currentTheme.primary,
+      dark: currentTheme.primaryVariant,
+      contrastText: currentTheme.onPrimary
+    },
+    secondary: {
+      main: currentTheme.secondary,
+      light: currentTheme.secondary,
+      dark: currentTheme.secondaryVariant,
+      contrastText: currentTheme.onSecondary
+    },
     text: {
-      primary: white,
+      primary: currentTheme.onBackground,
       secondary: '#EEEEEE',
       disabled: '#DDDDDD'
     }
   },
   overrides: {
+    MuiToolbar: {
+      root: {
+        backgroundColor: '#1F1B24'
+      }
+    },
     MuiDivider: {
       root: {
         backgroundColor: '#AAAAAA'
       }
     },
-    MuiLink: {
-      root: {
-        color: teal.A400
-      }
-    },
     MuiCardHeader: {
       title: {
-        textAlign: 'center',
-        color: green.A400
+        textAlign: 'center'
       }
     },
     MuiPaper: {
@@ -58,18 +92,18 @@ const theme = createMuiTheme({
       }
     },
     MuiTypography: {
-      h3: {
-        color: tertiary.A400
-      },
       h4: {
-        color: tertiary.A400,
-        textAlign: 'center'
-      }
-    },
-    MuiChip: {
-      colorPrimary: {
-        backgroundColor: deepPurple[900],
-        color: white
+        textAlign: 'center',
+        fontWeight: '200'
+      },
+      h5: {
+        fontWeight: '400'
+      },
+      h6: {
+        fontWeight: '600'
+      },
+      body1: {
+        fontWeight: '200'
       }
     },
     MuiListItemIcon: {

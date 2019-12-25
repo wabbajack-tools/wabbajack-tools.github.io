@@ -55,7 +55,7 @@ export default function Header() {
         <ToolBar variant="dense">
           <IconButton
             edge="start"
-            color="inherit"
+            color="secondary"
             aria-label="menu"
             onClick={toggleDrawer(true)}
           >

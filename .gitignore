@@ -1,6 +1,9 @@
 # Webpack stats
 stats.json
 
+# reports
+reports
+
 #temp folder
 temp
 

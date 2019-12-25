@@ -2,10 +2,12 @@ import React from 'react';
 
 import { Container, Typography, Link } from '@material-ui/core';
 
+import { blue } from '@material-ui/core/colors';
+
 export default function General() {
   return (
     <Container
-      maxWidth="lg"
+      maxWidth="md"
       style={{ paddingTop: '16px', paddingBottom: '16px' }}
     >
       <Typography variant="h4">General Information</Typography>
