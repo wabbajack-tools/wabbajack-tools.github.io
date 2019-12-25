@@ -6,5 +6,33 @@
     "**/dist": true,
     ".git": true,
     "yarn.lock": true
-  }
+  },
+  "cSpell.language": "en,en-GB",
+  "cSpell.enabledLanguageIds": [
+    "css",
+    "dockerfile",
+    "git-commit",
+    "git-rebase",
+    "graphql",
+    "html",
+    "javascript",
+    "javascriptreact",
+    "jest-snapshot",
+    "json",
+    "jsonc",
+    "jsx",
+    "jsx-attr",
+    "jsx-tags",
+    "markdown",
+    "php",
+    "plaintext",
+    "scss",
+    "styled-css",
+    "text",
+    "typescript",
+    "typescriptreact",
+    "xml",
+    "yaml",
+    "yml"
+  ]
 }
