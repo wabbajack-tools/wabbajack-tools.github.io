@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Container, Grid, Paper, Typography, Link } from '@material-ui/core';
+import { Container, Grid, Typography, Link } from '@material-ui/core';
 
 import config from 'Config';
 
