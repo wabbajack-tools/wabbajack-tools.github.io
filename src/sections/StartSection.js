@@ -11,26 +11,40 @@ export default function StartSection() {
     <Grid container spacing={5} style={{ padding: '0 16px' }}>
       {/* TOP GRID */}
 
-      <Grid item xs={12}>
-        <Typography variant="h4">An automated Modlist installer</Typography>
-        <Container maxWidth="lg" style={{ marginTop: '16px' }}>
-          <Typography variant="body1">
-            Modding requires a lot of knowledge and time. Most people do not
-            have the time needed to mod their favorite games or do not want to
-            go into hiding for the next three months for learning how to mod.
-            But on the other hand, some of us spent decades honing their skills
-            and investing hours into downloading, installing, testing, tweaking
-            and playing with their setup. Wabbajack exists for everyone who just
-            wants to play a fully modded game without investing a lot of time
-            into modding.
+      <Container
+        maxWidth="md"
+        style={{
+          display: 'flex',
+          paddingTop: '160px',
+          paddingBottom: '160px',
+          alignItems: 'flex-start',
+          flexDirection: 'row'
+        }}
+      >
+        <img
+          src={require('Assets/img/wabbajack_transparent.png').default}
+          alt="logo"
+          style={{ width: '220px', height: '220px', marginRight: '64px' }}
+        />
+        <div>
+          <Typography
+            variant="h3"
+            style={{
+              fontWeight: '300',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            Wabbajack
           </Typography>
-          <Typography variant="body1">
-            Give Wabbajack a Mod Organizer 2 folder and profile or a Vortex
-            installation and Wabbajack will generate a list of instructions to
-            recreate the entire setup on another machine.
+          <Typography variant="h5">An automated Modlist Installer</Typography>
+          <Typography variant="h5">
+            Wabbajack can reproduce an entire modding setup on another machine
+            <b> without bundling any assets or re-distributing any mods</b>.
           </Typography>
-        </Container>
+        </div>
+      </Container>
 
+      <Grid item xs={12}>
         {/* INSALLING A MODLIST REQUIREMENTS */}
 
         <Container maxWidth="lg" style={{ marginTop: '16px' }}>
@@ -56,7 +70,7 @@ export default function StartSection() {
               <CCard
                 title="A Modlist"
                 media={require('Assets/img/banner.png').default}
-                body="We offer a list of currated Modlist on this Website in a gallery"
+                body="We offer a list of curated Modlist on this Website in a gallery"
                 link="/gallery"
                 linkText="Browse"
                 openNew={false}
@@ -83,7 +97,7 @@ export default function StartSection() {
           <Typography variant="body1">
             If you have trouble installing a Modlist, head over to our{' '}
             <Link href={config.discord}>Discord</Link> and ask for help in the
-            respective channels. If your installed a Modlist which is not in the
+            respective channels. If you installed a Modlist which is not in the
             gallery than ask the person who compiled it for support.{' '}
             <b>Do not ask for support on other Discord servers or on reddit!</b>
           </Typography>
@@ -115,16 +129,6 @@ export default function StartSection() {
         </Container>
         {/* TOP GRID END */}
       </Grid>
-
-      {/* LEFT GRID
-      <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-        <Paper elevation={12}>Left</Paper>
-      </Grid> */}
-
-      {/* RIGHT GRID
-      <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
-        <Paper elevation={12}>Right</Paper>
-      </Grid> */}
     </Grid>
   );
 }
