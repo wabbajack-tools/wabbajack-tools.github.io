@@ -76,7 +76,7 @@ module.exports = {
       userAgents: [
         {
           name: '*',
-          disallow: ['/']
+          disallow: ['/api/']
         }
       ]
     }),
