@@ -63,8 +63,8 @@ export default function General() {
       </Typography>
       <Typography variant="body1">
         To compile a Modlist, Wabbajack needs either an MO2 or Vortex
-        installation. We have seperate compilers for both of them but the
-        general proceedure is the same: <br />
+        installation. We have separate compilers for both of them but the
+        general procedure is the same: <br />
         Wabbajack starts by indexing <b>everything</b>: your game, downloads and
         installation folder. Using information provided by the modlist author,
         Wabbajack tries to find out where every file came from. We support
@@ -99,7 +99,7 @@ export default function General() {
       <Typography variant="body1">
         Wabbajack is made to be a one click installer: you start Wabbajack, load
         the Modlist and hit Install. Like with Compilation, we start by hashing
-        everyfile. If the user has already downloaded the needed archives than
+        every file. If the user has already downloaded the needed archives than
         we can skip doing that again, but if they are missing some than
         Wabbajack will download those archives for them. This requires a Nexus
         Premium Account since the API for getting download links only works for

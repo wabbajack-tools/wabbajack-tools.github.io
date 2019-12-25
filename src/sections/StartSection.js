@@ -45,7 +45,7 @@ export default function StartSection() {
       </Container>
 
       <Grid item xs={12}>
-        {/* INSALLING A MODLIST REQUIREMENTS */}
+        {/* INSTALLING A MODLIST REQUIREMENTS */}
 
         <Container maxWidth="lg" style={{ marginTop: '16px' }}>
           <Typography variant="h6">

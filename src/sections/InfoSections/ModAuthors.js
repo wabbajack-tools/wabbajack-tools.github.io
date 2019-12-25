@@ -14,7 +14,7 @@ export default function ModAuthors() {
         <Link href="/info/general">General Information</Link> page.
       </Typography>
       <Typography variant="body1" style={{ paddingTop: '8px' }}>
-        Depending on what modding scene you came from, you may have differnt
+        Depending on what modding scene you came from, you may have different
         experiences with <i>Modpacks</i>, <i>Modlists</i> and{' '}
         <i>Automated Installers</i>. It is important to understand what and how
         Wabbajack does before doing anything stupid like going onto
