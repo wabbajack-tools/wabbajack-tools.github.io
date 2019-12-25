@@ -4,6 +4,9 @@ stats.json
 #temp folder
 temp
 
+#cache folder
+cache
+
 # Logs
 logs
 *.log
