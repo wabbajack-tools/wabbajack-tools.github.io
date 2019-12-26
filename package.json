@@ -4,11 +4,11 @@
   "description": "Website for Wabbajack",
   "main": "express.js",
   "scripts": {
-    "dev": "webpack-dev-server --config webpack.config.client.js --mode development --open --hot",
-    "build": "webpack --config webpack.config.client.js",
+    "dev": "yarn run webpack-dev-server --config webpack.config.client.js --mode development --open --hot",
+    "build": "yarn run webpack --config webpack.config.client.js",
     "prestart": "yarn run build",
     "start": "yarn run nodemon",
-    "test": "jest"
+    "test": "yarn run jest"
   },
   "author": "erri120 <erri120@protonmail.com>",
   "license": "GPL-3.0-only",
