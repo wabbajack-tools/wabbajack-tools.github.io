@@ -2,8 +2,6 @@ import React from 'react';
 
 import { Container, Typography, Link } from '@material-ui/core';
 
-import { blue } from '@material-ui/core/colors';
-
 export default function General() {
   return (
     <Container
