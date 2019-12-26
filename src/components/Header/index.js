@@ -4,7 +4,6 @@ import uuid from 'uuid';
 
 import {
   AppBar,
-  ToolBar,
   IconButton,
   Button,
   Slide,
@@ -15,6 +14,8 @@ import {
   ListItem,
   ListItemIcon
 } from '@material-ui/core';
+
+import ToolBar from '@material-ui/core/Toolbar';
 
 import MenuIcon from '@material-ui/icons/Menu';
 import AppsIcon from '@material-ui/icons/Apps';
