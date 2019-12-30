@@ -117,7 +117,11 @@ export default function StartSection() {
             For <Link href="/info/modauthors">Mod Authors</Link>.
           </Typography>
           <Typography variant="body1">
-            For <Link href="/info/modlistauthors">Modlist Authors</Link>.
+            For{' '}
+            <Link href="https://github.com/wabbajack-tools/wabbajack#creating-your-own-modlist">
+              Modlist Authors
+            </Link>
+            .
           </Typography>
           <Typography variant="body1">
             For{' '}

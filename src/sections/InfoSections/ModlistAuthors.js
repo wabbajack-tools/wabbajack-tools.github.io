@@ -10,8 +10,10 @@ export default function ModlistAuthors() {
     >
       <Typography variant="h4">Information for Modlist Authors</Typography>
       <Typography variant="body2">
-        Before reading this section, make sure you have read the{' '}
-        <Link href="/info/general">General Information</Link> page.
+        <i>
+          Before reading this section, make sure you have read the{' '}
+          <Link href="/info/general">General Information</Link> page.
+        </i>
       </Typography>
     </Container>
   );
