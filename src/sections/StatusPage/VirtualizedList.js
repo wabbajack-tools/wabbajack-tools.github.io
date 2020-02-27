@@ -14,7 +14,7 @@ export default function VirtualizedList(props) {
     if (item === undefined) return <div></div>;
     return (
       <ListItem button style={style} key={index}>
-        <ListItemText primary={item.Name} />
+        <ListItemText primary={item.Archive.Name} />
       </ListItem>
     );
   };
