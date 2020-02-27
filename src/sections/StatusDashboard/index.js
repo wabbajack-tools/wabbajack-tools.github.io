@@ -20,21 +20,21 @@ class StatusDashboard extends Component {
 
   render() {
     const failed = underscore
-      .chain(this.props.status.$values)
+      .chain(this.props.status)
       .filter(status => {
-        return status.HasFailures;
+        return status.has_failures;
       })
       .sortBy(status => {
-        return status.Name;
+        return status.name;
       })
       .value();
     const success = underscore
-      .chain(this.props.status.$values)
+      .chain(this.props.status)
       .filter(status => {
-        return !status.HasFailures;
+        return !status.has_failures;
       })
       .sortBy(status => {
-        return status.Name;
+        return status.name;
       })
       .value();
     return (

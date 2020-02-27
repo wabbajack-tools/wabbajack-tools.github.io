@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -28,23 +29,22 @@ const redDot = {
 
 export default function StatusCard(props) {
   const { status } = props;
-  const { Name, MachineName, Checked, Failed, Passed, HasFailures } = status;
-  const machine = MachineName === undefined ? Name : MachineName;
+  const { name, checked, failed, passed, has_failures } = status;
   return (
     <Paper style={{ marginTop: '8px', marginBottom: '8px' }}>
       <Grid style={{ padding: '8px' }}>
-        {HasFailures ? <span style={redDot} /> : <span style={greenDot} />}
+        {has_failures ? <span style={redDot} /> : <span style={greenDot} />}
         <Typography
           variant="h6"
           component="a"
-          href={`/status/${machine}`}
+          href={`/status/${name}`}
           style={clickableTitle}
         >
-          {Name}
+          {name}
         </Typography>
-        <Typography variant="body1">Passed: {Passed}</Typography>
-        <Typography variant="body1">Failed: {Failed}</Typography>
-        <Typography variant="body2">Last checked: {Checked}</Typography>
+        <Typography variant="body1">passed: {passed}</Typography>
+        <Typography variant="body1">failed: {failed}</Typography>
+        <Typography variant="body2">Last checked: {checked}</Typography>
       </Grid>
     </Paper>
   );
