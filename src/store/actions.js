@@ -16,12 +16,12 @@ const actions = () => ({
       .then(readme => ({ ...state, readme })),
   loadStatus: state =>
     axios
-      .get('http://build.wabbajack.org/lists/status.json')
+      .get('https://build.wabbajack.org/lists/status.json')
       .then(res => res.data)
       .then(status => ({ ...state, status })),
   loadModlistStatus: (state, link) =>
     axios
-      .get(`http://build.wabbajack.org/lists/status/${link}.json`)
+      .get(`https://build.wabbajack.org/lists/status/${link}.json`)
       .then(res => res.data)
       .then(modlistStatus => ({ ...state, modlistStatus }))
 });
