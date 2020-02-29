@@ -78,9 +78,9 @@ export default function StartSection() {
             </Grid>
             <Grid item xs={12} sm={4} md={4} lg={4} xl={4}>
               <CCard
-                title="Nexus Premium Account"
+                title="Nexus Premium Account (Optional)"
                 media={require('Assets/img/new/nexus.png').default}
-                body="The Nexus API only provides download links for Premium Accounts"
+                body="The Nexus API only provides download links for Premium Accounts. We have recently added the option to manually download all mods using our internal browser."
                 link="https://forums.nexusmods.com/index.php?/store/category/1-premium-membership/"
                 linkText="Buy"
               />
