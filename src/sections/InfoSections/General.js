@@ -22,34 +22,36 @@ export default function General() {
         Commonly found in the Minecraft modding scene, a modpack is a collection
         of mods put together in a single file. Often compressed into a zip, 7z
         or rar archive. This single file contains an entire modding setup and is
-        very large in size as every file from every mod is included.
+        very large in size as every file from every mod is included. Uploading a
+        Modpack to the Internet means distributing possible copyrighted content
+        and has lead to huge backlash in other modding scenes.
       </Typography>
       <Typography variant="subtitle1" style={{ marginTop: '8px' }}>
         Modlist (Written guide)
       </Typography>
       <Typography variant="body1">
         A written guide like{' '}
-        <Link href="https://wiki.step-project.com/STEP:2.10.0">STEP</Link> or{' '}
+        <Link href="https://wiki.step-project.com/STEP:2.10.0">STEP</Link>,{' '}
         <Link href="https://wiki.nexusmods.com/index.php/User:Darkladylexy/Lexys_LOTD_SE">
           Lexys LOTD SE Mod Guide
-        </Link>
-        . Tells the user what, when and how to download mods to reproduce the
-        setup of the guide author. Depending on the depth of the guide, this
-        process not only takes a very long time but is very error prone if the
-        user does not read everything carefully.
+        </Link>{' '}
+        or{' '}
+        <Link href="https://thephoenixflavour.com/">The Phoenix Flavour</Link>{' '}
+        tell the user what, when and how to download and install. In order to
+        reproduce the same setup of the guide author you will pick up a lot of
+        new modding tricks and learn something unknown to you before. Depending
+        on the depth of the guide, process not only takes a very long time but
+        is very error prone if the user does not read everything carefully.
       </Typography>
       <Typography variant="subtitle1" style={{ marginTop: '8px' }}>
         Modlist (Wabbajack)
       </Typography>
       <Typography variant="body1">
-        A Modlist produced by Wabbajack is a set of instructions on how to
-        reproduce an entire setup without including mod files or without having
-        the user read a master thesis on how mod Skyrim. A list of all possible
-        instructions can be viewed{' '}
-        <Link href="https://github.com/wabbajack-tools/wabbajack/blob/master/Wabbajack.Lib/Data.cs">
-          here
-        </Link>{' '}
-        (instructions are internally called Directives).
+        A Wabbajack Modlist can be compared to a written guide except it is not
+        written for humans but for machines. The resulting{' '}
+        <code>.wabbajack</code> file contains instructions on what, when and how
+        to download and install in order to replicate the entire setup of the
+        author without bundling any assets.
       </Typography>
 
       {/* HOW IT WORKS */}
@@ -62,6 +64,13 @@ export default function General() {
         Compilation
       </Typography>
       <Typography variant="body1">
+        {/* To compile a Modlist, Wabbajack needs a lot of information and has to
+        know from where every file came from. We start by indexing{' '}
+        <b>everything</b>: your game, downloads and installation folder and
+        create a <i>VFS cache file</i> containing the location and{' '}
+        <Link href="https://github.com/Cyan4973/xxHash">xxHash</Link> of every
+        indexed file.
+        <br /> */}
         To compile a Modlist, Wabbajack needs either an MO2 or Vortex
         installation. We have separate compilers for both of them but the
         general procedure is the same: <br />
@@ -101,9 +110,8 @@ export default function General() {
         the Modlist and hit Install. Like with Compilation, we start by hashing
         every file. If the user has already downloaded the needed archives than
         we can skip doing that again, but if they are missing some than
-        Wabbajack will download those archives for them. This requires a Nexus
-        Premium Account since the API for getting download links only works for
-        premium users. <br />
+        Wabbajack will download those archives for them.
+        <br />
         After downloading, Wabbajack starts going through all Directives within
         the Modlist and installs the files according to the instructions of
         those Directives.
