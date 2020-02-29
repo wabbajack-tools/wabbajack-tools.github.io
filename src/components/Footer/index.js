@@ -37,6 +37,10 @@ export default function Footer() {
               name="Patreon"
               link="https://www.patreon.com/user?u=11907933"
             />
+            <FooterItem
+              name="Reddit"
+              link="https://www.reddit.com/r/wabbajack/"
+            />
           </List>
         </div>
         <div style={right}>
