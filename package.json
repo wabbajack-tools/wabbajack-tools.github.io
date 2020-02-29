@@ -29,6 +29,7 @@
     "core-js": "^3.6.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "gh-pages": "^2.2.0",
     "history": "^4.10.1",
     "markdown-to-jsx": "^6.10.3",
     "prop-types": "^15.7.2",
