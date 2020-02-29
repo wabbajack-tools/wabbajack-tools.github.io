@@ -8,7 +8,9 @@
     "build": "yarn run webpack --config webpack.config.client.js",
     "prestart": "yarn run build",
     "start": "yarn run nodemon",
-    "test": "yarn run jest"
+    "test": "yarn run jest",
+    "publish": "gh-pages -b master -d dist",
+    "deploy": "gulp deploy"
   },
   "author": "erri120 <erri120@protonmail.com>",
   "license": "GPL-3.0-only",
@@ -62,6 +64,8 @@
     "eslint-plugin-react": "^7.17.0",
     "eslint-plugin-react-hooks": "^2.3.0",
     "file-loader": "^5.0.2",
+    "gulp": "^4.0.2",
+    "gulp-run": "^1.7.1",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.9.0",
     "node-cron": "^2.0.3",
