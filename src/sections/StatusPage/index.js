@@ -9,7 +9,7 @@ import { Box, Container, Typography, Button } from '@material-ui/core';
 
 import actions from 'Src/store/actions.js';
 
-import VirtualizedList from './VirtualizedList';
+import StatusList from './StatusList';
 
 const mapToProps = ({ modlistStatus }) => ({ modlistStatus });
 
@@ -52,7 +52,7 @@ class StatusDashboard extends Component {
               <Typography variant="h6" style={{ marginBottom: '8px' }}>
                 Failing:{' '}
               </Typography>
-              <VirtualizedList list={failing} />
+              <StatusList list={failing} />
             </div>
           ) : (
             <div></div>
@@ -61,7 +61,7 @@ class StatusDashboard extends Component {
             <Typography variant="h6" style={{ margin: '8px 0' }}>
               Passing:{' '}
             </Typography>
-            <VirtualizedList list={passing} />
+            <StatusList list={passing} />
           </div>
         </Container>
       </Box>
