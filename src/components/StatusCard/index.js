@@ -30,6 +30,7 @@ const redDot = {
 export default function StatusCard(props) {
   const { status } = props;
   const { name, checked, failed, passed, has_failures, machineURL } = status;
+  const date = new Date(checked);
   return (
     <Paper style={{ marginTop: '8px', marginBottom: '8px' }}>
       <Grid style={{ padding: '8px' }}>
@@ -44,7 +45,7 @@ export default function StatusCard(props) {
         </Typography>
         <Typography variant="body1">passed: {passed}</Typography>
         <Typography variant="body1">failed: {failed}</Typography>
-        <Typography variant="body2">Last checked: {checked}</Typography>
+        <Typography variant="body2">Last checked: {date}</Typography>
       </Grid>
     </Paper>
   );
