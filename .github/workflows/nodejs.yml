@@ -28,7 +28,7 @@ jobs:
         CI: true
 
   deploy:
-    if: github.event == 'push' && steps.test.conclusion == 'success'
+    if: github.event == 'push'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
