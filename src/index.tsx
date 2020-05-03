@@ -44,5 +44,5 @@ if (isIE) {
     document.getElementById('root')
   );
 
-  registerServiceWorker();
+  //registerServiceWorker();
 }
