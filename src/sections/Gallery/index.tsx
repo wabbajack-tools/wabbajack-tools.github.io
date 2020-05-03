@@ -16,6 +16,8 @@ import {
   Select,
   Typography,
   Link,
+  Checkbox,
+  FormControlLabel,
 } from '@material-ui/core';
 
 import GalleryCard from './GalleryCard';
@@ -26,6 +28,7 @@ type ModlistGalleryProps = PropsFromRedux & typeof GalleryStore.actionCreator;
 
 interface IState {
   selectedGame?: string;
+  showNSFW: boolean;
 }
 
 export class ModlistGallery extends ReactAxiosComponent<
@@ -37,6 +40,7 @@ export class ModlistGallery extends ReactAxiosComponent<
 
     this.state = {
       selectedGame: '',
+      showNSFW: false,
     };
   }
 
@@ -53,6 +57,15 @@ export class ModlistGallery extends ReactAxiosComponent<
     });
   }
 
+  private onCheck(
+    event: React.ChangeEvent<{ name?: string | undefined; value: unknown }>
+  ) {
+    this.setState({
+      ...this.state,
+      showNSFW: !this.state.showNSFW,
+    });
+  }
+
   public showContent() {
     if (this.props.modlists && !this.props.error) {
       return (
@@ -65,6 +78,8 @@ export class ModlistGallery extends ReactAxiosComponent<
           {underscore.map(this.props.modlists, (modlist) => {
             if (
               (!modlist.tags.includes('hidden') &&
+                (this.state.showNSFW ||
+                  (!this.state.showNSFW && !modlist.nsfw)) &&
                 modlist !== undefined &&
                 this.state.selectedGame === '') ||
               this.state.selectedGame === modlist.game
@@ -125,6 +140,18 @@ export class ModlistGallery extends ReactAxiosComponent<
       >
         <Typography variant="h4">Gallery</Typography>
         <Grid container alignItems="flex-start" justify="flex-end">
+          <Grid item>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="enableNSFW"
+                  checked={this.state.showNSFW}
+                  onChange={this.onCheck.bind(this)}
+                />
+              }
+              label="Show NSFW"
+            />
+          </Grid>
           <Grid item>
             <FormControl>
               <Select
