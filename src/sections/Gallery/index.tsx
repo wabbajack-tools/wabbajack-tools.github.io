@@ -64,7 +64,9 @@ export class ModlistGallery extends ReactAxiosComponent<
         >
           {underscore.map(this.props.modlists, (modlist) => {
             if (
-              (modlist !== undefined && this.state.selectedGame === '') ||
+              (!modlist.tags.includes('hidden') &&
+                modlist !== undefined &&
+                this.state.selectedGame === '') ||
               this.state.selectedGame === modlist.game
             )
               return (
