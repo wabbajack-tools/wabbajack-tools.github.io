@@ -39,6 +39,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: '14.1.x'
+    - run: yarn install
     - run: yarn build
     - name: Release GitHub Pages
       uses: igolopolosov/github-action-release-github-pages@v1
