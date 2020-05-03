@@ -2,6 +2,8 @@
 
 ## Requirements
 
+(check the required version numbers in the `package.json` file under `engines`)
+
 1. [Node](https://nodejs.org/en/)
 2. [Yarn](https://yarnpkg.com/lang/en/)
 3. [VS Code](https://code.visualstudio.com)
@@ -23,30 +25,8 @@
 4. Rebase `git rebase upstream/master`
 5. If your other branch needs updating `git checkout branch-name && git rebase master`
 
-## Project structure
+## Used libraries and frameworks
 
-This project has **two** sub-projects. You have the server `express.js` and the client `src/index.js`. The server is powered by [Express](https://expressjs.com/) and the client uses [React](https://reactjs.org) + [Redux Zero](https://github.com/redux-zero/redux-zero) + [Material-UI](https://material-ui.com/).
+This website was build on a [CRA](https://create-react-app.dev/) template featuring [TypeScript](https://www.typescriptlang.org/), [Redux](https://redux.js.org/) and, of course, [React](https://reactjs.org/). CRA does a lot for us with the react-scripts so we don't have to worry about configuring [babel](https://babeljs.io/), [webpack](https://webpack.js.org/) or [jest](https://jestjs.io/).
 
-### Working on the server
-
-Start the server by running `yarn start`. This will start [nodemon](https://nodemon.io/) (see `nodemon.json` for the config) and run the epxress server at `localhost:3000` if the environment variable `PORT` is not set. We serve the client as a static ressource which is why `yarn build` is called before starting the server so that the `dist` folder gets populated with the client.
-
-### Working on the client
-
-For the client we use [webpack](https://webpack.js.org/) for bundling, [Babel](https://babeljs.io/) for compiling, [ESLint](https://eslint.org/) for linting and [Jest](https://jestjs.io/) for unit testing. You can start the webpack dev server by running `yarn run dev`.
-
-You should take a look at aliases declared in `webpack.config.client.js` as they are used everywhere.
-
-We have opted to use `redux-zero` instead of normal `redux` due to the reduced boilerplate code needed. You can view the store and actions in the `src/store` folder.
-
-#### Folder structure
-
-(root is `src/`)
-
-| Folder        | Alias         | Contents |
-|---|---|---|
-| `assets`      | `Assets`      | Contains all non-code assets like html, css or image files. Each file category gets its own subfolder |
-| `components`  | `Components`  | Contains all React components. Every component gets its own folder. Components that are being used only by another component will be placed in the same folder (see `Footer` and `FooterItem`) |
-| `sections`    | `Sections`    | Contains all Sections. Sections are the top level components being rendered when accessing a specific route. |
-| `store`       | none          | Contains the `redux-zero` store and actions |
-| `utils`       | `Utils`       | Contains utility functions |
+That being said, [jest](https://jestjs.io/) is used with [enzyme](https://github.com/enzymejs/enzyme) to test react components and other functionalities. You can generate a coverage report with `yarn run coverage`.
