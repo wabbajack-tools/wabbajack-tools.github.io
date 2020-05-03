@@ -30,3 +30,9 @@
 This website was build on a [CRA](https://create-react-app.dev/) template featuring [TypeScript](https://www.typescriptlang.org/), [Redux](https://redux.js.org/) and, of course, [React](https://reactjs.org/). CRA does a lot for us with the react-scripts so we don't have to worry about configuring [babel](https://babeljs.io/), [webpack](https://webpack.js.org/) or [jest](https://jestjs.io/).
 
 That being said, [jest](https://jestjs.io/) is used with [enzyme](https://github.com/enzymejs/enzyme) to test react components and other functionalities. You can generate a coverage report with `yarn run coverage`.
+
+## Contributing code
+
+If you wanna contribute code, make sure you got all the requirements and know the libraries listed above. This repo has a custom eslint, prettier and editor config for a reason and those guidelines should be followed when writing code.
+
+You should also write a jest test suit if needed. Code coverage should stay above 70%.

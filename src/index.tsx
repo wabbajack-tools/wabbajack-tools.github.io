@@ -5,7 +5,6 @@ import { ConnectedRouter } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
 import configureStore from './store/configureStore';
 import App from './App';
-import registerServiceWorker from './registerServiceWorker';
 
 import { ThemeProvider } from '@material-ui/core/styles';
 import { theme } from './assets/jss/theme';
