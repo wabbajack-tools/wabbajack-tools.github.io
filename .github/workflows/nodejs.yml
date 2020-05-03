@@ -41,6 +41,8 @@ jobs:
         node-version: '14.1.x'
     - run: yarn install
     - run: yarn build
+      env:
+        CI: false
     - name: Release GitHub Pages
       uses: igolopolosov/github-action-release-github-pages@v1
       env:
