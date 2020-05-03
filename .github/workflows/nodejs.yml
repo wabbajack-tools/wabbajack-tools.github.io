@@ -8,13 +8,16 @@ on:
     branches: code
   pull_request:
     branches: code
+  schedule:
+    - cron: "*/30 * * * *"
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        ref: code
     - name: Use Node.js 14.1.x
       uses: actions/setup-node@v1
       with:
@@ -23,3 +26,24 @@ jobs:
     - run: yarn test
       env:
         CI: true
+
+  deploy:
+    if: github.event == 'push' && steps.test.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: code
+    - name: Use Node.js 14.1.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14.1.x'
+    - run: yarn build
+    - name: Release GitHub Pages
+      uses: igolopolosov/github-action-release-github-pages@v1
+      env:
+        GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+        GITHUB_PAGES_REPO_AUTHOR: wabbajack-tools
+        GITHUB_PAGES_REPO_NAME: wabbajack-tools.github.io
+        GITHUB_PAGES_RELEASE_BRANCH: master
+        PROJECT_BUILD_FOLDER: build
