@@ -43,11 +43,25 @@ jobs:
     - run: yarn build
       env:
         CI: false
-    - name: Release GitHub Pages
-      uses: igolopolosov/github-action-release-github-pages@v1
+    - name: GitHub Pages Deployment
+      uses: crazy-max/ghaction-github-pages@v1.4.1
       env:
-        GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-        GITHUB_PAGES_REPO_AUTHOR: wabbajack-tools
-        GITHUB_PAGES_REPO_NAME: wabbajack-tools.github.io
-        GITHUB_PAGES_RELEASE_BRANCH: master
-        PROJECT_BUILD_FOLDER: build
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # Git branch where assets will be deployed
+        target_branch: master # optional, default is gh-pages
+        # Create incremental commit instead of doing push force
+        keep_history: false # optional, default is false
+        # Allow an empty commit to be created
+        allow_empty_commit: true # optional, default is true
+        # Build directory to deploy
+        build_dir: build
+        # Commit author's name
+        committer_name: erri120 # optional
+        # Commit author's email
+        committer_email: erri120@protonmail.ch # optional
+        # Commit message
+        commit_message: Update # optional
+        # Write the given domain name to the CNAME file
+        # fqdn: # optional
+
