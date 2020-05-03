@@ -13,9 +13,9 @@ import {
   Link,
 } from '@material-ui/core';
 
-import logo from '../assets/img/wabbajack_transparent.png';
-import banner from '../assets/img/banner.png';
-import nexus from '../assets/img/nexus.png';
+import logo from '../assets/img/wabbajack_transparent.webp';
+import banner from '../assets/img/banner.webp';
+import nexus from '../assets/img/nexus.webp';
 
 interface ICardProps {
   title: string;
