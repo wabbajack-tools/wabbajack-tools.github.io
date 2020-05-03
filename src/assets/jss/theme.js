@@ -18,6 +18,7 @@ const elevation12 = '#323232';
 const elevation16 = '#353535';
 const elevation24 = '#383838';
 
+// eslint-disable-next-line
 const whiteTheme = {
   primary: '#6200EE', // 500
   primaryVariant: '#3700B3', // 700
@@ -30,7 +31,7 @@ const whiteTheme = {
   onSecondary: black,
   onBackground: black,
   onSurface: black,
-  onError: white
+  onError: white,
 };
 
 const darkTheme = {
@@ -45,7 +46,7 @@ const darkTheme = {
   onSecondary: black,
   onBackground: white,
   onSurface: white,
-  onError: black
+  onError: black,
 };
 
 const currentTheme = darkTheme;
@@ -56,62 +57,62 @@ const theme = createMuiTheme({
       main: currentTheme.primary,
       light: currentTheme.primary,
       dark: currentTheme.primaryVariant,
-      contrastText: currentTheme.onPrimary
+      contrastText: currentTheme.onPrimary,
     },
     secondary: {
       main: currentTheme.secondary,
       light: currentTheme.secondary,
       dark: currentTheme.secondaryVariant,
-      contrastText: currentTheme.onSecondary
+      contrastText: currentTheme.onSecondary,
     },
     text: {
       primary: currentTheme.onBackground,
       secondary: '#EEEEEE',
-      disabled: '#DDDDDD'
-    }
+      disabled: '#DDDDDD',
+    },
   },
   overrides: {
     MuiToolbar: {
       root: {
-        backgroundColor: '#1F1B24'
-      }
+        backgroundColor: '#1F1B24',
+      },
     },
     MuiDivider: {
       root: {
-        backgroundColor: '#AAAAAA'
-      }
+        backgroundColor: '#AAAAAA',
+      },
     },
     MuiCardHeader: {
       title: {
-        textAlign: 'center'
-      }
+        textAlign: 'center',
+      },
     },
     MuiPaper: {
       root: {
-        backgroundColor: elevation24
-      }
+        backgroundColor: elevation24,
+      },
     },
     MuiTypography: {
       h4: {
         textAlign: 'center',
-        fontWeight: '200'
+        fontWeight: '200',
       },
       h5: {
-        fontWeight: '400'
+        fontWeight: '400',
       },
       h6: {
-        fontWeight: '600'
+        fontWeight: '600',
       },
       body1: {
-        fontWeight: '200'
-      }
+        fontWeight: '200',
+      },
     },
     MuiListItemIcon: {
       root: {
-        color: white
-      }
-    }
-  }
+        color: white,
+      },
+    },
+  },
 });
 
 export {
@@ -125,5 +126,5 @@ export {
   elevation8,
   elevation12,
   elevation16,
-  elevation24
+  elevation24,
 };

@@ -1,7 +1,0 @@
-[production]
-last 5 major versions
-not dead
-
-[development]
-last 1 chrome version
-last 1 firefox version

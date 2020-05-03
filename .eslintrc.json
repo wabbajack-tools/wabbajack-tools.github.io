@@ -1,46 +1,13 @@
 {
-  "env": {
-    "browser": true,
-    "jest/globals": "true"
-  },
+  "extends": ["react-app", "prettier"],
+  "plugins": ["prettier"],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": 11,
-    "ecmaFeatures": {
-      "jsx": true
-    },
+    "ecmaVersion": 6,
     "sourceType": "module"
-  },
-  "extends": ["airbnb", "prettier", "plugin:node/recommended"],
-  "plugins": ["prettier", "import", "jsx-a11y", "node", "react", "react-hooks", "jest"],
-  "settings": {
-    "import/resolver": "webpack"
   },
   "rules": {
     "prettier/prettier": "warn",
-    "import/no-unresolved": "off",
-    "node/no-unpublished-require": "off",
-    "node/no-unsupported-features/es-syntax": "off",
-    "node/no-missing-import": "off",
-    "node/no-missing-require": "off",
-    "react/jsx-filename-extension": "off",
-    "react/jsx-one-expression-per-line": "off",
-    "react/forbid-prop-types": "off",
-    "react/no-unused-prop-types": "warn",
-    "react/jsx-tag-spacing": "warn",
-    "react/jsx-indent": "warn",
-    "react/self-closing-comp": "off",
-    "react/jsx-closing-tag-location": "warn",
-    "react/prefer-stateless-function": "warn",
-    "react/jsx-wrap-multilines": "warn",
-    "react/prop-types": "warn",
-    "react/destructuring-assignment": "warn",
-    "import/extensions": "off",
-    "object-shorthand": "warn",
-    "global-require": "off",
-    "no-console": "off",
-    "func-names": "off",
-    "no-unused-vars": "warn",
-    "semi": "error",
-    "react/jsx-uses-vars": "error"
+    "semi": "error"
   }
 }
