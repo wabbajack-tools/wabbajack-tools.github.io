@@ -59,7 +59,7 @@ jobs:
         # Commit author's name
         committer_name: erri120 # optional
         # Commit author's email
-        committer_email: erri120@protonmail.com # optional
+        committer_email: ${{ secrets.email }} # optional
         # Commit message
         commit_message: Update # optional
         # Write the given domain name to the CNAME file
