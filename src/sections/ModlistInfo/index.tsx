@@ -191,7 +191,14 @@ export class ModlistInfo extends ReactAxiosComponent<ModlistInfoProps, IState> {
 
         <Divider style={{ marginTop: '8px', marginBottom: '8px' }} />
 
-        <Markdown options={options}>{readme}</Markdown>
+        <Markdown
+          options={options(
+            `/modlist/${this.state.currentModlist.links.machineURL}`,
+            `${this.state.currentModlist.links.readme}`
+          )}
+        >
+          {readme}
+        </Markdown>
 
         <Divider style={{ marginTop: '8px', marginBottom: '8px' }} />
 

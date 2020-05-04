@@ -17,3 +17,12 @@ export const getDateString = (
   ).format(date);
   return dateString;
 };
+
+export const getGitHubLinkFromRaw = (rawURL: string): string | undefined => {
+  if (!rawURL.startsWith('https://raw.githubusercontent.com')) return undefined;
+  const base = rawURL.replace('https://raw.githubusercontent.com/', '');
+  const split = base.split('/');
+  const url = `https://github.com/${split[0]}/${split[1]}/blob/${split[2]}/`;
+
+  return url;
+};
