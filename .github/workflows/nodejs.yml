@@ -23,9 +23,22 @@ jobs:
       with:
         node-version: '14.1.x'
     - run: yarn install
-    - run: yarn test
+    - run: yarn run coverage
       env:
         CI: true
+    - name: Codecov
+      uses: codecov/codecov-action@v1.0.6
+      with:
+        # User defined upload name. Visible in Codecov UI
+        # name: # optional
+        # Repository upload token - get it from codecov.io. Required only for private repositories
+        # token: # optional
+        # Path to coverage file to upload
+        file:  coverage/clover.xml # optional
+        # Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)
+        # flags: # optional
+        # Specify whether or not CI build should fail if Codecov runs into an error during upload
+        fail_ci_if_error: false # optional
 
   deploy:
     needs: [test]
