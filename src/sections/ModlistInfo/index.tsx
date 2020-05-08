@@ -7,7 +7,7 @@ import Markdown from 'markdown-to-jsx';
 import { ApplicationState } from '../../store';
 import * as ModlistInfoStore from '../../store/ModlistInfoStore';
 import * as ModlistsStore from '../../store/ModlistsStore';
-import getGameName from '../../utils/games';
+import { getGameName } from '../../utils/games';
 import { ModlistMetaData } from '../../utils/modlist';
 import { ReactAxiosComponent, AxiosError } from '../../utils/axios';
 import options from '../../utils/markdown.config';

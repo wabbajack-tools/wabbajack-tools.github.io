@@ -9,7 +9,7 @@ export interface Archive {
 
 export interface State {
   $type: string;
-  PrimaryKeyString: string;
+  //PrimaryKeyString: string;
 }
 
 export interface MetaState extends State {
@@ -24,7 +24,7 @@ export interface MetaState extends State {
 
 export interface HTTPDownloaderState extends State {
   Url: string;
-  Headers: Array<string>;
+  Headers: string[];
 }
 
 export interface MegaDownloaderState extends HTTPDownloaderState {}

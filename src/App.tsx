@@ -11,6 +11,7 @@ import Gallery from './sections/Gallery';
 import ModlistInfo from './sections/ModlistInfo';
 import StatusDashboard from './sections/StatusDashboard';
 import StatusPage from './sections/StatusPage';
+import SearchPage from './sections/SearchPage';
 
 import { elevation2 } from './assets/jss/theme';
 
@@ -31,6 +32,7 @@ export default () => (
       <Route path="/modlist/:url" component={ModlistInfo} />
       <Route exact path="/status" component={StatusDashboard} />
       <Route path="/status/:url" component={StatusPage} />
+      <Route path="/search/:url" component={SearchPage} />
     </Box>
     <Footer />
   </div>

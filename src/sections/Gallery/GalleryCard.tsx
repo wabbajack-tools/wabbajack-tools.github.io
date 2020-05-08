@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import underscore from 'underscore';
-import getGameName from '../../utils/games';
+import { getGameName } from '../../utils/games';
 import { ModlistMetaData } from '../../utils/modlist';
 
 import {

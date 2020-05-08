@@ -26,3 +26,26 @@ export const getGitHubLinkFromRaw = (rawURL: string): string | undefined => {
 
   return url;
 };
+
+export const randomString = (length: number) => {
+  const characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result = result.concat(
+      characters.charAt(Math.floor(Math.random() * charactersLength))
+    );
+  }
+  return result;
+};
+
+const Suffix = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB'];
+
+export const toFileSizeString = (size: number) => {
+  if (size === 0) return `${size}${Suffix[0]}`;
+  const bytes = Math.abs(size);
+  const place = Math.floor(Math.log(bytes) / Math.log(1024));
+  const num = Math.round(bytes / Math.pow(1024, place));
+  return Math.sign(size) * num + Suffix[place];
+};

@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import underscore from 'underscore';
 import { ApplicationState } from '../../store';
 import * as GalleryStore from '../../store/ModlistsStore';
-import getGameName from '../../utils/games';
+import { getGameName } from '../../utils/games';
 import { ReactAxiosComponent } from '../../utils/axios';
 
 import {

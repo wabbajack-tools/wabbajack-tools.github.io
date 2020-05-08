@@ -112,6 +112,25 @@ const theme = createMuiTheme({
         color: white,
       },
     },
+    MuiTableCell: {
+      root: {
+        backgroundColor: '#323232',
+      },
+    },
+    MuiIcon: {
+      colorDisabled: 'grey',
+    },
+    MuiIconButton: {
+      colorDisabled: 'grey',
+      root: {
+        color: 'white !important',
+      },
+    },
+    MuiSvgIcon: {
+      root: {
+        color: 'white !important',
+      },
+    },
   },
 });
 

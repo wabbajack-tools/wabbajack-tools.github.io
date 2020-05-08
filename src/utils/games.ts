@@ -3,7 +3,7 @@
  * @param game machine name of a game
  * @returns human readable name
  */
-const getGameName = (game: string | undefined) => {
+export const getGameName = (game: string | undefined) => {
   let gameName = 'UNKNOWN';
   if (game === undefined) return gameName;
   switch (game.toLocaleLowerCase()) {
@@ -38,5 +38,3 @@ const getGameName = (game: string | undefined) => {
 
   return gameName;
 };
-
-export default getGameName;
