@@ -18,12 +18,12 @@ const right: React.CSSProperties = {
   float: 'right',
 };
 
-interface IFooterItemProps {
+interface FooterItemProps {
   link: string | undefined;
   name: string;
 }
 
-export const FooterItem: React.FC<IFooterItemProps> = (props) => {
+export const FooterItem: React.FC<FooterItemProps> = (props) => {
   const { link, name } = props;
   return (
     <ListItem>
@@ -34,44 +34,48 @@ export const FooterItem: React.FC<IFooterItemProps> = (props) => {
   );
 };
 
-export default () => (
-  <footer>
-    <Container>
-      <div style={left}>
-        <List style={flexContainer}>
-          <FooterItem
-            name="GitHub"
-            link="https://github.com/wabbajack-tools/wabbajack"
-          />
-          <FooterItem
-            name="Discord"
-            link={process.env.REACT_APP_DISCORD_LINK}
-          />
-          <FooterItem
-            name="Patreon"
-            link="https://www.patreon.com/user?u=11907933"
-          />
-          <FooterItem
-            name="Reddit"
-            link="https://www.reddit.com/r/wabbajack/"
-          />
-        </List>
-      </div>
-      <div style={right}>
-        &copy; 2019 - {new Date().getFullYear()}, made by the{' '}
-        <Tooltip
-          title="Website actually only made by erri120 :p (don't tell anyone)"
-          enterDelay={10000}
-        >
-          <Link
-            href="https://github.com/wabbajack-tools"
-            target="_blank"
-            rel="noopener noreferrer"
+const Footer: React.FC = () => {
+  return (
+    <footer>
+      <Container>
+        <div style={left}>
+          <List style={flexContainer}>
+            <FooterItem
+              name="GitHub"
+              link="https://github.com/wabbajack-tools/wabbajack"
+            />
+            <FooterItem
+              name="Discord"
+              link={process.env.REACT_APP_DISCORD_LINK}
+            />
+            <FooterItem
+              name="Patreon"
+              link="https://www.patreon.com/user?u=11907933"
+            />
+            <FooterItem
+              name="Reddit"
+              link="https://www.reddit.com/r/wabbajack/"
+            />
+          </List>
+        </div>
+        <div style={right}>
+          &copy; 2019 - {new Date().getFullYear()}, made by the{' '}
+          <Tooltip
+            title="Website actually only made by erri120 :p (don't tell anyone)"
+            enterDelay={10000}
           >
-            Wabbajack Team
-          </Link>
-        </Tooltip>
-      </div>
-    </Container>
-  </footer>
-);
+            <Link
+              href="https://github.com/wabbajack-tools"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Wabbajack Team
+            </Link>
+          </Tooltip>
+        </div>
+      </Container>
+    </footer>
+  );
+};
+
+export default Footer;

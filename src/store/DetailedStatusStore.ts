@@ -2,8 +2,8 @@ import axios from 'axios';
 
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from '.';
-import { ModlistDetailedStatus } from '../utils/modlist';
-import { AxiosState, AxiosError } from '../utils/axios';
+import { ModlistDetailedStatus } from 'types/modlist';
+import { AxiosState, AxiosError } from 'types/axios';
 
 export interface ModlistStatusState extends AxiosState {
   status?: ModlistDetailedStatus | undefined;
@@ -41,7 +41,7 @@ export const actionCreator = {
       !appState.modlistStatus.status
     ) {
       axios
-        .get(link)
+        .get(`https://build.wabbajack.org/lists/status/${link}.json`)
         .then((response) => response.data as Promise<ModlistDetailedStatus>)
         .then((data) => {
           dispatch({ type: 'FETCH_STATUS_SUCCESS', status: data });

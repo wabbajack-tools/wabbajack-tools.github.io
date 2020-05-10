@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from '.';
-import { AxiosState, AxiosError } from '../utils/axios';
+import { AxiosState, AxiosError } from 'types/axios';
 
 export interface ModlistInfoState extends AxiosState {
   info?: string | undefined;

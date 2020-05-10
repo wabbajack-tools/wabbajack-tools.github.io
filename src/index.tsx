@@ -3,13 +3,15 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
-import configureStore from './store/configureStore';
+
+import './assets/scss/wabbajack.scss';
+
+import configureStore from 'store/configureStore';
+import { theme } from 'assets/jss/theme';
+
 import App from './App';
 
 import { ThemeProvider } from '@material-ui/core/styles';
-import { theme } from './assets/jss/theme';
-
-import './assets/scss/wabbajack.scss';
 
 // Create browser history to use in the Redux store
 const baseUrl = document

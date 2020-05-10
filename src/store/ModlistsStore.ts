@@ -2,8 +2,8 @@ import axios from 'axios';
 
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from '.';
-import { ModlistMetaData } from '../utils/modlist';
-import { AxiosState, AxiosError } from '../utils/axios';
+import { ModlistMetaData } from 'types/modlist';
+import { AxiosState, AxiosError } from 'types/axios';
 
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.

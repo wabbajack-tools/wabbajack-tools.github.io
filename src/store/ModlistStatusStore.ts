@@ -2,8 +2,8 @@ import axios from 'axios';
 
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from '.';
-import { ModlistStatus } from '../utils/modlist';
-import { AxiosState, AxiosError } from '../utils/axios';
+import { ModlistStatus } from 'types/modlist';
+import { AxiosState, AxiosError } from 'types/axios';
 
 export interface ModlistStatusState extends AxiosState {
   statusList?: ModlistStatus[] | undefined;

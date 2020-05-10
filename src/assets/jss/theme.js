@@ -101,7 +101,7 @@ const theme = createMuiTheme({
         fontWeight: '400',
       },
       h6: {
-        fontWeight: '600',
+        fontWeight: '300',
       },
       body1: {
         fontWeight: '200',
@@ -123,12 +123,17 @@ const theme = createMuiTheme({
     MuiIconButton: {
       colorDisabled: 'grey',
       root: {
-        color: 'white !important',
+        //color: 'white !important',
       },
     },
     MuiSvgIcon: {
       root: {
-        color: 'white !important',
+        //color: 'white !important',
+      },
+    },
+    MuiSkeleton: {
+      root: {
+        backgroundColor: elevation4,
       },
     },
   },

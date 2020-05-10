@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
+
+import MaterialLink from './MaterialLink';
 
 import {
   AppBar,
   IconButton,
-  Button,
   Slide,
   useScrollTrigger,
   Typography,
@@ -35,11 +35,11 @@ const HideOnScroll: React.FC<HideOnScrollProps> = (props) => {
   );
 };
 
-interface IState {
-  left?: boolean;
+interface HeaderState {
+  left: boolean;
 }
 
-class Header extends React.PureComponent<{}, IState> {
+class Header extends React.PureComponent<{}, HeaderState> {
   constructor(props: {}) {
     super(props);
 
@@ -48,7 +48,7 @@ class Header extends React.PureComponent<{}, IState> {
     };
   }
 
-  private onClick = (open: boolean) => (event: React.MouseEvent) => {
+  private onClick = (open: boolean) => () => {
     this.setState({ ...this.state, left: open });
   };
 
@@ -90,32 +90,32 @@ class Header extends React.PureComponent<{}, IState> {
                     <ListItemIcon>
                       <AppsIcon />
                     </ListItemIcon>
-                    <Button
-                      href="/gallery"
+                    <MaterialLink
+                      href="/modlists/gallery"
                       style={{ width: '100%', justifyContent: 'flex-start' }}
                       disableTouchRipple
                     >
                       Gallery
-                    </Button>
+                    </MaterialLink>
                   </ListItem>
                   <ListItem button key={uuidv4()} href="/status">
                     <ListItemIcon>
                       <DashboardIcon />
                     </ListItemIcon>
-                    <Button
-                      href="/status"
+                    <MaterialLink
+                      href="/modlists/status"
                       style={{ width: '100%', justifyContent: 'flex-start' }}
                       disableTouchRipple
                     >
                       Status Dashboard
-                    </Button>
+                    </MaterialLink>
                   </ListItem>
                 </List>
               </div>
             </Drawer>
-            <Button disableRipple href="/">
+            <MaterialLink disableRipple href="/">
               <Typography variant="button">Wabbajack</Typography>
-            </Button>
+            </MaterialLink>
           </Toolbar>
         </AppBar>
       </HideOnScroll>
@@ -123,4 +123,4 @@ class Header extends React.PureComponent<{}, IState> {
   }
 }
 
-export default connect()(Header);
+export default Header;

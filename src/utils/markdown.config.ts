@@ -70,8 +70,9 @@ const options = (
 
         if (externalURL === undefined)
           return React.createElement(type, props, children);
-
+        console.log(externalURL);
         const src = anyProps.src as string;
+        console.log(src);
         const split = externalURL.split('/');
         const url = externalURL.replace(split[split.length - 1], '');
         anyProps.src = `${url}${src}`;

@@ -1,8 +1,17 @@
 {
-    "cSpell.words": [
-        "MODLISTINFO",
-        "Patreon",
-        "modlists",
-        "unmount"
-    ]
+  "cSpell.words": [
+    "MODLISTINFO",
+    "Modpack",
+    "Modpacks",
+    "Patreon",
+    "modauthors",
+    "modlists",
+    "unmount",
+    "uuidv",
+    "webp"
+  ],
+  "material-icon-theme.activeIconPack": "react_redux",
+  "material-icon-theme.folders.associations": {
+    "types": "typescript",
+  }
 }

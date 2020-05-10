@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "./src",
     "target": "ESNext",
     "allowJs": true,
     "esModuleInterop": true,
