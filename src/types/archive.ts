@@ -29,7 +29,7 @@ export interface HTTPDownloaderState extends State {
 
 export interface MegaDownloaderState extends HTTPDownloaderState {}
 
-export interface GoogleDriveDownloader extends State {
+export interface GoogleDriveDownloaderState extends State {
   Id: string;
 }
 

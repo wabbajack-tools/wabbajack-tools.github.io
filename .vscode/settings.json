@@ -13,5 +13,6 @@
   "material-icon-theme.activeIconPack": "react_redux",
   "material-icon-theme.folders.associations": {
     "types": "typescript",
+    "test-utils": "utils",
   }
 }

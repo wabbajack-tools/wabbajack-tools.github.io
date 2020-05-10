@@ -24,7 +24,7 @@ interface HideOnScrollProps {
   children?: React.ReactElement<any, any>;
 }
 
-const HideOnScroll: React.FC<HideOnScrollProps> = (props) => {
+export const HideOnScroll: React.FC<HideOnScrollProps> = (props) => {
   const { children } = props;
   const trigger = useScrollTrigger();
 
@@ -66,7 +66,6 @@ class Header extends React.PureComponent<{}, HeaderState> {
         <AppBar position="sticky">
           <Toolbar variant="dense">
             <IconButton
-              id="Header-IconButton"
               edge="start"
               color="secondary"
               aria-label="menu"
