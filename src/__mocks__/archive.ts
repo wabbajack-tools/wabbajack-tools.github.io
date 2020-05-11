@@ -114,7 +114,6 @@ export const FakeMegaDownloaderState: MegaDownloaderState = {
 export const FakeMegaDownloaderArchive: Archive = {
   $type: 'Archive, Wabbajack.Lib',
   Hash: 'h5LJ+CbJSuE=',
-  Meta: null,
   Name: 'Skyrim_Particle_Patch_for_ENB-SSE.zip',
   Size: 28189946,
   State: FakeMegaDownloaderState,
