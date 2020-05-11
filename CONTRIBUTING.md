@@ -31,6 +31,8 @@ This website was build on a [CRA](https://create-react-app.dev/) template featur
 
 That being said, [jest](https://jestjs.io/) is used with [enzyme](https://github.com/enzymejs/enzyme) to test react components and other functionalities. You can generate a coverage report with `yarn run coverage`.
 
+The Typescript Server for VSCode has some funky glitches from time to time so just use the `TypeScript: Restart TS server` command if you get some weird typescript errors in VSCode but not during testing/building.
+
 ## Contributing code
 
 If you wanna contribute code, make sure you got all the requirements and know the libraries listed above. This repo has a custom eslint, prettier and editor config for a reason and those guidelines should be followed when writing code.
