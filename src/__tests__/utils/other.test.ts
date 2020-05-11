@@ -2,7 +2,7 @@ import {
   getDateString,
   getGitHubLinkFromRaw,
   toFileSizeString,
-  randomString
+  randomString,
 } from '../../utils/other';
 
 describe('Test utility functions', () => {
@@ -17,7 +17,8 @@ describe('Test utility functions', () => {
   it('Creates a correct GitHub link', () => {
     let input =
       'https://raw.githubusercontent.com/erri120/lotus/master/README.md';
-    let result = 'https://github.com/erri120/lotus/blob/master/';
+    let result: string | undefined =
+      'https://github.com/erri120/lotus/blob/master/';
     expect(getGitHubLinkFromRaw(input)).toBe(result);
 
     input = randomString(100);
