@@ -118,3 +118,12 @@ export const FakeMegaDownloaderArchive: Archive = {
   Size: 28189946,
   State: FakeMegaDownloaderState,
 };
+
+export const FakeArchiveList: Archive[] = [
+  FakeArchive,
+  FakeNexusArchive,
+  FakeLoversLabArchive,
+  FakeGoogleDriveArchive,
+  FakeVectorPlexusArchive,
+  FakeMegaDownloaderArchive,
+];
