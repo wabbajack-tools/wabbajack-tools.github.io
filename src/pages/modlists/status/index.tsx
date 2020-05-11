@@ -34,6 +34,8 @@ export class ModlistsStatusPage extends ReactAxiosComponent<
   showError(): JSX.Element | undefined {
     if (this.props.isLoading) return;
     if (!this.props.error) return;
+    console.log(this.props.error.request);
+    console.log(this.props.error.response.data);
     return <Error error={this.props.error} />;
   }
 
