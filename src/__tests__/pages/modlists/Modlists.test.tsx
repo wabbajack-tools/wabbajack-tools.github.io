@@ -26,20 +26,20 @@ describe('Test Modlist page', () => {
   });
 
   it('Behaves correctly after state changes', () => {
-    //loading, modlists is undefined
+    //loading
     wrapper = shallow(
       <ModlistsPage isLoading={true} requestModlists={() => () => {}} />
     );
     wrapperTest(expect, wrapper);
 
-    //not loading, modlists is undefined, expecting a DataError
+    //not loading, modlists is undefined, expecting a DataError component
     wrapper = shallow(
       <ModlistsPage isLoading={false} requestModlists={() => () => {}} />
     );
     wrapperTest(expect, wrapper);
     expect(wrapper.find(DataError).length).toBe(1);
 
-    //not loading, modlists has a length of 0, expecting a DataError
+    //not loading, modlists has a length of 0, expecting a DataError component
     wrapper = shallow(
       <ModlistsPage
         isLoading={false}
@@ -50,7 +50,7 @@ describe('Test Modlist page', () => {
     wrapperTest(expect, wrapper);
     expect(wrapper.find(DataError).length).toBe(1);
 
-    //not loading, modlists is undefined and we have an error, expecting an Error
+    //not loading, modlists is undefined and we have an error, expecting an Error component
     wrapper = shallow(
       <ModlistsPage
         isLoading={false}
