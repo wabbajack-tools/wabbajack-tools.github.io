@@ -34,7 +34,7 @@ export const FakeModlistMetaData: ModlistMetaData = {
   download_metadata: FakeDownloadMeta,
 };
 
-export const FakeModlistStatus: ModlistStatus = {
+export const FakeFailingModlistStatus: ModlistStatus = {
   name: 'Lotus',
   machineURL: 'lotus',
   checked: '1589198021200',
@@ -44,4 +44,16 @@ export const FakeModlistStatus: ModlistStatus = {
   link: 'lotus',
   report: 'lotus',
   has_failures: true,
+};
+
+export const FakeSucceedingModlistStatus: ModlistStatus = {
+  name: 'Lotus',
+  machineURL: 'lotus',
+  checked: '1589198021200',
+  failed: 0,
+  passed: 3,
+  updating: 0,
+  link: 'lotus',
+  report: 'lotus',
+  has_failures: false,
 };

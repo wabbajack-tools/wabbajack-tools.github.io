@@ -4,14 +4,14 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { wrapperTest } from '../../../../test-utils';
 import {
   FakeModlistMetaData,
-  FakeModlistStatus,
+  FakeFailingModlistStatus,
 } from '../../../../__mocks__/modlist';
 import { FakeAxiosError } from '../../../../__mocks__/axiosState';
 
 import { ModlistsStatusPage } from '../../../../pages/modlists/status';
 import { DataError, Error, Loading } from '../../../../components/Fetching';
 
-describe('Test Modlist page', () => {
+describe('Test Status page', () => {
   let wrapper: ShallowWrapper;
   afterAll(() => {
     wrapper.unmount();
@@ -23,7 +23,7 @@ describe('Test Modlist page', () => {
         isLoading={false}
         requestStatusList={() => () => {}}
         modlists={[FakeModlistMetaData]}
-        statusList={[FakeModlistStatus]}
+        statusList={[FakeFailingModlistStatus]}
       />
     );
     wrapperTest(expect, wrapper);
