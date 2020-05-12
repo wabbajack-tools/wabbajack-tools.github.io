@@ -5,6 +5,7 @@ import {
   ModlistMetaData,
   ModlistStatus,
 } from '../types/modlist';
+import { FakeArchive, FakeNexusArchive, FakeLoversLabArchive } from './archive';
 
 export const FakeDownloadMeta: DownloadMeta = {
   Hash: 'Q/qk29tJmZQ=',
@@ -37,7 +38,7 @@ export const FakeModlistMetaData: ModlistMetaData = {
 export const FakeFailingModlistStatus: ModlistStatus = {
   name: 'Lotus',
   machineURL: 'lotus',
-  checked: '1589198021200',
+  checked: '12/20/2012',
   failed: 1,
   passed: 2,
   updating: 0,
@@ -49,11 +50,37 @@ export const FakeFailingModlistStatus: ModlistStatus = {
 export const FakeSucceedingModlistStatus: ModlistStatus = {
   name: 'Lotus',
   machineURL: 'lotus',
-  checked: '1589198021200',
+  checked: '12/20/2012',
   failed: 0,
   passed: 3,
   updating: 0,
   link: 'lotus',
   report: 'lotus',
   has_failures: false,
+};
+
+export const FakeFailingModlistDetailedStatus: ModlistDetailedStatus = {
+  $type: '',
+  Name: 'Lotus',
+  Checked: '12/20/2012',
+  HasFailures: true,
+  DownloadMetaData: FakeDownloadMeta,
+  Archives: [
+    { IsFailing: true, Archive: FakeArchive },
+    { IsFailing: true, Archive: FakeNexusArchive },
+    { IsFailing: false, Archive: FakeLoversLabArchive },
+  ],
+};
+
+export const FakeSucceedingModlistDetailedStatus: ModlistDetailedStatus = {
+  $type: '',
+  Name: 'Lotus',
+  Checked: '12/20/2012',
+  HasFailures: false,
+  DownloadMetaData: FakeDownloadMeta,
+  Archives: [
+    { IsFailing: false, Archive: FakeArchive },
+    { IsFailing: false, Archive: FakeNexusArchive },
+    { IsFailing: false, Archive: FakeLoversLabArchive },
+  ],
 };
