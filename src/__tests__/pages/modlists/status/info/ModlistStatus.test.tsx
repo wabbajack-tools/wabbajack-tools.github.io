@@ -29,7 +29,7 @@ describe('Test Status page', () => {
     wrapper.unmount();
   });
 
-  it('Renders without crashing', () => {
+  it('Renders with default state (failing)', () => {
     wrapper = shallow(
       <ModlistStatus
         {...params}
@@ -41,8 +41,9 @@ describe('Test Status page', () => {
       { wrappingComponent: TestProvider }
     );
     wrapperTest(expect, wrapper);
+  });
 
-    //succeeding status
+  it('Renders with default state (succeeding)', () => {
     wrapper = shallow(
       <ModlistStatus
         {...params}
@@ -56,8 +57,7 @@ describe('Test Status page', () => {
     wrapperTest(expect, wrapper);
   });
 
-  it('Behaves correctly after state changes', () => {
-    //loading expecting a Loading component
+  it('State: loading expecting a Loading component', () => {
     wrapper = shallow(
       <ModlistStatus
         {...params}
@@ -69,8 +69,9 @@ describe('Test Status page', () => {
     );
     wrapperTest(expect, wrapper);
     expect(wrapper.find(Loading).length).toBe(1);
+  });
 
-    //not loading, modlists has a length of 0, expecting a DataError component
+  it('State: not loading, modlists has a length of 0, expecting a DataError component', () => {
     wrapper = shallow(
       <ModlistStatus
         {...params}
@@ -82,8 +83,9 @@ describe('Test Status page', () => {
     );
     wrapperTest(expect, wrapper);
     expect(wrapper.find(DataError).length).toBe(1);
+  });
 
-    //not loading, status is undefined and we have an error, expecting an Error component
+  it('State: not loading, status is undefined and we have an error, expecting an Error component', () => {
     wrapper = shallow(
       <ModlistStatus
         {...params}
@@ -96,8 +98,9 @@ describe('Test Status page', () => {
     );
     wrapperTest(expect, wrapper);
     expect(wrapper.find(Error).length).toBe(1);
+  });
 
-    //not loading, status is undefined, expecting an DataError component
+  it('State: not loading, status is undefined, expecting an DataError component', () => {
     wrapper = shallow(
       <ModlistStatus
         {...params}

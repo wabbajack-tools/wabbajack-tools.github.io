@@ -17,7 +17,7 @@ describe('Test Status page', () => {
     wrapper.unmount();
   });
 
-  it('Renders without crashing', () => {
+  it('Renders with default state', () => {
     wrapper = shallow(
       <ModlistsStatusPage
         isLoading={false}
@@ -29,8 +29,7 @@ describe('Test Status page', () => {
     wrapperTest(expect, wrapper);
   });
 
-  it('Behaves correctly after state changes', () => {
-    //loading expecting a Loading component
+  it('State: loading expecting a Loading component', () => {
     wrapper = shallow(
       <ModlistsStatusPage
         isLoading={true}
@@ -40,8 +39,9 @@ describe('Test Status page', () => {
     );
     wrapperTest(expect, wrapper);
     expect(wrapper.find(Loading).length).toBe(1);
+  });
 
-    //not loading, modlists has a length of 0, expecting a DataError component
+  it('State: not loading, modlists has a length of 0, expecting a DataError component', () => {
     wrapper = shallow(
       <ModlistsStatusPage
         isLoading={false}
@@ -51,8 +51,9 @@ describe('Test Status page', () => {
     );
     wrapperTest(expect, wrapper);
     expect(wrapper.find(DataError).length).toBe(1);
+  });
 
-    //not loading, statusList is undefined and we have an error, expecting an Error component
+  it('State: not loading, statusList is undefined and we have an error, expecting an Error component', () => {
     wrapper = shallow(
       <ModlistsStatusPage
         isLoading={false}
@@ -63,8 +64,9 @@ describe('Test Status page', () => {
     );
     wrapperTest(expect, wrapper);
     expect(wrapper.find(Error).length).toBe(1);
+  });
 
-    //not loading, statusList is undefined, expecting an Error component
+  it('State: not loading, statusList is undefined, expecting an Error component', () => {
     wrapper = shallow(
       <ModlistsStatusPage
         isLoading={false}
@@ -74,8 +76,9 @@ describe('Test Status page', () => {
     );
     wrapperTest(expect, wrapper);
     expect(wrapper.find(DataError).length).toBe(1);
+  });
 
-    //not loading, statusList has a length of 0, expecting an Error component
+  it('State: not loading, statusList has a length of 0, expecting an Error component', () => {
     wrapper = shallow(
       <ModlistsStatusPage
         isLoading={false}
