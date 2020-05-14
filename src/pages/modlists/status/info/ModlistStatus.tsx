@@ -52,9 +52,16 @@ export class ModlistStatus extends ReactAxiosComponent<ModlistStatusProps> {
     if (!this.props.modlists) return <DataError />;
     if (this.props.modlists.length === 0) return <DataError />;
 
-    if (!this.props.status) return <DataError />;
+    if (!this.props.statusMap) return <DataError />;
 
-    const { Name, Checked, HasFailures, Archives } = this.props.status;
+    if (!this.props.statusMap.has(this.props.match.params.url))
+      return <DataError />;
+
+    const status = this.props.statusMap.get(this.props.match.params.url);
+
+    if (!status) return <DataError />;
+
+    const { Name, Checked, HasFailures, Archives } = status;
     const date = new Date(Checked);
     const dateString = getDateString(date);
 

@@ -3,6 +3,8 @@ import * as React from 'react';
 import { ModlistStatus } from 'types/modlist';
 import { getDateString } from 'utils/other';
 
+import { Link as RoutedLink } from 'react-router-dom';
+
 import { Grid, Paper, Typography } from '@material-ui/core';
 
 const clickableTitle: React.CSSProperties = {
@@ -44,8 +46,8 @@ const DashboardCard: React.FC<DashboardCardProps> = (props) => {
         {has_failures ? <span style={redDot} /> : <span style={greenDot} />}
         <Typography
           variant="h6"
-          component="a"
-          href={`/status/${machineURL}`}
+          component={RoutedLink}
+          to={`status/${machineURL}`}
           style={clickableTitle}
         >
           {name}

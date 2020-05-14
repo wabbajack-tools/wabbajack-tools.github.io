@@ -6,7 +6,7 @@ import { ModlistDetailedStatus } from 'types/modlist';
 import { AxiosState, AxiosError } from 'types/axios';
 
 export interface ModlistStatusState extends AxiosState {
-  status?: ModlistDetailedStatus | undefined;
+  statusMap?: Map<string, ModlistDetailedStatus> | undefined;
 }
 
 export interface FetchStatusRequest {
@@ -16,6 +16,7 @@ export interface FetchStatusRequest {
 
 export interface FetchStatusSuccess {
   type: 'FETCH_STATUS_SUCCESS';
+  link: string;
   status: ModlistDetailedStatus;
 }
 
@@ -38,13 +39,14 @@ export const actionCreator = {
     if (
       appState.modlistStatus &&
       !appState.modlistStatus.error &&
-      !appState.modlistStatus.status
+      appState.modlistStatus.statusMap &&
+      !appState.modlistStatus.statusMap.has(link)
     ) {
       axios
         .get(`https://build.wabbajack.org/lists/status/${link}.json`)
         .then((response) => response.data as Promise<ModlistDetailedStatus>)
         .then((data) => {
-          dispatch({ type: 'FETCH_STATUS_SUCCESS', status: data });
+          dispatch({ type: 'FETCH_STATUS_SUCCESS', status: data, link: link });
         })
         .catch((error) => {
           const axiosError = error as AxiosError;
@@ -55,7 +57,10 @@ export const actionCreator = {
   },
 };
 
-const unloadedState: ModlistStatusState = { isLoading: false };
+const unloadedState: ModlistStatusState = {
+  isLoading: false,
+  statusMap: new Map(),
+};
 
 export const reducer: Reducer<ModlistStatusState> = (
   state: ModlistStatusState | undefined,
@@ -70,12 +75,13 @@ export const reducer: Reducer<ModlistStatusState> = (
     case 'FETCH_STATUS_REQUEST':
       return {
         isLoading: true,
-        status: state.status,
+        statusMap: state.statusMap,
       };
     case 'FETCH_STATUS_SUCCESS':
+      state.statusMap?.set(action.link, action.status);
       return {
         isLoading: false,
-        status: action.status,
+        statusMap: state.statusMap,
       };
     case 'FETCH_STATUS_FAILURE':
       return {
