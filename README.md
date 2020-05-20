@@ -4,4 +4,4 @@
 
 Code for [wabbajack.org](https://www.wabbajack.org), website for [Wabbajack](https://www.github.com/wabbajack-tools/wabbajack).
 
-See [Contributing](Contributing.md) on how to contribute to this repo.
+See [Contributing](CONTRIBUTING.md) on how to contribute to this repo.
