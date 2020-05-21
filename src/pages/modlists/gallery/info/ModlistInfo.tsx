@@ -60,7 +60,10 @@ export class ModlistInfo extends ReactAxiosComponent<
         currentModlist: modlist,
       });
 
-      this.props.requestModlistInfo(modlist.links.readme);
+      this.props.requestModlistInfo(
+        modlist.links.readme,
+        modlist.links.machineURL
+      );
     }
     return;
   }
@@ -68,24 +71,43 @@ export class ModlistInfo extends ReactAxiosComponent<
   showError(): JSX.Element | undefined {
     if (this.props.isLoading) return;
     if (!this.props.error) return;
-    return <Error error={this.props.error} />;
+
+    if (
+      this.props.error.extraData === this.state.currentModlist?.links.machineURL
+    )
+      return <Error error={this.props.error} />;
   }
 
   showLoading(): JSX.Element | undefined {
-    if (this.props.error) return;
+    if (this.props.error) {
+      if (
+        this.props.error.extraData ===
+        this.state.currentModlist?.links.machineURL
+      )
+        return;
+    }
     if (!this.props.isLoading) return;
     return <Loading message="Loading Modlist Readme" />;
   }
 
   showContent(): JSX.Element | undefined {
-    if (this.props.error) return;
+    if (this.props.error) {
+      if (
+        this.props.error.extraData ===
+        this.state.currentModlist?.links.machineURL
+      )
+        return;
+    }
     if (this.props.isLoading) return;
 
     if (!this.props.modlists) return <DataError />;
     if (this.props.modlists.length === 0) return <DataError />;
 
     if (!this.state.currentModlist) return <DataError />;
-    if (!this.props.info) return <DataError />;
+    if (!this.props.infoMap) return <DataError />;
+
+    if (!this.props.infoMap.has(this.state.currentModlist.links.machineURL))
+      return <DataError />;
 
     const {
       title,
@@ -133,7 +155,7 @@ export class ModlistInfo extends ReactAxiosComponent<
             `${this.state.currentModlist.links.readme}`
           )}
         >
-          {this.props.info}
+          {this.props.infoMap.get(this.state.currentModlist.links.machineURL)}
         </Markdown>
         <Divider style={{ marginTop: '8px', marginBottom: '8px' }} />
         <Button href={download} color="secondary">

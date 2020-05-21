@@ -51,6 +51,7 @@ export interface AxiosError {
   message: string;
   response: AxiosResponse;
   request: AxiosRequest;
+  extraData?: string | undefined;
 }
 
 export interface AxiosRequest {

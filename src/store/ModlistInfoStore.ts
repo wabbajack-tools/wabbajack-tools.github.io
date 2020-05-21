@@ -5,16 +5,18 @@ import { AppThunkAction } from '.';
 import { AxiosState, AxiosError } from 'types/axios';
 
 export interface ModlistInfoState extends AxiosState {
-  info?: string | undefined;
+  infoMap: Map<string, string>;
 }
 
 export interface FetchModlistInfoRequest {
   type: 'FETCH_MODLISTINFO_REQUEST';
+  machineURL: string;
   link: string;
 }
 
 export interface FetchModlistInfoSuccess {
   type: 'FETCH_MODLISTINFO_SUCCESS';
+  machineURL: string;
   readme: string;
 }
 
@@ -29,38 +31,49 @@ export type KnownAction =
   | FetchModlistInfoFailure;
 
 export const actionCreator = {
-  requestModlistInfo: (link: string): AppThunkAction<KnownAction> => (
-    dispatch,
-    getState
-  ) => {
+  requestModlistInfo: (
+    link: string,
+    machineURL: string
+  ): AppThunkAction<KnownAction> => (dispatch, getState) => {
     const appState = getState();
     if (
       appState &&
       appState.modlistInfo &&
-      !appState.modlistInfo.info &&
-      !appState.modlistInfo.error
+      appState.modlistInfo.infoMap &&
+      !appState.modlistInfo.infoMap.has(machineURL) &&
+      appState.modlistInfo.error?.extraData !== machineURL
     ) {
       axios
         .get(link)
         .then((response) => response.data as Promise<string>)
         .then((data) => {
-          dispatch({ type: 'FETCH_MODLISTINFO_SUCCESS', readme: data });
+          dispatch({
+            type: 'FETCH_MODLISTINFO_SUCCESS',
+            readme: data,
+            machineURL: machineURL,
+          });
         })
         .catch((error) => {
           const axiosError = error as AxiosError;
+          axiosError.extraData = machineURL;
           dispatch({
             type: 'FETCH_MODLISTINFO_FAILURE',
             error: axiosError,
           });
         });
 
-      dispatch({ type: 'FETCH_MODLISTINFO_REQUEST', link: link });
+      dispatch({
+        type: 'FETCH_MODLISTINFO_REQUEST',
+        link: link,
+        machineURL: machineURL,
+      });
     }
   },
 };
 
 const unloadedState: ModlistInfoState = {
   isLoading: false,
+  infoMap: new Map<string, string>(),
 };
 
 export const reducer: Reducer<ModlistInfoState> = (
@@ -76,16 +89,19 @@ export const reducer: Reducer<ModlistInfoState> = (
     case 'FETCH_MODLISTINFO_REQUEST':
       return {
         isLoading: true,
+        infoMap: state.infoMap,
       };
     case 'FETCH_MODLISTINFO_SUCCESS':
+      state.infoMap.set(action.machineURL, action.readme);
       return {
         isLoading: false,
-        info: action.readme,
+        infoMap: state.infoMap,
       };
     case 'FETCH_MODLISTINFO_FAILURE':
       return {
         isLoading: false,
         error: action.error,
+        infoMap: state.infoMap,
       };
   }
 
