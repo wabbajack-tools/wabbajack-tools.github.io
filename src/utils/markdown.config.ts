@@ -2,28 +2,19 @@ import * as React from 'react';
 import { MarkdownOptions, ComponentOverride } from 'markdown-to-jsx';
 import { Typography, Link } from '@material-ui/core';
 import { getGitHubLinkFromRaw } from './other';
+import { CSSProperties } from '@material-ui/core/styles/withStyles';
 
-const h4: ComponentOverride = {
-  component: Typography,
-  props: {
-    variant: 'h4',
-    style: {
-      marginTop: '8px',
-      marginBottom: '8px',
-    },
-  },
-};
+const headingStyle : CSSProperties = {
+  marginTop: '24px',
+  marginBottom: '16px',
+  fontWeight: 600,
+  lineHeight: '1.25',
+}
 
-const h5: ComponentOverride = {
-  component: Typography,
-  props: {
-    variant: 'h5',
-    style: {
-      marginTop: '4px',
-      marginBottom: '4px',
-    },
-  },
-};
+const topHeadingStyle : CSSProperties = {
+  paddingBottom: '.3em',
+  borderBottom: '1px solid #eaecef',
+}
 
 const options = (
   baseURL?: string | undefined,
@@ -31,21 +22,61 @@ const options = (
 ): MarkdownOptions => {
   return {
     overrides: {
-      h1: h4,
-      h2: h4,
-      h3: h5,
-      h4: h5,
-      h5,
-      h6: {
+      h1: {
         component: Typography,
         props: {
-          variant: 'h6',
+          variant: 'h1',
+          style: {
+            ...headingStyle,
+            ...topHeadingStyle,
+            fontSize: '2em',
+            marginTop: '0 !important'
+          }
         },
+      },
+      h2: {
+        component: Typography,
+        props: {
+          variant: 'h2',
+          style: {
+            ...headingStyle,
+            ...topHeadingStyle,
+            fontSize: '1.5em'
+          }
+        }
+      },
+      h3: {
+        component: Typography,
+        props: {
+          variant: 'h3',
+          style: {
+            ...headingStyle,
+            fontSize: '1.25em'
+          }
+        }
+      },
+      h4: {
+        component: Typography,
+        props: {
+          variant: 'h4',
+          style: {
+            ...headingStyle,
+            fontSize: '1em',
+            textAlign: 'initial'
+          }
+        }
       },
       p: {
         component: Typography,
         props: {
           variant: 'body2',
+          style: {
+            marginTop: '0',
+            marginBottom: '16px',
+            fontSize: '16px',
+            lineHeight: '1.5',
+            wordWrap: 'break-word',
+          }
         },
       },
       a: {
