@@ -118,7 +118,7 @@ export class ModlistInfo extends ReactAxiosComponent<
       tags,
       links,
     } = this.state.currentModlist;
-    const { image, download } = links;
+    const { image } = links;
 
     return (
       <React.Fragment>
@@ -158,9 +158,9 @@ export class ModlistInfo extends ReactAxiosComponent<
           {this.props.infoMap.get(this.state.currentModlist.links.machineURL)}
         </Markdown>
         <Divider style={{ marginTop: '8px', marginBottom: '8px' }} />
-        <Button href={download} color="secondary">
+        {/*<Button href={download} color="secondary">
           Download
-        </Button>
+          </Button>*/}
       </React.Fragment>
     );
   }
