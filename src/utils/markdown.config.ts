@@ -79,9 +79,9 @@ const options = (
           },
         },
       },
-      a: {
+      /*a: {
         component: Link,
-      },
+      },*/
       img: {
         component: 'img',
         props: {
@@ -115,14 +115,16 @@ const options = (
         return React.createElement(type, anyProps, children);
       }
 
-      const anyType = type as any;
+      if (type !== 'a') return React.createElement(type, props, children);
+
+      /*const anyType = type as any;
       if (anyType.options === undefined)
         return React.createElement(type, props, children);
       if (anyType.options.name === undefined)
         return React.createElement(type, props, children);
 
       const name = anyType.options.name as string;
-      if (name !== 'MuiLink') return React.createElement(type, props, children);
+      if (name !== 'MuiLink') return React.createElement(type, props, children);*/
 
       const anyProps = props as any;
       if (anyProps.href === undefined)
@@ -131,13 +133,9 @@ const options = (
       let href = anyProps.href as string;
       if (href.startsWith('#')) {
         if (baseURL === undefined) {
-          console.log(
-            `baseURL is undefined! This should not happen, href is ${href}`
-          );
           return React.createElement(type, props, children);
         }
 
-        console.log(`new href: ${baseURL}${href}`);
         anyProps.href = `${baseURL}${href}`;
       } else if (href.endsWith('.md') && !href.startsWith('http')) {
         if (externalURL === undefined)
