@@ -4,17 +4,17 @@ import { Typography, Link } from '@material-ui/core';
 import { getGitHubLinkFromRaw } from './other';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
 
-const headingStyle : CSSProperties = {
+const headingStyle: CSSProperties = {
   marginTop: '24px',
   marginBottom: '16px',
   fontWeight: 600,
   lineHeight: '1.25',
-}
+};
 
-const topHeadingStyle : CSSProperties = {
+const topHeadingStyle: CSSProperties = {
   paddingBottom: '.3em',
   borderBottom: '1px solid #eaecef',
-}
+};
 
 const options = (
   baseURL?: string | undefined,
@@ -30,8 +30,8 @@ const options = (
             ...headingStyle,
             ...topHeadingStyle,
             fontSize: '2em',
-            marginTop: '0 !important'
-          }
+            marginTop: '0 !important',
+          },
         },
       },
       h2: {
@@ -41,9 +41,9 @@ const options = (
           style: {
             ...headingStyle,
             ...topHeadingStyle,
-            fontSize: '1.5em'
-          }
-        }
+            fontSize: '1.5em',
+          },
+        },
       },
       h3: {
         component: Typography,
@@ -51,9 +51,9 @@ const options = (
           variant: 'h3',
           style: {
             ...headingStyle,
-            fontSize: '1.25em'
-          }
-        }
+            fontSize: '1.25em',
+          },
+        },
       },
       h4: {
         component: Typography,
@@ -62,9 +62,9 @@ const options = (
           style: {
             ...headingStyle,
             fontSize: '1em',
-            textAlign: 'initial'
-          }
-        }
+            textAlign: 'initial',
+          },
+        },
       },
       p: {
         component: Typography,
@@ -76,7 +76,7 @@ const options = (
             fontSize: '16px',
             lineHeight: '1.5',
             wordWrap: 'break-word',
-          }
+          },
         },
       },
       a: {
@@ -86,7 +86,8 @@ const options = (
         component: 'img',
         props: {
           style: {
-            width: '100%',
+            //width: '100%',
+            maxWidth: '100%',
             marginTop: '8px',
             marginBottom: '8px',
           },
@@ -98,13 +99,19 @@ const options = (
         const anyProps = props as any;
         if (anyProps.src === undefined)
           return React.createElement(type, props, children);
-
         if (externalURL === undefined)
           return React.createElement(type, props, children);
+
         const src = anyProps.src as string;
+        if (src.startsWith('https://' || src.startsWith('http://')))
+          return React.createElement(type, props, children);
+        //console.log(`src: ${src}`);
+        //console.log(`externalURL: ${externalURL}`);
         const split = externalURL.split('/');
         const url = externalURL.replace(split[split.length - 1], '');
         anyProps.src = `${url}${src}`;
+        //console.log(`final src: ${anyProps.src}`);
+
         return React.createElement(type, anyProps, children);
       }
 
