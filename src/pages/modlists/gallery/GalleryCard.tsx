@@ -63,11 +63,16 @@ const ModlistGalleryCard: React.FC<ModlistGalleryCardProps> = (props) => {
       <CardActions>
         <MaterialLink
           size="small"
-          color="secondary"
+          buttonColor="secondary"
           href={`/modlists/gallery/${machineURL}`}
         >
           View
         </MaterialLink>
+        <Grid container alignItems="flex-start" justify="flex-end">
+          <MaterialLink href={`/modlists/search/${machineURL}`}>
+            Archive Search
+          </MaterialLink>
+        </Grid>
       </CardActions>
     </Card>
   );

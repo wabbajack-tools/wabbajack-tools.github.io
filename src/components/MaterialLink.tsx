@@ -7,6 +7,7 @@ interface Props {
   href: string;
   disableScroll?: boolean;
   isLink?: boolean;
+  buttonColor?: 'inherit' | 'primary' | 'secondary' | 'default' | undefined;
 }
 
 type MaterialLinkProps = ButtonProps & Props;
@@ -26,11 +27,24 @@ const MaterialLink: React.FC<MaterialLinkProps> = (props) => {
     );
   }
 
-  return (
-    <Button component={RoutedLink} to={props.href} onClick={onClick}>
-      {props.children}
-    </Button>
-  );
+  if (props.buttonColor) {
+    return (
+      <Button
+        component={RoutedLink}
+        to={props.href}
+        onClick={onClick}
+        color={props.buttonColor}
+      >
+        {props.children}
+      </Button>
+    );
+  } else {
+    return (
+      <Button component={RoutedLink} to={props.href} onClick={onClick}>
+        {props.children}
+      </Button>
+    );
+  }
 };
 
 export default MaterialLink;

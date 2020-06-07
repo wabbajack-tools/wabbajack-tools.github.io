@@ -307,7 +307,7 @@ class ModlistSearch extends ReactAxiosComponent<
               disabled: this.disabledDetailPanel(rowData),
             }),
           ]}
-          title="Archive Search"
+          title={`Archive Search for ${status.Name}`}
         />
       </React.Fragment>
     );
@@ -318,7 +318,9 @@ class ModlistSearch extends ReactAxiosComponent<
   render(): JSX.Element {
     return (
       <React.Fragment>
-        <MaterialLink href="/modlists/status">Back to Dashboard</MaterialLink>
+        <MaterialLink href="/modlists/gallery">
+          Back to the Gallery
+        </MaterialLink>
         {this.showLoading()}
         {this.showError()}
         {this.showContent()}
