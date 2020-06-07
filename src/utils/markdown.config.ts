@@ -130,9 +130,14 @@ const options = (
 
       let href = anyProps.href as string;
       if (href.startsWith('#')) {
-        if (baseURL === undefined)
+        if (baseURL === undefined) {
+          console.log(
+            `baseURL is undefined! This should not happen, href is ${href}`
+          );
           return React.createElement(type, props, children);
+        }
 
+        console.log(`new href: ${baseURL}${href}`);
         anyProps.href = `${baseURL}${href}`;
       } else if (href.endsWith('.md') && !href.startsWith('http')) {
         if (externalURL === undefined)
