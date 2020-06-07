@@ -9,6 +9,7 @@ import { ReactAxiosComponent } from 'types/axios';
 import { Error, DataError } from 'components/Fetching';
 import { ModlistsGalleryPage } from './gallery';
 import ModlistsStatusPage from './status';
+import { ModlistSearchPage } from './search';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -64,6 +65,10 @@ export class ModlistsPage extends ReactAxiosComponent<ModlistsPageProps> {
         <Route
           path="/modlists/status"
           render={() => <ModlistsStatusPage modlists={this.props.modlists!} />}
+        />
+        <Route
+          path="/modlists/search"
+          render={() => <ModlistSearchPage modlists={this.props.modlists!} />}
         />
       </React.Fragment>
     );
