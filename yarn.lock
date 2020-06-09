@@ -7456,10 +7456,10 @@ markdown-to-jsx@^6.11.4:
     prop-types "^15.6.2"
     unquote "^1.1.0"
 
-material-table@1.59.0:
-  version "1.59.0"
-  resolved "https://registry.yarnpkg.com/material-table/-/material-table-1.59.0.tgz#fb1d5cafbd4322d113805a923afe9fcd54d34157"
-  integrity sha512-gI18QcQhtmLoMGuYdhZEdtVBQurgZkB6BGuo4PF5HogoBycJyfy3qbrjLkprLXV4WrZoBZjRThFUEKq4z6zclg==
+material-table@1.60.0:
+  version "1.60.0"
+  resolved "https://registry.yarnpkg.com/material-table/-/material-table-1.60.0.tgz#9133780d78926a14d6fea0e1b4f7049d66a36514"
+  integrity sha512-qJd5CpCljKVghd3S8VTDuS7Vo5SQVnZW0LqM1Af1K65+yrV1BAXHx/iFZjir5B++v0ixYyRcnX59cAwGD5wMUg==
   dependencies:
     "@date-io/date-fns" "^1.1.0"
     "@material-ui/pickers" "^3.2.2"
