@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import MaterialLink from 'components/MaterialLink';
 
-import { Container, Typography, Link } from '@material-ui/core';
+import { Container, Typography, Link, Button, Grid } from '@material-ui/core';
 
 import logo from 'assets/img/wabbajack_transparent.webp';
 
@@ -39,6 +39,37 @@ const HomePage: React.FC = () => {
             Wabbajack can reproduce an entire modding setup on another machine
             <b> without bundling any assets or re-distributing any mods</b>.
           </Typography>
+          <Grid
+            alignContent="flex-start"
+            alignItems="flex-start"
+            direction="row"
+            container
+            justify="space-between"
+            style={{
+              marginTop: '16px',
+            }}
+          >
+            <Grid item style={{ width: '55%' }}>
+              <Button
+                href="https://github.com/wabbajack-tools/wabbajack/releases"
+                fullWidth
+                color="secondary"
+                variant="contained"
+              >
+                Download
+              </Button>
+            </Grid>
+            <Grid item style={{ width: '30%' }}>
+              <Button
+                href={process.env.REACT_APP_DISCORD_LINK}
+                fullWidth
+                color="secondary"
+                variant="outlined"
+              >
+                Discord
+              </Button>
+            </Grid>
+          </Grid>
         </div>
       </Container>
 
