@@ -6,7 +6,9 @@
   "author": "erri120 <erri120@protonmail.com>",
   "license": "GPL-3.0-only",
   "scripts": {
+    "prestart": "yarn gulp",
     "start": "react-scripts start",
+    "prebuild": "yarn gulp",
     "build": "react-scripts build",
     "test": "cross-env CI=true react-scripts test --env=jsdom",
     "coverage": "cross-env CI=true react-scripts test --env=jsdom --coverage",
@@ -67,6 +69,7 @@
     "eslint-plugin-jsx-a11y": "6.3.1",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "7.20.2",
+    "gulp": "^4.0.2",
     "node-sass": "^4.14.1",
     "prettier": "^2.0.5",
     "redux-mock-store": "^1.5.4",

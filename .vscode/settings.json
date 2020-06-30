@@ -6,6 +6,8 @@
     "Patreon",
     "modauthors",
     "modlists",
+    "prebuild",
+    "prestart",
     "unmount",
     "uuidv",
     "webp"

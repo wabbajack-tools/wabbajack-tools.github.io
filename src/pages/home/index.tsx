@@ -51,7 +51,7 @@ const HomePage: React.FC = () => {
           >
             <Grid item style={{ width: '55%' }}>
               <Button
-                href="https://github.com/wabbajack-tools/wabbajack/releases"
+                href={process.env.REACT_APP_WABBAJACKEXE}
                 fullWidth
                 color="secondary"
                 variant="contained"
