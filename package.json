@@ -27,7 +27,7 @@
     "@material-ui/lab": "^4.0.0-alpha.56",
     "axios": "^0.19.2",
     "connected-react-router": "6.8.0",
-    "history": "4.10.1",
+    "history": "5.0.0",
     "markdown-to-jsx": "^6.11.4",
     "material-table": "1.64.0",
     "react": "16.13.1",
