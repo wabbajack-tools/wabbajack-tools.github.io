@@ -8174,10 +8174,10 @@ matchdep@^2.0.0:
     resolve "^1.4.0"
     stack-trace "0.0.10"
 
-material-table@1.64.0:
-  version "1.64.0"
-  resolved "https://registry.yarnpkg.com/material-table/-/material-table-1.64.0.tgz#c0d0a2a2b3657cbe729b25abf194c549015fa411"
-  integrity sha512-jvjr/USecR8BbEuWF2+8iScrjnoyOXsP/ghFOacNdgxZAZbmpJrhtHZtvu957QmRRYJSORAAW6JMskLEra9Sig==
+material-table@1.65.0:
+  version "1.65.0"
+  resolved "https://registry.yarnpkg.com/material-table/-/material-table-1.65.0.tgz#57893b6b75c1e11f6e1f22d0cd42056836f19293"
+  integrity sha512-s3VVOETlsAR4ZvaGUJdwcu+4IaYcM5fewMmBf3tT3/hdadwH5CkXYOvMNGU8zDh4iYOGyMcAiUMm2YIxGVFTuw==
   dependencies:
     "@date-io/date-fns" "^1.1.0"
     "@material-ui/pickers" "^3.2.2"
