@@ -22,6 +22,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: '14.1.x'
+    - run: rm -rf node_modules
     - run: yarn install
     - run: yarn build
       env:
