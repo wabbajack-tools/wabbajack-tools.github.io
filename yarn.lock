@@ -1708,10 +1708,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/underscore@^1.10.4":
-  version "1.10.4"
-  resolved "https://registry.yarnpkg.com/@types/underscore/-/underscore-1.10.4.tgz#0b91aa47205086dfd4c0d85b3434b94e62e6695c"
-  integrity sha512-2dZ6y+llKA20NZdZgyDE1V9ZaRzcDQf86EUuT/NrTXX3ZtAhPCurIyf6OI/GrE6HuySQoRv0QwzwpUJxHn0WgA==
+"@types/underscore@^1.10.12":
+  version "1.10.12"
+  resolved "https://registry.yarnpkg.com/@types/underscore/-/underscore-1.10.12.tgz#4f4a0b785c1d5ec5584279edd5e46b459707d4e6"
+  integrity sha512-TaxXwY+NL5N8esWw92+m+twK3D1ib9PuHYQIkDVg8Ck+mYuHe+rAMoqZcUkTsh55uFzV/9mQTikmbrjr81ZlAg==
 
 "@types/uuid@^8.0.0":
   version "8.0.0"
