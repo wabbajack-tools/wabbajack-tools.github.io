@@ -16,6 +16,12 @@ export const getGameName = (game: string | undefined) => {
     case 'skyrimspecialedition':
       gameName = 'Skyrim Special Edition';
       break;
+    case 'enderal':
+      gameName = 'Enderal';
+      break;
+    case 'fallout4vr':
+      gameName = 'Fallout 4 VR';
+      break;
     case 'fallout4':
       gameName = 'Fallout 4';
       break;

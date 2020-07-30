@@ -29,6 +29,11 @@ interface ModlistsGalleryState {
   showNSFW: boolean;
 }
 
+interface IGame {
+  gameID: string;
+  gameName: string;
+}
+
 class ModlistGallery extends React.PureComponent<
   ModlistGalleryProps,
   ModlistsGalleryState
@@ -71,14 +76,29 @@ class ModlistGallery extends React.PureComponent<
   };
 
   render(): JSX.Element {
-    const gamesList: Array<string> = [];
+    const gamesList: Array<IGame> = [];
 
-    if (this.props.modlists) {
-      _.map(this.props.modlists, (modlist) => {
-        if (!gamesList.includes(modlist.game)) gamesList.push(modlist.game);
-        gamesList.sort();
-      });
-    }
+    if (!this.props.modlists) return <div></div>;
+
+    _.map(this.props.modlists, (modlist) => {
+      const foundGame = _.find(
+        gamesList,
+        (game) => game.gameID === modlist.game
+      );
+      if (!foundGame) {
+        gamesList.push({
+          gameID: modlist.game,
+          gameName: getGameName(modlist.game),
+        });
+      }
+    });
+
+    gamesList.sort((a, b) => {
+      if (a.gameName < b.gameName) return -1;
+      if (a.gameName > b.gameName) return 1;
+      return 0;
+    });
+
     return (
       <React.Fragment>
         <Typography variant="h4">Gallery</Typography>
@@ -106,8 +126,8 @@ class ModlistGallery extends React.PureComponent<
                 <MenuItem value="">All</MenuItem>
                 {_.map(gamesList, (game) => {
                   return (
-                    <MenuItem value={game} key={uuidv4()}>
-                      {getGameName(game)}
+                    <MenuItem value={game.gameID} key={uuidv4()}>
+                      {game.gameName}
                     </MenuItem>
                   );
                 })}
