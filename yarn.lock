@@ -1715,10 +1715,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/underscore@^1.10.17":
-  version "1.10.17"
-  resolved "https://registry.yarnpkg.com/@types/underscore/-/underscore-1.10.17.tgz#13315853257c818fbd10c5b1baff3f0170f3fb58"
-  integrity sha512-puV6Kw1HU/WKxyJgSkC0cQCv0UmNWZrjNIWqseDBOg4G3fE6yYXHWGI+9Sjha94FytbVChXPltmQRzCdFt932Q==
+"@types/underscore@^1.10.20":
+  version "1.10.20"
+  resolved "https://registry.yarnpkg.com/@types/underscore/-/underscore-1.10.20.tgz#4685206bcb2c9e2338fa6d89d678a8b916315f7f"
+  integrity sha512-UiLhTLijxQ6sKP2aQbextgPVovrrxqXFP+UO/l90o1Ytguc85UWtbHcmnZDRe8hQ2MHeA+BJglgbYsgtll/zyw==
 
 "@types/uuid@^8.0.0":
   version "8.0.0"
