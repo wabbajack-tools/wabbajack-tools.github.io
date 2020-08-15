@@ -27,7 +27,7 @@
     "history": "^5.0.0",
     "markdown-to-jsx": "^6.11.4",
     "material-table": "^1.68.0",
-    "react": ">=15",
+    "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "react-router5": "^8.0.1",
