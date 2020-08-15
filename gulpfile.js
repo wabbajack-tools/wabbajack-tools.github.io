@@ -1,6 +1,8 @@
 const fs = require('fs');
 const axios = require('axios');
 const _ = require('underscore');
+const { parallel, series, src, dest } = require('gulp');
+const del = require('del');
 
 function getGitHubDownloadLink(cb) {
   return axios
@@ -45,4 +47,17 @@ function getGitHubDownloadLink(cb) {
     });
 }
 
+function cleanDist() {
+  return del('dist/**');
+}
+
+function copyPublicFiles() {
+  return src('./src/public/CNAME').pipe(dest('./dist/'));
+}
+
+exports.clean = cleanDist;
+exports.build = series(
+  parallel(cleanDist, getGitHubDownloadLink),
+  copyPublicFiles
+);
 exports.default = getGitHubDownloadLink;
