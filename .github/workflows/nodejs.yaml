@@ -1,0 +1,80 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+  push:
+    branches: code
+  pull_request:
+    branches: code
+  schedule:
+    - cron: "*/30 * * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: code
+    - name: Use Node.js 14.7.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14.7.x'
+    - run: yarn install
+    - run: yarn build
+    #- run: yarn run coverage
+    #  env:
+    #    CI: true
+    #- name: Codecov
+    #  if: github.event_name == 'push' && ${{ always() }}
+    #  uses: codecov/codecov-action@v1.0.6
+    #  with:
+        # User defined upload name. Visible in Codecov UI
+        # name: # optional
+        # Repository upload token - get it from codecov.io. Required only for private repositories
+        # token: # optional
+        # Path to coverage file to upload
+    #    file:  coverage/clover.xml # optional
+        # Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)
+        # flags: # optional
+        # Specify whether or not CI build should fail if Codecov runs into an error during upload
+    #    fail_ci_if_error: false # optional
+
+  deploy:
+    needs: [build]
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: code
+    - name: Use Node.js 14.7.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14.7.x'
+    - run: yarn install
+    - run: yarn build
+    - name: GitHub Pages Deployment
+      uses: crazy-max/ghaction-github-pages@v1.4.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # Git branch where assets will be deployed
+        target_branch: master # optional, default is gh-pages
+        # Create incremental commit instead of doing push force
+        keep_history: false # optional, default is false
+        # Allow an empty commit to be created
+        allow_empty_commit: true # optional, default is true
+        # Build directory to deploy
+        build_dir: build
+        # Commit author's name
+        committer_name: erri120 # optional
+        # Commit author's email
+        committer_email: ${{ secrets.email }} # optional
+        # Commit message
+        commit_message: Update # optional
+        # Write the given domain name to the CNAME file
+        # fqdn: # optional
+
