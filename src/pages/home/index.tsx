@@ -51,7 +51,7 @@ const HomePage: React.FC = () => {
           >
             <Grid item style={{ width: '55%' }}>
               <Button
-                href={process.env.REACT_APP_WABBAJACKEXE}
+                href={process.env.WABBAJACKEXE}
                 fullWidth
                 color="secondary"
                 variant="contained"
@@ -61,7 +61,7 @@ const HomePage: React.FC = () => {
             </Grid>
             <Grid item style={{ width: '30%' }}>
               <Button
-                href={process.env.REACT_APP_DISCORD_LINK}
+                href={process.env.DISCORD_LINK}
                 fullWidth
                 color="secondary"
                 variant="outlined"
