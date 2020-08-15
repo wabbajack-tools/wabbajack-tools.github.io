@@ -23,10 +23,10 @@ const routes: IRoute[] = [
   { name: 'test.lel', path: '/lel' },
   { name: 'modlists', path: '/modlists' },
   { name: 'modlists.gallery', path: '/gallery' },
-  { name: 'modlists.info', path: '/info/:machineURL' },
+  { name: 'modlists.info', path: '/info?:machineURL' },
   { name: 'modlists.status', path: '/status' },
-  { name: 'modlists.status.detailed', path: '/:machineURL' },
-  { name: 'modlists.search', path: '/search/:machineURL' },
+  { name: 'modlists.status.detailed', path: '?:machineURL' },
+  { name: 'modlists.search', path: '/search?:machineURL' },
 ];
 
 const configureRouter = () => {
