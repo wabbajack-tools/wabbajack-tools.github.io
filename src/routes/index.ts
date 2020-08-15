@@ -36,7 +36,7 @@ const configureRouter = () => {
 
   router.usePlugin(browserPlugin());
 
-  if (process.env.NODE_ENV !== 'production') router.usePlugin(loggerPlugin);
+  if (process.env.NODE_ENV === 'development') router.usePlugin(loggerPlugin);
 
   return router;
 };
