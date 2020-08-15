@@ -68,7 +68,7 @@ jobs:
         # Allow an empty commit to be created
         allow_empty_commit: true # optional, default is true
         # Build directory to deploy
-        build_dir: build
+        build_dir: dist
         # Commit author's name
         committer_name: erri120 # optional
         # Commit author's email

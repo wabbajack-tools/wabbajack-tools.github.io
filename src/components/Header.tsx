@@ -20,7 +20,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import AppsIcon from '@material-ui/icons/Apps';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 
-import RoutedLink from './RoutedLink'
+import RoutedLink from './RoutedLink';
 
 const drawerLinkStyle: React.CSSProperties = {
   fontWeight: 'bold',
