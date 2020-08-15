@@ -52,7 +52,9 @@ function cleanDist() {
 }
 
 function copyPublicFiles() {
-  return src('./src/public/CNAME').pipe(dest('./dist/'));
+  return src('./src/public/CNAME')
+    .pipe(src('./src/public/404.html'))
+    .pipe(dest('./dist/'));
 }
 
 exports.clean = cleanDist;
