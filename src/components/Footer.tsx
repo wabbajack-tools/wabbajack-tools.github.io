@@ -18,12 +18,12 @@ const right: React.CSSProperties = {
   float: 'right',
 };
 
-interface FooterItemProps {
+interface IFooterItemProps {
   link: string | undefined;
   name: string;
 }
 
-export const FooterItem: React.FC<FooterItemProps> = (props) => {
+export const FooterItem: React.FC<IFooterItemProps> = (props) => {
   const { link, name } = props;
   return (
     <ListItem>
@@ -44,10 +44,7 @@ const Footer: React.FC = () => {
               name="GitHub"
               link="https://github.com/wabbajack-tools/wabbajack"
             />
-            <FooterItem
-              name="Discord"
-              link={process.env.REACT_APP_DISCORD_LINK}
-            />
+            <FooterItem name="Discord" link={process.env.DISCORD_LINK} />
             <FooterItem
               name="Patreon"
               link="https://www.patreon.com/user?u=11907933"

@@ -1,35 +1,22 @@
-/**
- * Converts a machine name of a game to a human readable one
- * @param game machine name of a game
- * @returns human readable name
- */
-export const getGameName = (game: string | undefined) => {
+import { Game } from '../types/game';
+
+export const getGameName = (game: Game) => {
   let gameName = 'UNKNOWN';
-  if (game === undefined) return gameName;
-  switch (game.toLocaleLowerCase()) {
-    case 'skyrim':
-      gameName = 'Skyrim';
-      break;
-    case 'oblivion':
-      gameName = 'Oblivion';
-      break;
-    case 'skyrimspecialedition':
-      gameName = 'Skyrim Special Edition';
+  switch (game) {
+    case 'darkestdungeon':
+      gameName = 'Darkest Dungeon';
       break;
     case 'enderal':
       gameName = 'Enderal';
       break;
-    case 'fallout4vr':
-      gameName = 'Fallout 4 VR';
+    case 'fallout3':
+      gameName = 'Fallout 3';
       break;
     case 'fallout4':
       gameName = 'Fallout 4';
       break;
-    case 'skyrimvr':
-      gameName = 'Skyrim VR';
-      break;
-    case 'fallout3':
-      gameName = 'Fallout 3';
+    case 'fallout4vr':
+      gameName = 'Fallout 4 VR';
       break;
     case 'falloutnewvegas':
       gameName = 'Fallout New Vegas';
@@ -37,10 +24,27 @@ export const getGameName = (game: string | undefined) => {
     case 'morrowind':
       gameName = 'Morrowind';
       break;
+    case 'oblivion':
+      gameName = 'Oblivion';
+      break;
+    case 'skyrim':
+      gameName = 'Skyrim';
+      break;
+    case 'skyrimspecialedition':
+      gameName = 'Skyrim Special Edition';
+      break;
+    case 'skyrimvr':
+      gameName = 'Skyrim VR';
+      break;
+    case 'stardewvalley':
+      gameName = 'Stardew Valley';
+      break;
+    case 'witcher3':
+      gameName = 'Witcher 3';
+      break;
     default:
       gameName = 'UNKNOWN';
       break;
   }
-
   return gameName;
 };

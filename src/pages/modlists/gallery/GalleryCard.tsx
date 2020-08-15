@@ -1,13 +1,10 @@
 import * as React from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import underscore from 'underscore';
 
-import { getGameName } from 'utils/games';
-import { ModlistMetaData } from 'types/modlist';
+import { getGameName } from '../../../utils/games';
+import { IModlistMetadata } from '../../../types/modlists';
 
-import MaterialLink from 'components/MaterialLink';
-
-import { Skeleton } from '@material-ui/lab';
+import RoutedButton from '../../../components/RoutedButton';
 
 import {
   Card,
@@ -21,15 +18,14 @@ import {
   Chip,
 } from '@material-ui/core';
 
-interface ModlistGalleryCardProps {
-  modlist: ModlistMetaData;
+interface IModlistGalleryCardProps {
+  modlist: IModlistMetadata;
 }
 
-const ModlistGalleryCard: React.FC<ModlistGalleryCardProps> = (props) => {
+const ModlistGalleryCard: React.FC<IModlistGalleryCardProps> = (props) => {
   const { modlist } = props;
   const { title, description, author, game, tags, links, nsfw } = modlist;
   const { image, machineURL } = links;
-
   return (
     <Card>
       <CardHeader title={title} />
@@ -51,7 +47,7 @@ const ModlistGalleryCard: React.FC<ModlistGalleryCardProps> = (props) => {
           ) : (
             <div></div>
           )}
-          {underscore.map(tags, (tag) => {
+          {tags.map((tag) => {
             return (
               <Grid item key={uuidv4()}>
                 <Chip size="small" label={tag} color="primary" />
@@ -61,42 +57,23 @@ const ModlistGalleryCard: React.FC<ModlistGalleryCardProps> = (props) => {
         </Grid>
       </CardContent>
       <CardActions>
-        <MaterialLink
+        <RoutedButton
           size="small"
-          buttonColor="secondary"
-          href={`/modlists/gallery/${machineURL}`}
+          color="secondary"
+          routeName="modlists.info"
+          routeParams={{ machineURL }}
         >
           View
-        </MaterialLink>
+        </RoutedButton>
         <Grid container alignItems="flex-start" justify="flex-end">
-          <MaterialLink href={`/modlists/search/${machineURL}`}>
+          <RoutedButton
+            routeName="modlists.search"
+            routeParams={{ machineURL }}
+          >
             Archive Search
-          </MaterialLink>
+          </RoutedButton>
         </Grid>
       </CardActions>
-    </Card>
-  );
-};
-
-export const SkeletonCard: React.FC = () => {
-  return (
-    <Card style={{ width: '100%' }}>
-      <CardHeader
-        component={Skeleton}
-        animation={false}
-        variant="text"
-        height={50}
-        style={{ marginLeft: '4px', marginRight: '4px' }}
-      />
-      <CardMedia
-        component={Skeleton}
-        animation={false}
-        variant="rect"
-        height={300}
-      />
-      <CardContent>
-        <Skeleton animation={false} variant="text" height={100} />
-      </CardContent>
     </Card>
   );
 };

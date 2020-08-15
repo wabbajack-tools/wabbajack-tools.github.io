@@ -1,8 +1,4 @@
-// This is the global material-ui theme
-
 import { createMuiTheme } from '@material-ui/core/styles';
-
-// import { deepPurple, teal, cyan, blueGrey } from '@material-ui/core/colors';
 
 const white = '#FFFFFF';
 const black = '#000000';
@@ -18,7 +14,6 @@ const elevation12 = '#323232';
 const elevation16 = '#353535';
 const elevation24 = '#383838';
 
-// eslint-disable-next-line
 const whiteTheme = {
   primary: '#6200EE', // 500
   primaryVariant: '#3700B3', // 700
@@ -49,98 +44,100 @@ const darkTheme = {
   onError: black,
 };
 
-const currentTheme = darkTheme;
-
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      main: currentTheme.primary,
-      light: currentTheme.primary,
-      dark: currentTheme.primaryVariant,
-      contrastText: currentTheme.onPrimary,
-    },
-    secondary: {
-      main: currentTheme.secondary,
-      light: currentTheme.secondary,
-      dark: currentTheme.secondaryVariant,
-      contrastText: currentTheme.onSecondary,
-    },
-    text: {
-      primary: currentTheme.onBackground,
-      secondary: '#EEEEEE',
-      disabled: '#DDDDDD',
-    },
-  },
-  overrides: {
-    MuiToolbar: {
-      root: {
-        backgroundColor: '#1F1B24',
+const createTheme = (theme) => {
+  return createMuiTheme({
+    palette: {
+      primary: {
+        main: theme.primary,
+        light: theme.primary,
+        dark: theme.primaryVariant,
+        contrastText: theme.onPrimary,
+      },
+      secondary: {
+        main: theme.secondary,
+        light: theme.secondary,
+        dark: theme.secondaryVariant,
+        contrastText: theme.onSecondary,
+      },
+      text: {
+        primary: theme.onBackground,
+        secondary: '#EEEEEE',
+        disabled: '#DDDDDD',
       },
     },
-    MuiDivider: {
-      root: {
-        backgroundColor: '#AAAAAA',
+    overrides: {
+      MuiToolbar: {
+        root: {
+          backgroundColor: '#1F1B24',
+        },
+      },
+      MuiDivider: {
+        root: {
+          backgroundColor: '#AAAAAA',
+        },
+      },
+      MuiCardHeader: {
+        title: {
+          textAlign: 'center',
+        },
+      },
+      MuiPaper: {
+        root: {
+          backgroundColor: elevation24,
+        },
+      },
+      MuiTypography: {
+        h4: {
+          textAlign: 'center',
+          fontWeight: '200',
+        },
+        h5: {
+          fontWeight: '400',
+        },
+        h6: {
+          fontWeight: '300',
+        },
+        body1: {
+          fontWeight: '200',
+        },
+      },
+      MuiListItemIcon: {
+        root: {
+          color: white,
+        },
+      },
+      MuiTableCell: {
+        root: {
+          backgroundColor: '#323232',
+        },
+      },
+      MuiIcon: {
+        colorDisabled: 'grey',
+      },
+      MuiIconButton: {
+        colorDisabled: 'grey',
+        root: {
+          //color: 'white !important',
+        },
+      },
+      MuiSvgIcon: {
+        root: {
+          //color: 'white !important',
+        },
+      },
+      MuiSkeleton: {
+        root: {
+          backgroundColor: elevation4,
+        },
       },
     },
-    MuiCardHeader: {
-      title: {
-        textAlign: 'center',
-      },
-    },
-    MuiPaper: {
-      root: {
-        backgroundColor: elevation24,
-      },
-    },
-    MuiTypography: {
-      h4: {
-        textAlign: 'center',
-        fontWeight: '200',
-      },
-      h5: {
-        fontWeight: '400',
-      },
-      h6: {
-        fontWeight: '300',
-      },
-      body1: {
-        fontWeight: '200',
-      },
-    },
-    MuiListItemIcon: {
-      root: {
-        color: white,
-      },
-    },
-    MuiTableCell: {
-      root: {
-        backgroundColor: '#323232',
-      },
-    },
-    MuiIcon: {
-      colorDisabled: 'grey',
-    },
-    MuiIconButton: {
-      colorDisabled: 'grey',
-      root: {
-        //color: 'white !important',
-      },
-    },
-    MuiSvgIcon: {
-      root: {
-        //color: 'white !important',
-      },
-    },
-    MuiSkeleton: {
-      root: {
-        backgroundColor: elevation4,
-      },
-    },
-  },
-});
+  });
+};
 
 export {
-  theme,
+  createTheme,
+  whiteTheme,
+  darkTheme,
   elevation0,
   elevation1,
   elevation2,

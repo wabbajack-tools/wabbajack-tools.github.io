@@ -1,28 +1,24 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
-    "target": "ESNext",
-    "allowJs": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "preserve",
-    "lib": [
-      "es6",
-      "dom"
-    ],
-    "skipLibCheck": false,
+    "moduleResolution": "Node",
+    "target": "ESNext",
+    "strict": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "resolveJsonModule": true,
+    "jsx": "preserve",
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
+    "skipLibCheck": false,
+    "experimentalDecorators": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": [
-    "src"
+    "src/**/*"
   ]
 }

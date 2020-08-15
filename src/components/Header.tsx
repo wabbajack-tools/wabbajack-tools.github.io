@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-import MaterialLink from './MaterialLink';
+import { observer, useLocalStore } from 'mobx-react';
 
 import {
   AppBar,
@@ -20,11 +20,17 @@ import MenuIcon from '@material-ui/icons/Menu';
 import AppsIcon from '@material-ui/icons/Apps';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 
-interface HideOnScrollProps {
+import RoutedLink from './RoutedLink'
+
+const drawerLinkStyle: React.CSSProperties = {
+  fontWeight: 'bold',
+};
+
+interface IHideOnScrollProps {
   children?: React.ReactElement<any, any>;
 }
 
-export const HideOnScroll: React.FC<HideOnScrollProps> = (props) => {
+export const HideOnScroll: React.FC<IHideOnScrollProps> = (props) => {
   const { children } = props;
   const trigger = useScrollTrigger();
 
@@ -35,91 +41,82 @@ export const HideOnScroll: React.FC<HideOnScrollProps> = (props) => {
   );
 };
 
-interface HeaderState {
-  left: boolean;
-}
+const Header = observer(() => {
+  const localStore = useLocalStore(() => ({ isDrawerOpen: false }));
 
-class Header extends React.PureComponent<{}, HeaderState> {
-  constructor(props: {}) {
-    super(props);
-
-    this.state = {
-      left: false,
-    };
-  }
-
-  private onClick = (open: boolean) => () => {
-    this.setState({ ...this.state, left: open });
+  const onClick = (open: boolean) => () => {
+    localStore.isDrawerOpen = open;
   };
 
-  private onKeyDown = (open: boolean) => (
+  const onKeyDown = (open: boolean) => (
     event: React.KeyboardEvent<HTMLDivElement>
   ) => {
     if (event.key === 'Tab' || event.key === 'Shift') return;
-
-    this.setState({ ...this.state, left: open });
+    localStore.isDrawerOpen = open;
   };
 
-  public render() {
-    return (
-      <HideOnScroll>
-        <AppBar position="sticky">
-          <Toolbar variant="dense">
-            <IconButton
-              edge="start"
-              color="secondary"
-              aria-label="menu"
-              onClick={this.onClick(true).bind(this)}
+  return (
+    <HideOnScroll>
+      <AppBar position="sticky">
+        <Toolbar variant="dense">
+          <IconButton
+            edge="start"
+            color="secondary"
+            aria-label="menu"
+            onClick={onClick(true)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Drawer open={localStore.isDrawerOpen} onClose={onClick(false)}>
+            <div
+              id="drawer-div"
+              role="presentation"
+              onClick={onClick(false)}
+              onKeyDown={onKeyDown(false)}
+              style={{ width: '250px' }}
             >
-              <MenuIcon />
-            </IconButton>
-            <Drawer
-              open={this.state.left}
-              onClose={this.onClick(false).bind(this)}
-            >
-              <div
-                id="drawer-div"
-                role="presentation"
-                onClick={this.onClick(false).bind(this)}
-                onKeyDown={this.onKeyDown(false).bind(this)}
-                style={{ width: '250px' }}
-              >
-                <List>
-                  <ListItem button key={uuidv4()}>
-                    <ListItemIcon>
-                      <AppsIcon />
-                    </ListItemIcon>
-                    <MaterialLink
-                      href="/modlists/gallery"
-                      style={{ width: '100%', justifyContent: 'flex-start' }}
-                      disableTouchRipple
-                    >
-                      Gallery
-                    </MaterialLink>
-                  </ListItem>
-                  <ListItem button key={uuidv4()} href="/status">
-                    <ListItemIcon>
-                      <DashboardIcon />
-                    </ListItemIcon>
-                    <MaterialLink
-                      href="/modlists/status"
-                      style={{ width: '100%', justifyContent: 'flex-start' }}
-                      disableTouchRipple
-                    >
-                      Status Dashboard
-                    </MaterialLink>
-                  </ListItem>
-                </List>
-              </div>
-            </Drawer>
-            <MaterialLink disableRipple href="/">
-              <Typography variant="button">Wabbajack</Typography>
-            </MaterialLink>
-          </Toolbar>
-        </AppBar>
-      </HideOnScroll>
-    );
-  }
-}
+              <List>
+                <ListItem button key={uuidv4()}>
+                  <ListItemIcon>
+                    <AppsIcon />
+                  </ListItemIcon>
+                  <RoutedLink
+                    routeName="modlists.gallery"
+                    style={drawerLinkStyle}
+                    underline="none"
+                    color="textPrimary"
+                  >
+                    Gallery
+                  </RoutedLink>
+                </ListItem>
+                <ListItem button key={uuidv4()} href="/status">
+                  <ListItemIcon>
+                    <DashboardIcon />
+                  </ListItemIcon>
+                  <RoutedLink
+                    routeName="modlists.status"
+                    color="textPrimary"
+                    style={drawerLinkStyle}
+                    underline="none"
+                  >
+                    Status Dashboard
+                  </RoutedLink>
+                </ListItem>
+              </List>
+            </div>
+          </Drawer>
+          <RoutedLink
+            routeName="home"
+            underline="none"
+            color="textPrimary"
+            style={{ ...drawerLinkStyle, marginLeft: '8px' }}
+          >
+            <Typography variant="button">Wabbajack</Typography>
+          </RoutedLink>
+        </Toolbar>
+      </AppBar>
+    </HideOnScroll>
+  );
+});
 
 export default Header;

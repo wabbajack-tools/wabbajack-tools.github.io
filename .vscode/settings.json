@@ -1,20 +1,7 @@
 {
-  "cSpell.words": [
-    "MODLISTINFO",
-    "Modpack",
-    "Modpacks",
-    "Patreon",
-    "modauthors",
-    "modlists",
-    "prebuild",
-    "prestart",
-    "unmount",
-    "uuidv",
-    "webp"
-  ],
-  "material-icon-theme.activeIconPack": "react_redux",
-  "material-icon-theme.folders.associations": {
-    "types": "typescript",
-    "test-utils": "utils",
-  }
+    "cSpell.words": [
+        "prebuild",
+        "prestart"
+    ],
+    "typescript.tsdk": "node_modules\\typescript\\lib"
 }

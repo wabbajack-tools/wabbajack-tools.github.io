@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { ModlistStatus } from 'types/modlist';
-import { getDateString } from 'utils/other';
+import RoutedLink from '../../../components/RoutedLink';
 
-import { Link as RoutedLink } from 'react-router-dom';
+import { IModlistSummary } from '../../../types/modlists';
+import { getDateString } from '../../../utils/other';
 
 import { Grid, Paper, Typography } from '@material-ui/core';
 
@@ -30,11 +30,11 @@ const redDot: React.CSSProperties = {
   backgroundColor: 'red',
 };
 
-interface DashboardCardProps {
-  status: ModlistStatus;
+interface IDashboardCardProps {
+  status: IModlistSummary;
 }
 
-const DashboardCard: React.FC<DashboardCardProps> = (props) => {
+const DashboardCard: React.FC<IDashboardCardProps> = (props) => {
   const { status } = props;
   const { name, checked, failed, passed, has_failures, machineURL } = status;
   const date = new Date(checked);
@@ -43,15 +43,16 @@ const DashboardCard: React.FC<DashboardCardProps> = (props) => {
   return (
     <Paper style={{ marginTop: '8px', marginBottom: '8px' }}>
       <Grid style={{ padding: '8px' }}>
-        {has_failures ? <span style={redDot} /> : <span style={greenDot} />}
-        <Typography
-          variant="h6"
-          component={RoutedLink}
-          to={`status/${machineURL}`}
-          style={clickableTitle}
-        >
-          {name}
-        </Typography>
+        <Grid container alignItems="center" style={{ paddingBottom: '8px' }}>
+          {has_failures ? <span style={redDot} /> : <span style={greenDot} />}
+          <RoutedLink
+            routeName="modlists.status.detailed"
+            routeParams={{ machineURL }}
+            style={clickableTitle}
+          >
+            {name}
+          </RoutedLink>
+        </Grid>
         <Typography variant="body1">Passed: {passed}</Typography>
         <Typography variant="body1">Failed: {failed}</Typography>
         <Typography variant="body2">Last checked: {dateString}</Typography>

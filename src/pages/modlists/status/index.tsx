@@ -1,96 +1,79 @@
 import * as React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import { Route } from 'react-router';
+import { v4 as uuidv4 } from 'uuid';
+import { observer } from 'mobx-react';
 
-import { ApplicationState } from 'store';
-import * as ModlistStatusStore from 'store/ModlistStatusStore';
+import { useStores } from '../../../hooks/use-stores';
+import ErrorDisplay from '../../../components/ErrorDisplay';
+import { IModlistSummary } from '../../../types/modlists';
 
-import { ModlistMetaData } from 'types/modlist';
+import { Grid, Typography } from '@material-ui/core';
 
-import { ReactAxiosComponent } from 'types/axios';
-import { Loading, Error, DataError } from 'components/Fetching';
+import DashboardCard from './DashboardCard';
 
-import StatusDashboard from './Dashboard';
-import ModlistStatus from './info/ModlistStatus';
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-interface OwnProps {
-  modlists: ModlistMetaData[];
-}
-
-type ModlistsStatusPageProps = OwnProps &
-  typeof ModlistStatusStore.actionCreator &
-  ModlistStatusStore.ModlistStatusState &
-  PropsFromRedux;
-
-export class ModlistsStatusPage extends ReactAxiosComponent<
-  ModlistsStatusPageProps
-> {
-  ensureDataFetched(): void {
-    this.props.requestStatusList();
+const ModlistsStatusPage = observer(() => {
+  const { modlistsStore, modlistsStatusStore } = useStores();
+  const { modlists } = modlistsStore;
+  if (modlistsStore.shouldFetch()) {
+    modlistsStore.fetchModlists();
   }
-
-  showError(): JSX.Element | undefined {
-    if (this.props.isLoading) return;
-    if (!this.props.error) return;
-    return <Error error={this.props.error} />;
+  if (modlistsStore.isLoading.get('modlists')) {
+    return <React.Fragment>Loading Modlists</React.Fragment>;
   }
-
-  showLoading(): JSX.Element | undefined {
-    if (this.props.error) return;
-    if (!this.props.isLoading) return;
-    return <Loading message="Loading status from build server" />;
+  if (modlistsStore.axiosError) {
+    return <ErrorDisplay axiosError={modlistsStore.axiosError} />;
   }
-
-  showContent(): JSX.Element | undefined {
-    if (this.props.error) return;
-    if (this.props.isLoading) return;
-
-    if (!this.props.modlists) return <DataError />;
-    if (this.props.modlists.length === 0) return <DataError />;
-
-    if (!this.props.statusList) return <DataError />;
-    if (this.props.statusList.length === 0) return <DataError />;
-
+  if (modlists === undefined) {
     return (
-      <React.Fragment>
-        <Route
-          exact
-          path="/modlists/status"
-          render={() => <StatusDashboard statusList={this.props.statusList!} />}
-        />
-        <Route
-          path="/modlists/status/:url"
-          render={(props) => (
-            <ModlistStatus {...props} modlists={this.props.modlists} />
-          )}
-        />
-        <Route
-          path="/modlists/status/search"
-          render={() => <div>Search page</div>}
-        />
-      </React.Fragment>
+      <ErrorDisplay message="Fetched modlists without an error but array is still undefined!" />
     );
   }
 
-  render(): JSX.Element {
+  const { statusList } = modlistsStatusStore;
+  if (modlistsStatusStore.shouldFetch()) {
+    modlistsStatusStore.fetchStatus();
+  }
+  if (modlistsStatusStore.isLoading.get('status')) {
+    return <React.Fragment>Loading Status</React.Fragment>;
+  }
+  if (modlistsStatusStore.axiosError) {
+    return <ErrorDisplay axiosError={modlistsStatusStore.axiosError} />;
+  }
+  if (statusList === undefined) {
     return (
-      <React.Fragment>
-        {this.showLoading()}
-        {this.showError()}
-        {this.showContent()}
-      </React.Fragment>
+      <ErrorDisplay message="Fetched modlists without an error but array is still undefined!" />
     );
   }
-}
 
-const connector = connect(
-  (state: ApplicationState, ownProps: OwnProps) => ({
-    ...state.modlistStatusList,
-    ...ownProps,
-  }),
-  ModlistStatusStore.actionCreator
-);
+  const failed: IModlistSummary[] = statusList
+    .filter((status) => status.has_failures)
+    .sort((a, b) => a.name.localeCompare(b.name));
 
-export default connector(ModlistsStatusPage as any);
+  const success: IModlistSummary[] = statusList
+    .filter((status) => !status.has_failures)
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  return (
+    <React.Fragment>
+      <Typography variant="h6">Failing Modlists: {failed.length}</Typography>
+      <Typography variant="h6">Working Modlists: {success.length}</Typography>
+      <Grid container direction="row" spacing={3}>
+        {failed.map((status: IModlistSummary) => {
+          return (
+            <Grid item key={uuidv4()} xs={12} sm={6} md={4} lg={4} xl={4}>
+              <DashboardCard status={status} />
+            </Grid>
+          );
+        })}
+        {success.map((status: IModlistSummary) => {
+          return (
+            <Grid item key={uuidv4()} xs={12} sm={6} md={4} lg={4} xl={4}>
+              <DashboardCard status={status} />
+            </Grid>
+          );
+        })}
+      </Grid>
+    </React.Fragment>
+  );
+});
+
+export default ModlistsStatusPage;

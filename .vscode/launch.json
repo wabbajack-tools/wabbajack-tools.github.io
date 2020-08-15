@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "name": "Launch Chrome",
+      "request": "launch",
+      "type": "pwa-chrome",
+      "url": "http://localhost:1234",
+      "webRoot": "${workspaceFolder}",
+      "sourceMapPathOverrides": {
+        "../*": "${webRoot}/*"
+      }
+    }
+  ]
+}

@@ -1,16 +1,19 @@
 import * as React from 'react';
-import { Route } from 'react-router';
 
+import { ThemeProvider } from '@material-ui/core/styles';
 import { Box, Container } from '@material-ui/core';
 
-import Header from 'components/Header';
-import Footer from 'components/Footer';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import Route from './components/Route';
 
-import HomePage from 'pages/home';
-import InfoPage from 'pages/info';
-import ModlistsPage from 'pages/modlists';
+import { elevation2 } from './assets/jss/theme';
 
-import { elevation2 } from 'assets/jss/theme';
+import HomePage from './pages/home';
+import TestPage from './pages/testpage';
+import ModlistsPage from './pages/modlists';
+
+import { createTheme, darkTheme } from './assets/jss/theme';
 
 const mainRaised = {
   background: elevation2,
@@ -21,21 +24,22 @@ const mainRaised = {
 
 const App: React.FC = () => {
   return (
-    <React.Fragment>
+    <ThemeProvider theme={createTheme(darkTheme)}>
       <Header />
       <Box style={mainRaised} m={4}>
         <Container
           maxWidth="lg"
           style={{ paddingTop: '16px', paddingBottom: '16px' }}
         >
-          <Route exact path="/" component={HomePage} />
-          <Route path="/info" component={InfoPage} />
-          <Route path="/modlists" component={ModlistsPage} />
+          <Route exact name="home" component={<HomePage />} />
+          <Route name="test" component={<TestPage />} />
+          <Route name="modlists" component={<ModlistsPage />} />
         </Container>
       </Box>
       <Footer />
-    </React.Fragment>
+    </ThemeProvider>
   );
 };
+
 
 export default App;

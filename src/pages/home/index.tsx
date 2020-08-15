@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import MaterialLink from 'components/MaterialLink';
+import { Container, Typography, Button, Grid, Link } from '@material-ui/core';
 
-import { Container, Typography, Link, Button, Grid } from '@material-ui/core';
+import logo from '../../assets/img/wabbajack_transparent.webp';
 
-import logo from 'assets/img/wabbajack_transparent.webp';
+import RoutedLink from '../../components/RoutedLink';
 
 const HomePage: React.FC = () => {
   return (
@@ -79,35 +79,43 @@ const HomePage: React.FC = () => {
           The process of installing a Modlist is designed to be as quick as
           possible. If you haven't already found a Modlist you want to install,
           you can head over to our{' '}
-          <MaterialLink href="/modlists/gallery" isLink>
-            Gallery
-          </MaterialLink>{' '}
-          to find a selection of curated Modlists.
+          <RoutedLink routeName="modlists.gallery">Gallery</RoutedLink> to find
+          a selection of curated Modlists.
         </Typography>
         <Typography variant="body1">
-          The readme of each Modlist will take you through the entire process on
-          how to correctly install it. Most of the time it's just a matter of
-          having a clean game installation, loading the Modlist in Wabbajack and
-          pressing the start button.
+          Every Modlist comes with its own README containing information and
+          instructions on how to install it correctly. You should definitely
+          read the Modlist specific README if you want a successful
+          installation.
+        </Typography>
+        <Typography variant="body1">
+          The general procedure is download the Modlist which comes as a
+          .wabbajack file, opening Wabbajack, clicking on the Install From Disk
+          button, configuring Install and Download Location and hitting start.
+        </Typography>
+        <Typography variant="body1">
+          Do note that installation can take anything from a few minutes to
+          hours depending on the size of the Modlist, your Internet connection
+          as well as your hardware. In the meantime you can take a look at some
+          of the included mods of the Modlist in the Slideshow that is playing
+          during installation.
         </Typography>
       </Container>
 
       <Container style={{ marginTop: '16px' }}>
         <Typography variant="h5">Compiling a Modlist</Typography>
         <Typography variant="body1">
-          Compiling/Creating a Modlist with Wabbajack is similar to installing
-          one in the sense that you don't really have to do anything in
-          Wabbajack itself. You do need good preparation if you want the
-          compilation to succeed.
+          Modlist Creation or Compilation as we call it, is a trial and error
+          process. You will likely get a decent amount of compilation errors in
+          the beginning and have to spent some time fixing them before your
+          first compilation succeeds. After that you can do incremental builds
+          which take significantly less time and have close to zero errors
+          compared to your first build.
         </Typography>
         <Typography variant="body1">
-          To get started with creating your own Modlist, check the{' '}
-          <MaterialLink href="/info/general" isLink>
-            General Information
-          </MaterialLink>{' '}
-          page on how Wabbajack works and read our guide{' '}
+          To get started with creating your own Modlist read our guide{' '}
           <Link href="https://github.com/wabbajack-tools/wabbajack#creating-your-own-modlist">
-            here
+            on GitHub
           </Link>
           .
         </Typography>
@@ -117,9 +125,9 @@ const HomePage: React.FC = () => {
         <Typography variant="h5">Troubleshooting</Typography>
         <Typography variant="body1">
           If you have trouble installing a Modlist, head over to our{' '}
-          <Link href={process.env.REACT_APP_DISCORD_LINK}>Discord</Link> and ask
-          for help in the respective channels. If you installed a Modlist which
-          is not in the gallery than ask the person who compiled it for support.{' '}
+          <Link href={process.env.DISCORD_LINK}>Discord</Link> and ask for help
+          in the respective channels. If you installed a Modlist which is not in
+          the gallery than ask the person who compiled it for support.{' '}
           <b>Do not ask for support on other Discord servers or on reddit!</b>
         </Typography>
       </Container>
@@ -127,16 +135,15 @@ const HomePage: React.FC = () => {
       <Container style={{ marginTop: '16px' }}>
         <Typography variant="h5">Further Information:</Typography>
         <Typography variant="body1">
-          <MaterialLink isLink href="/info/general">
-            General Information
-          </MaterialLink>{' '}
-          about how Wabbajack works.
+          <Link href="https://github.com/wabbajack-tools/wabbajack#wabbajack">
+            GitHub Readme
+          </Link>
         </Typography>
         <Typography variant="body1">
           For{' '}
-          <MaterialLink isLink href="/info/modauthors">
+          <Link href="https://github.com/wabbajack-tools/wabbajack#for-mod-authors">
             Mod Authors
-          </MaterialLink>
+          </Link>
           .
         </Typography>
         <Typography variant="body1">
@@ -148,7 +155,7 @@ const HomePage: React.FC = () => {
         </Typography>
         <Typography variant="body1">
           For{' '}
-          <Link href="https://github.com/wabbajack-tools/wabbajack/blob/master/CONTRIBUTING.md">
+          <Link href="https://github.com/wabbajack-tools/wabbajack/blob/master/CONTRIBUTING.md#contributing-to-wabbajack">
             Contributors
           </Link>
           .

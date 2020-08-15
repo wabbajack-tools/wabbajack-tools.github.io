@@ -1,26 +1,13 @@
+import 'mobx-react-lite/batchingForReactDom';
+
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { ConnectedRouter } from 'connected-react-router';
-import { createBrowserHistory } from 'history';
+import { RouterProvider } from 'react-router5';
 
 import './assets/scss/wabbajack.scss';
 
-import configureStore from 'store/configureStore';
-import { theme } from 'assets/jss/theme';
-
 import App from './App';
-
-import { ThemeProvider } from '@material-ui/core/styles';
-
-// Create browser history to use in the Redux store
-const baseUrl = document
-  .getElementsByTagName('base')[0]
-  .getAttribute('href') as string;
-const history = createBrowserHistory({ basename: baseUrl });
-
-// Get the application-wide store instance, prepopulating with state from the server where available.
-const store = configureStore(history);
+import { configureRouter } from './routes';
 
 const { userAgent } = window.navigator;
 const isIE = /MSIE|Trident/.test(userAgent);
@@ -34,16 +21,13 @@ if (isIE) {
     document.getElementById('root')
   );
 } else {
+  const router = configureRouter();
+  if (!router.isStarted()) router.start();
+
   ReactDOM.render(
-    <Provider store={store}>
-      <ConnectedRouter history={history}>
-        <ThemeProvider theme={theme}>
-          <App />
-        </ThemeProvider>
-      </ConnectedRouter>
-    </Provider>,
+    <RouterProvider router={router}>
+      <App />
+    </RouterProvider>,
     document.getElementById('root')
   );
-
-  //registerServiceWorker();
 }
