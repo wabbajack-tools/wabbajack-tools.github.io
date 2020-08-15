@@ -1,2 +1,10 @@
-last 1 chrome version
-last 1 firefox version
+[production]
+> 0.5%
+last 2 versions
+not dead
+not IE 11
+not edge 18
+
+[development]
+last 2 chrome version
+last 2 firefox version
