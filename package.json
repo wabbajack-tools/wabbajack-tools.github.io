@@ -10,8 +10,8 @@
     "prestart": "gulp",
     "start": "parcel ./src/public/index.html",
     "prebuild": "gulp",
-    "build": "parcel build ./src/index.tsx",
-    "lint": "eslint ./src**/*.ts ./src/**/*.tsx"
+    "build": "parcel build ./src/public/index.html",
+    "lint": "eslint ./src**/*.ts ./src/**/*.tsx gulpfile.js"
   },
   "engines": {
     "node": "14.7.x",

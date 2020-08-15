@@ -25,6 +25,7 @@ function getGitHubDownloadLink(cb) {
                   fs.unlinkSync('.env.local');
                 } catch (e) {}
                 fs.writeFileSync('.env.local', `WABBAJACKEXE=${url}`);
+                console.log(`Found URL: ${url}`);
                 cb();
               } else {
                 cb(new Error(`Unable to find Wabbajack.exe in ${assets}!`));
