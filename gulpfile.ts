@@ -42,9 +42,7 @@ export class Gulpfile {
                 const url = asset.browser_download_url;
                 try {
                   fs.unlinkSync('.env.local');
-                } catch (e) {
-                  return Promise.reject(e);
-                }
+                } catch (e) {}
                 fs.writeFileSync('.env.local', `WABBAJACKEXE=${url}`);
                 console.log(`Found URL: ${url}`);
                 return Promise.resolve(`Found URL: ${url}`);
