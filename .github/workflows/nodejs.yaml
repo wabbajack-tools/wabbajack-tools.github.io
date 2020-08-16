@@ -23,6 +23,7 @@ jobs:
       with:
         node-version: '14.7.x'
     - run: yarn install
+    - run: yarn test
     - run: yarn build
     #- run: yarn run coverage
     #  env:
@@ -54,8 +55,8 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: '14.7.x'
-    - run: yarn install
-    - run: yarn build
+    #- run: yarn install
+    #- run: yarn build
     - name: GitHub Pages Deployment
       uses: crazy-max/ghaction-github-pages@v1.4.1
       env:
