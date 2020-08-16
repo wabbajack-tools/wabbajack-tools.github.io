@@ -17,9 +17,14 @@
     "experimentalDecorators": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
-    "sourceMap": true
+    "sourceMap": true,
+  },
+  "ts-node": {
+    "transpileOnly": true
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "gulpfile.ts",
+    "__tests__/**/*"
   ]
 }
