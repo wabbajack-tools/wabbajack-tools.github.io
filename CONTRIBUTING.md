@@ -23,8 +23,8 @@
 1. Add this repository as a new remote `git remote add upstream https://github.com/wabbajack-tools/wabbajack.org.git`
 2. Make sure to be on the `code` branch `git checkout code`
 3. Fetch the changes `git fetch upstream`
-4. Rebase `git rebase upstream/master`
-5. If your other branch needs updating `git checkout branch-name && git rebase master`
+4. Rebase `git rebase upstream/code`
+5. If your other branch needs updating `git checkout branch-name && git rebase code`
 
 ## Used libraries and frameworks
 
