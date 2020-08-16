@@ -43,7 +43,8 @@ jobs:
         ref: code
     - name: Download build artifact
       uses: actions/download-artifact@v2
-      with: build-artifact
+      with:
+        name: build-artifact
     #- name: Use Node.js 14.7.x
     #  uses: actions/setup-node@v1
     #  with:
