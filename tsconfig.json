@@ -16,7 +16,8 @@
     "skipLibCheck": false,
     "experimentalDecorators": true,
     "allowJs": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true
   },
   "include": [
     "src/**/*"

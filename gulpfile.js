@@ -62,4 +62,4 @@ exports.build = series(
   parallel(cleanDist, getGitHubDownloadLink),
   copyPublicFiles
 );
-exports.default = getGitHubDownloadLink;
+exports.default = parallel(getGitHubDownloadLink, copyPublicFiles);
