@@ -7,7 +7,7 @@
       "url": "http://localhost:1234",
       "webRoot": "${workspaceFolder}",
       "sourceMapPathOverrides": {
-        "../*": "${webRoot}/*"
+        "../src/*": "${webRoot}/*"
       }
     }
   ]

@@ -8,6 +8,7 @@
 2. [Yarn](https://yarnpkg.com/lang/en/)
 3. [VS Code](https://code.visualstudio.com)
 4. The recommended VS extensions (see [`.vscode/extensions.json`](.vscode/extensions.json))
+5. (Optional) [Chrome](https://www.google.com/chrome/) + DevTools Extensions
 
 ## Installing
 
@@ -32,3 +33,7 @@ The website uses [React](https://reactjs.org/)+[Mobx 5](https://mobx.js.org)(+[M
 This is a bit different from your usual [Create React App](https://create-react-app.dev/) setup with React+Redux but I started to hate Redux very early on an found Mobx to be easier to work with.
 
 [Material-UI](https://material-ui.com/) is the UI framework, [Jest](https://jestjs.io/) is used for testing and [ESLint](https://eslint.org/) for linting.
+
+## Starting a dev server
+
+You can start a dev server by using the `yarn start` command. This will call `prestart` first and then launch parcel. It is recommended to use the Chrome launch configuration defined in [`.vscode/launch.json`](.vscode/launch.json).
