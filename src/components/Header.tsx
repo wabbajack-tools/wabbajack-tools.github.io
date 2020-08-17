@@ -26,6 +26,11 @@ const drawerLinkStyle: React.CSSProperties = {
   fontWeight: 'bold',
 };
 
+const titleBarLinks: React.CSSProperties = {
+  paddingLeft: '6px',
+  paddingRight: '6px',
+};
+
 interface IHideOnScrollProps {
   children?: React.ReactElement<any, any>;
 }
@@ -109,9 +114,25 @@ const Header = observer(() => {
             routeName="home"
             underline="none"
             color="textPrimary"
-            style={{ ...drawerLinkStyle, marginLeft: '8px' }}
+            style={{ ...drawerLinkStyle, marginLeft: '8px', flexGrow: 1 }}
           >
             <Typography variant="button">Wabbajack</Typography>
+          </RoutedLink>
+          <RoutedLink
+            routeName="modlists.gallery"
+            underline="none"
+            color="textPrimary"
+            style={titleBarLinks}
+          >
+            Gallery
+          </RoutedLink>
+          <RoutedLink
+            routeName="modlists.status"
+            underline="none"
+            color="textPrimary"
+            style={titleBarLinks}
+          >
+            Status Dashboard
           </RoutedLink>
         </Toolbar>
       </AppBar>
