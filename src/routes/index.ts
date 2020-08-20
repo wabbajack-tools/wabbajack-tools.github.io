@@ -34,7 +34,7 @@ const configureRouter = () => {
     defaultRoute: 'home',
   });
 
-  router.usePlugin(browserPlugin());
+  router.usePlugin(browserPlugin({ useHash: true }));
 
   if (process.env.NODE_ENV === 'development') router.usePlugin(loggerPlugin);
 

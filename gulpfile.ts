@@ -14,9 +14,11 @@ export class Gulpfile {
 
   @Task('copyPublicFiles')
   copyPublicFiles() {
-    return src('./src/public/CNAME')
-      .pipe(src('./src/public/404.html'))
-      .pipe(dest('./dist/'));
+    return (
+      src('./src/public/CNAME')
+        //.pipe(src('./src/public/404.html'))
+        .pipe(dest('./dist/'))
+    );
   }
 
   @Task('getGitHubDownloadLink')
