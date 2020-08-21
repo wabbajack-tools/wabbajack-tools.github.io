@@ -28,11 +28,13 @@ const App: React.FC = () => {
       <Header />
       <Box style={mainRaised} m={4}>
         <Container
-          maxWidth="lg"
+          maxWidth="xl"
           style={{ paddingTop: '16px', paddingBottom: '16px' }}
         >
-          <Route exact name="home" component={<HomePage />} />
-          <Route name="test" component={<TestPage />} />
+          <Container maxWidth="lg">
+            <Route exact name="home" component={<HomePage />} />
+            <Route name="test" component={<TestPage />} />
+          </Container>
           <Route name="modlists" component={<ModlistsPage />} />
         </Container>
       </Box>

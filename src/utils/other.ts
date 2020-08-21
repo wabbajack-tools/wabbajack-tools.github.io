@@ -49,3 +49,7 @@ export const toFileSizeString = (size: number) => {
   const num = Math.round(bytes / Math.pow(1024, place));
   return Math.sign(size) * num + Suffix[place];
 };
+
+export const createNexusURL = (game: string, id: string | number) => {
+  return `https://www.nexusmods.com/${game.toLowerCase()}/mods/${id}`;
+};

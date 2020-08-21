@@ -30,9 +30,13 @@ export interface IAbstractDownloadState {
   $type: StateType;
 }
 
-export interface IMetaState extends IAbstractDownloadState {
-  URL: string | undefined;
-  Name: string | undefined;
+export interface IURLState extends IAbstractDownloadState {
+  Url: string | undefined | null;
+  URL: string | undefined | null;
+}
+
+export interface IMetaState extends IURLState {
+  Name: string | undefined | null;
   Author: string | undefined;
   Version: string | undefined;
   ImageURL: string | undefined;
@@ -54,7 +58,7 @@ export interface IBethesdaNetDownloaderState extends IAbstractDownloadState {
 
 export interface IGameFileSourceDownloaderState extends IAbstractDownloadState {
   Game: Game;
-  GameFiel: string;
+  GameFile: string;
   Hash: string;
   GameVersion: string;
 }
@@ -63,31 +67,21 @@ export interface IGoogleDriveDownloaderState extends IAbstractDownloadState {
   Id: string;
 }
 
-export interface IHTTPDownloaderState extends IAbstractDownloadState {
-  Url: string;
-}
+export interface IHTTPDownloaderState extends IURLState {}
 
-export interface IManualDownloaderState extends IAbstractDownloadState {
-  Url: string;
-}
+export interface IManualDownloaderState extends IURLState {}
 
-export interface IMediaFireDownloaderState extends IAbstractDownloadState {
-  Url: string;
-}
+export interface IMediaFireDownloaderState extends IURLState {}
 
-export interface IModDBDownloaderState extends IAbstractDownloadState {
-  Url: string;
-}
+export interface IModDBDownloaderState extends IURLState {}
 
 export interface INexusDownloaderState extends IMetaState {
-  Game: Game;
+  GameName: Game;
   ModID: number;
   FileID: number;
 }
 
-export interface IWabbajackCDNDownloaderState extends IAbstractDownloadState {
-  Url: string;
-}
+export interface IWabbajackCDNDownloaderState extends IURLState {}
 
 export interface IDeadlyStreamDownloaderState
   extends IAbstractIPS4DownloaderState {}

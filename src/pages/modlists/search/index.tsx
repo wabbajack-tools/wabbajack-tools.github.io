@@ -22,8 +22,17 @@ import {
 import MaterialTable, { MTableToolbar } from 'material-table';
 
 import { getDateString, toFileSizeString } from '../../../utils/other';
-import { tryGetMetaState, tryGetName } from '../../../utils/archiveUtils';
-import { IArchive, MetaStateType, IMetaState } from '../../../types/archives';
+import {
+  tryGetMetaState,
+  tryGetName,
+  tryGetURL,
+} from '../../../utils/archiveUtils';
+import {
+  IArchive,
+  MetaStateType,
+  IMetaState,
+  IAbstractIPS4DownloaderState,
+} from '../../../types/archives';
 
 const ModlistSearchPage: React.FC = () => {
   const { machineURL } = useRouteNode('modlists.status.detailed').route.params;
@@ -97,6 +106,19 @@ const ModlistSearchPage: React.FC = () => {
 
   const renderType = (rowData: IArchive): string => {
     return rowData.State.$type.replace(', Wabbajack.Lib', '');
+  };
+
+  const archiveLinkAction = (rowData: IArchive | IArchive[]) => {
+    const archive = rowData as IArchive;
+    if (archive === undefined) return;
+    const url = tryGetURL(archive);
+    if (url === undefined) return;
+    window.open(url, '_blank');
+  };
+
+  const archiveLinkActionDisabled = (rowData: IArchive): boolean => {
+    const url = tryGetURL(rowData);
+    return url === undefined;
   };
 
   const toggleNSFW = useObserver(() => {
@@ -207,6 +229,11 @@ const ModlistSearchPage: React.FC = () => {
                 filterName(filter, rowData),
             },
             {
+              title: 'Archive Name',
+              field: 'Name',
+              hidden: !store.renderMetaNames,
+            },
+            {
               title: 'Size',
               field: 'Size',
               searchable: false,
@@ -219,6 +246,14 @@ const ModlistSearchPage: React.FC = () => {
               searchable: false,
               render: (rowData) => renderType(rowData),
             },
+          ]}
+          actions={[
+            (rowData: IArchive) => ({
+              icon: 'link',
+              tooltip: 'Visit',
+              onClick: () => archiveLinkAction(rowData),
+              disabled: archiveLinkActionDisabled(rowData),
+            }),
           ]}
         />
       </React.Fragment>
