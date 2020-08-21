@@ -240,14 +240,34 @@ const ModlistSearchPage: React.FC = () => {
               title: 'Size',
               field: 'Size',
               searchable: false,
-              render: (rowData) => toFileSizeString(rowData.Size),
+              render: (rowData) => (
+                <Typography style={{ color: '#DDDDDD' }}>
+                  {toFileSizeString(rowData.Size)}
+                </Typography>
+              ),
+              width: 100,
             },
-            { title: 'Hash', field: 'Hash', sorting: false, searchable: true },
+            {
+              title: 'Hash',
+              field: 'Hash',
+              sorting: false,
+              searchable: true,
+              render: (rowData) => (
+                <Typography style={{ color: '#DDDDDD' }}>
+                  {rowData.Hash}
+                </Typography>
+              ),
+              width: 120,
+            },
             {
               title: 'Type',
               field: 'State',
               searchable: false,
-              render: (rowData) => renderType(rowData),
+              render: (rowData) => (
+                <Typography style={{ color: '#DDDDDD' }}>
+                  {renderType(rowData)}
+                </Typography>
+              ),
             },
           ]}
           actions={[
