@@ -21,24 +21,31 @@ interface IArchiveTableProps {
 }
 
 const ArchiveTable: React.FC<IArchiveTableProps> = (props) => {
-  const store = useLocalStore(() => ({
-    showNSFW: false,
-    showImages: false,
-    renderMetaNames: true,
-    archives: props.archives,
-  }));
-
-  const updateArchives = () => {
-    store.archives = props.archives.filter((a) => {
+  const filterArchives = (archives: IArchive[], showNSFW: boolean) => {
+    return archives.filter((a) => {
       //no need to filter if we show everything
-      if (store.showNSFW) return true;
+      if (showNSFW) return true;
       if (a.State.$type === 'LoversLabDownloader, Wabbajack.Lib')
-        return store.showNSFW;
+        return showNSFW;
 
       const metaState = tryGetMetaState(a.State);
       if (metaState === undefined) return true;
       return !metaState.IsNSFW;
     });
+  };
+
+  const store = useLocalStore(() => {
+    const archives = filterArchives(props.archives, false);
+    return {
+      showNSFW: false,
+      showImages: false,
+      renderMetaNames: true,
+      archives: archives,
+    };
+  });
+
+  const updateArchives = () => {
+    store.archives = filterArchives(props.archives, store.showNSFW);
   };
 
   const renderName = (rowData: IArchive): string => {
