@@ -79,6 +79,9 @@ const ModlistSearchPage: React.FC = () => {
     store.archives = status.Archives.map((a) => a.Archive).filter((a) => {
       //no need to filter if we show everything
       if (store.showNSFW) return true;
+      if (a.State.$type === 'LoversLabDownloader, Wabbajack.Lib')
+        return store.showNSFW;
+
       const metaState = tryGetMetaState(a.State);
       if (metaState === undefined) return true;
       return !metaState.IsNSFW;
