@@ -86,6 +86,13 @@ const ModlistSearchPage: React.FC = () => {
     return name1.localeCompare(name2);
   };
 
+  const filterName = (filter: any, rowData: IArchive): boolean => {
+    const sFilter = filter as string;
+    if (sFilter === undefined) return true;
+    const name = tryGetName(rowData).toLocaleLowerCase();
+    return name.includes(sFilter.toLocaleLowerCase());
+  };
+
   const renderType = (rowData: IArchive): string => {
     return rowData.State.$type.replace(', Wabbajack.Lib', '');
   };
@@ -154,24 +161,26 @@ const ModlistSearchPage: React.FC = () => {
             {
               title: 'Name',
               field: 'Name',
+              render: (rowData) => renderName(rowData),
               defaultSort: 'asc',
               sorting: true,
-              render: (rowData) => renderName(rowData),
-              customSort: (
-                data1: IArchive,
-                data2: IArchive,
-                type: 'row' | 'group'
-              ) => sortName(data1, data2),
+              customSort: (data1: IArchive, data2: IArchive) =>
+                sortName(data1, data2),
+              searchable: true,
+              customFilterAndSearch: (filter: any, rowData: IArchive) =>
+                filterName(filter, rowData),
             },
             {
               title: 'Size',
               field: 'Size',
+              searchable: false,
               render: (rowData) => toFileSizeString(rowData.Size),
             },
-            { title: 'Hash', field: 'Hash', sorting: false },
+            { title: 'Hash', field: 'Hash', sorting: false, searchable: true },
             {
               title: 'Type',
               field: 'State',
+              searchable: false,
               render: (rowData) => renderType(rowData),
             },
           ]}
