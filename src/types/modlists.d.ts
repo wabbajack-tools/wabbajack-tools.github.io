@@ -1,6 +1,22 @@
 import { Game } from './game';
 import { IArchive, ArchiveStatus } from './archives';
 
+export interface IModlist {
+  Name: string;
+  Version: string;
+  Author: string;
+  Description: string;
+  GameType: Game;
+  GameName: Game;
+  ModManager: number;
+  ModManagerName: string;
+  DownloadSize: number;
+  InstallSize: number;
+  IsNSFW: boolean;
+  Archives: IArchive[];
+  //Directives:
+}
+
 //adapted from https://github.com/wabbajack-tools/wabbajack/blob/master/Wabbajack.Lib/ModListRegistry/ModListMetadata.cs
 
 export interface IModlistMetadata {

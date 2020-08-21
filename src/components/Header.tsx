@@ -19,6 +19,7 @@ import {
 import MenuIcon from '@material-ui/icons/Menu';
 import AppsIcon from '@material-ui/icons/Apps';
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import DescriptionIcon from '@material-ui/icons/Description';
 
 import RoutedLink from './RoutedLink';
 
@@ -94,7 +95,7 @@ const Header = observer(() => {
                     Gallery
                   </RoutedLink>
                 </ListItem>
-                <ListItem button key={uuidv4()} href="/status">
+                <ListItem button key={uuidv4()}>
                   <ListItemIcon>
                     <DashboardIcon />
                   </ListItemIcon>
@@ -105,6 +106,19 @@ const Header = observer(() => {
                     underline="none"
                   >
                     Status Dashboard
+                  </RoutedLink>
+                </ListItem>
+                <ListItem button key={uuidv4()}>
+                  <ListItemIcon>
+                    <DescriptionIcon />
+                  </ListItemIcon>
+                  <RoutedLink
+                    routeName="modlists.manifest"
+                    color="textPrimary"
+                    style={drawerLinkStyle}
+                    underline="none"
+                  >
+                    Manifest Viewer
                   </RoutedLink>
                 </ListItem>
               </List>

@@ -11,13 +11,9 @@ import {
 
 import MaterialTable, { MTableToolbar } from 'material-table';
 
-import { toFileSizeString } from '../../../utils/other';
-import {
-  tryGetMetaState,
-  tryGetName,
-  tryGetURL,
-} from '../../../utils/archiveUtils';
-import { IArchive } from '../../../types/archives';
+import { toFileSizeString } from '../utils/other';
+import { tryGetMetaState, tryGetName, tryGetURL } from '../utils/archiveUtils';
+import { IArchive } from '../types/archives';
 
 interface IArchiveTableProps {
   archives: Array<IArchive>;

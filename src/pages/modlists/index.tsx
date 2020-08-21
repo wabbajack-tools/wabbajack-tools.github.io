@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { Container } from '@material-ui/core';
+
 import Route from '../../components/Route';
 
 import Gallery from './gallery';
@@ -7,7 +9,7 @@ import InfoPage from './info';
 import StatusPage from './status';
 import DetailedStatusPage from './detailed-status';
 import SearchPage from './search';
-import { Container } from '@material-ui/core';
+import ManifestPage from './manifest';
 
 const ModlistsPage: React.FC = () => {
   return (
@@ -23,6 +25,7 @@ const ModlistsPage: React.FC = () => {
         />
       </Container>
       <Route exact name="modlists.search" component={<SearchPage />} />
+      <Route exact name="modlists.manifest" component={<ManifestPage />} />
     </React.Fragment>
   );
 };

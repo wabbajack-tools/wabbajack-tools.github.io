@@ -1,31 +1,15 @@
 import * as React from 'react';
 import { useRouteNode } from 'react-router5';
-import { useLocalStore, Observer, useObserver } from 'mobx-react';
+import { useObserver } from 'mobx-react';
 
 import RoutedLink from '../../../components/RoutedLink';
 
 import { useStores } from '../../../hooks/use-stores';
 import ErrorDisplay from '../../../components/ErrorDisplay';
 
-import {
-  Typography,
-  FormControlLabel,
-  Grid,
-  Checkbox,
-  Tooltip,
-} from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 
-import MaterialTable, { MTableToolbar } from 'material-table';
-
-import { toFileSizeString } from '../../../utils/other';
-import {
-  tryGetMetaState,
-  tryGetName,
-  tryGetURL,
-} from '../../../utils/archiveUtils';
-import { IArchive } from '../../../types/archives';
-
-import ArchiveTable from './ArchiveTable';
+import ArchiveTable from '../../../components/ArchiveTable';
 
 const ModlistSearchPage: React.FC = () => {
   const { machineURL } = useRouteNode('modlists.status.detailed').route.params;
