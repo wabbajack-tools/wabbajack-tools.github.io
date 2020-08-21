@@ -20,7 +20,8 @@ export function tryGetMetaState(
   return metaState;
 }
 
-export function tryGetName(archive: IArchive): string {
+export function tryGetName(archive: IArchive, useMetaName: boolean): string {
+  if (!useMetaName) return archive.Name;
   const metaState = tryGetMetaState(archive.State);
   if (metaState === undefined) return archive.Name;
   if (metaState.Name === undefined) return archive.Name;

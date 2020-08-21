@@ -16,6 +16,7 @@ import {
   FormControlLabel,
   Grid,
   Checkbox,
+  Tooltip,
 } from '@material-ui/core';
 
 import MaterialTable, { MTableToolbar } from 'material-table';
@@ -29,6 +30,7 @@ const ModlistSearchPage: React.FC = () => {
   const store = useLocalStore(() => ({
     showNSFW: false,
     showImages: false,
+    renderMetaNames: true,
     archives: new Array<IArchive>(),
   }));
   const { detailedStatusStore } = useStores();
@@ -77,19 +79,19 @@ const ModlistSearchPage: React.FC = () => {
   updateArchives();
 
   const renderName = (rowData: IArchive): string => {
-    return tryGetName(rowData);
+    return tryGetName(rowData, store.renderMetaNames);
   };
 
   const sortName = (data1: IArchive, data2: IArchive): number => {
-    const name1 = tryGetName(data1);
-    const name2 = tryGetName(data2);
+    const name1 = tryGetName(data1, store.renderMetaNames);
+    const name2 = tryGetName(data2, store.renderMetaNames);
     return name1.localeCompare(name2);
   };
 
   const filterName = (filter: any, rowData: IArchive): boolean => {
     const sFilter = filter as string;
     if (sFilter === undefined) return true;
-    const name = tryGetName(rowData).toLocaleLowerCase();
+    const name = tryGetName(rowData, store.renderMetaNames).toLocaleLowerCase();
     return name.includes(sFilter.toLocaleLowerCase());
   };
 
@@ -116,6 +118,35 @@ const ModlistSearchPage: React.FC = () => {
     );
   });
 
+  const toggleImages = (
+    <FormControlLabel
+      control={
+        <Checkbox
+          name="enableImages"
+          checked={store.showImages}
+          onChange={() => (store.showImages = !store.showImages)}
+        />
+      }
+      label="Show Images"
+    />
+  );
+
+  const toggleMetaNames = (
+    <FormControlLabel
+      control={
+        <Checkbox
+          name="toggleMetaNames"
+          checked={store.renderMetaNames}
+          onChange={() => {
+            store.renderMetaNames = !store.renderMetaNames;
+            updateArchives();
+          }}
+        />
+      }
+      label="Render Meta Names"
+    />
+  );
+
   const content = useObserver(() => {
     if (loadingDetailedStatus !== undefined) return undefined;
     if (status === undefined) return undefined;
@@ -128,6 +159,8 @@ const ModlistSearchPage: React.FC = () => {
           options={{
             sorting: true,
             headerStyle: { backgroundColor: '#242424' },
+            pageSize: 10,
+            pageSizeOptions: [5, 10, 20, 50],
           }}
           components={{
             Toolbar: (props) => (
@@ -136,21 +169,24 @@ const ModlistSearchPage: React.FC = () => {
                   <div style={{ backgroundColor: '#1F1B24' }}>
                     <MTableToolbar {...props} />
                     <Grid container alignItems="flex-start" justify="flex-end">
-                      <Grid item>{toggleNSFW}</Grid>
-                      <Grid item>
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              name="enableImages"
-                              checked={store.showImages}
-                              onChange={() =>
-                                (store.showImages = !store.showImages)
-                              }
-                            />
-                          }
-                          label="Show Images"
-                        />
-                      </Grid>
+                      <Tooltip
+                        title="This will toggle the showcase of NSFW mods."
+                        placement="top"
+                      >
+                        <Grid item>{toggleNSFW}</Grid>
+                      </Tooltip>
+                      <Tooltip
+                        title="This will toggle the use of images in the details panel."
+                        placement="top"
+                      >
+                        <Grid item>{toggleImages}</Grid>
+                      </Tooltip>
+                      <Tooltip
+                        title="This will toggle the use of meta names instead of the archive file name."
+                        placement="top"
+                      >
+                        <Grid item>{toggleMetaNames}</Grid>
+                      </Tooltip>
                     </Grid>
                   </div>
                 )}
