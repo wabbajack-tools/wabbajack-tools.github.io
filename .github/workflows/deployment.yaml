@@ -1,12 +1,10 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Node.js CI
+name: Deployment Workflow
 
 on:
   push:
-    branches: code
-  pull_request:
     branches: code
   schedule:
     - cron: "*/30 * * * *"
@@ -23,18 +21,25 @@ jobs:
       with:
         node-version: '14.7.x'
     - run: yarn install --frozen-lockfile
-    - run: yarn test
     - run: yarn build
     - name: Upload build artifact
       uses: actions/upload-artifact@v2
-      if: github.event_name == 'push'
       with:
         name: build-artifact
         path: dist/
         if-no-files-found: error
-
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js 14.7.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14.7.x'
+    - run: yarn install --frozen-lockfile
+    - run: yarn test
   deploy:
-    needs: [build]
+    needs: [build, test]
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
@@ -46,12 +51,6 @@ jobs:
       with:
         name: build-artifact
         path: dist
-    #- name: Use Node.js 14.7.x
-    #  uses: actions/setup-node@v1
-    #  with:
-    #    node-version: '14.7.x'
-    #- run: yarn install
-    #- run: yarn build
     - name: GitHub Pages Deployment
       uses: crazy-max/ghaction-github-pages@v1.4.1
       env:
@@ -73,4 +72,3 @@ jobs:
         commit_message: Update # optional
         # Write the given domain name to the CNAME file
         # fqdn: # optional
-
