@@ -10,14 +10,6 @@ export interface IArchive {
   State: IAbstractDownloadState;
 }
 
-/*export const MetaStateList = [
-  'LoversLabDownloader, Wabbajack.Lib',
-  'NexusDownloader, Wabbajack.Lib',
-] as const;
-
-type MetaStateTuple = typeof MetaStateList;
-export type MetaStateType = MetaStateTuple[number];*/
-
 export type MetaStateType =
   | 'LoversLabDownloader, Wabbajack.Lib'
   | 'NexusDownloader, Wabbajack.Lib';

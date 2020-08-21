@@ -21,6 +21,7 @@ import {
 import MaterialTable, { MTableToolbar } from 'material-table';
 
 import { getDateString, toFileSizeString } from '../../../utils/other';
+import { tryGetMetaState, tryGetName } from '../../../utils/archiveUtils';
 import { IArchive, MetaStateType, IMetaState } from '../../../types/archives';
 
 const ModlistSearchPage: React.FC = () => {
@@ -67,21 +68,27 @@ const ModlistSearchPage: React.FC = () => {
     store.archives = status.Archives.map((a) => a.Archive).filter((a) => {
       //no need to filter if we show everything
       if (store.showNSFW) return true;
-      const type = a.State.$type;
-      const metaType = type as MetaStateType;
-      if (metaType === undefined) return true;
-      const metaState = a.State as IMetaState;
-      if (metaState === undefined) {
-        console.log(
-          `${a.State.$type} was supposed to be an IMetaState but is not!`
-        );
-        return true;
-      }
+      const metaState = tryGetMetaState(a.State);
+      if (metaState === undefined) return true;
       return !metaState.IsNSFW;
     });
   };
   //calling this once so store.archives gets populated
   updateArchives();
+
+  const renderName = (rowData: IArchive): string => {
+    return tryGetName(rowData);
+  };
+
+  const sortName = (data1: IArchive, data2: IArchive): number => {
+    const name1 = tryGetName(data1);
+    const name2 = tryGetName(data2);
+    return name1.localeCompare(name2);
+  };
+
+  const renderType = (rowData: IArchive): string => {
+    return rowData.State.$type.replace(', Wabbajack.Lib', '');
+  };
 
   const toggleNSFW = useObserver(() => {
     if (status === undefined) return undefined;
@@ -144,18 +151,28 @@ const ModlistSearchPage: React.FC = () => {
             ),
           }}
           columns={[
-            { title: 'Name', field: 'Name', defaultSort: 'asc' },
+            {
+              title: 'Name',
+              field: 'Name',
+              defaultSort: 'asc',
+              sorting: true,
+              render: (rowData) => renderName(rowData),
+              customSort: (
+                data1: IArchive,
+                data2: IArchive,
+                type: 'row' | 'group'
+              ) => sortName(data1, data2),
+            },
             {
               title: 'Size',
               field: 'Size',
               render: (rowData) => toFileSizeString(rowData.Size),
             },
-            { title: 'Hash', field: 'Hash' },
+            { title: 'Hash', field: 'Hash', sorting: false },
             {
               title: 'Type',
               field: 'State',
-              render: (rowData) =>
-                rowData.State.$type.replace(', Wabbajack.Lib', ''),
+              render: (rowData) => renderType(rowData),
             },
           ]}
         />
