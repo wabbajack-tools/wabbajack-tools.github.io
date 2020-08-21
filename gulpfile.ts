@@ -18,6 +18,7 @@ export class Gulpfile {
       src('./src/public/CNAME')
         .pipe(src('./README.md'))
         .pipe(src('./LICENSE.txt'))
+        .pipe(src('./CONTRIBUTING.md'))
         //.pipe(src('./src/public/404.html'))
         .pipe(dest('./dist/'))
     );
