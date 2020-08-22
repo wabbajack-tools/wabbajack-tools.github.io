@@ -23,7 +23,7 @@ const options = (
   return {
     overrides: {
       h1: {
-        component: Typography,
+        component: 'h1',
         props: {
           variant: 'h1',
           style: {
@@ -35,7 +35,7 @@ const options = (
         },
       },
       h2: {
-        component: Typography,
+        component: 'h2',
         props: {
           variant: 'h2',
           style: {
@@ -46,7 +46,7 @@ const options = (
         },
       },
       h3: {
-        component: Typography,
+        component: 'h3',
         props: {
           variant: 'h3',
           style: {
@@ -56,7 +56,7 @@ const options = (
         },
       },
       h4: {
-        component: Typography,
+        component: 'h4',
         props: {
           variant: 'h4',
           style: {
@@ -115,6 +115,19 @@ const options = (
         return React.createElement(type, anyProps, children);
       }
 
+      const anyProps = props as any;
+
+      if (
+        type === 'h1' ||
+        type == 'h2' ||
+        type == 'h3' ||
+        type == 'h4' ||
+        type == 'h5' ||
+        type == 'h6'
+      ) {
+        return React.createElement(Typography, props, children);
+      }
+
       if (type !== 'a') return React.createElement(type, props, children);
 
       /*const anyType = type as any;
@@ -126,17 +139,21 @@ const options = (
       const name = anyType.options.name as string;
       if (name !== 'MuiLink') return React.createElement(type, props, children);*/
 
-      const anyProps = props as any;
       if (anyProps.href === undefined)
         return React.createElement(type, props, children);
 
       let href = anyProps.href as string;
       if (href.startsWith('#')) {
-        if (baseURL === undefined) {
-          return React.createElement(type, props, children);
-        }
-
-        anyProps.href = `${baseURL}${href}`;
+        const linkProps: React.LinkHTMLAttributes<HTMLLinkElement> = {
+          href: `${baseURL}${href}`,
+          onClick: (event) => {
+            event.preventDefault();
+            const element = document.getElementById(href.slice(1));
+            if (element == null) return;
+            element.scrollIntoView();
+          },
+        };
+        return React.createElement('a', linkProps, children);
       } else if (href.endsWith('.md') && !href.startsWith('http')) {
         if (externalURL === undefined)
           return React.createElement(type, props, children);

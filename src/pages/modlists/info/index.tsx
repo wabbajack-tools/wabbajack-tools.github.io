@@ -129,10 +129,7 @@ const ModlistInfoPage: React.FC = () => {
         <Typography variant="subtitle2">{description}</Typography>
         <Divider style={{ marginTop: '8px', marginBottom: '8px' }} />
         <Markdown
-          options={options(
-            `/modlists/info/${machineURL}`,
-            `${modlist.links.readme}`
-          )}
+          options={options(window.location.hash, `${modlist.links.readme}`)}
         >
           {readme}
         </Markdown>
