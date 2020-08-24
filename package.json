@@ -69,7 +69,7 @@
     "eslint-plugin-react-hooks": "^4.1.0",
     "gulp": "^4.0.2",
     "gulpclass": "^0.2.0",
-    "jest": "^26.4.0",
+    "jest": "^26.4.2",
     "mobx": "^5.15.6",
     "mobx-react": "^6.2.5",
     "parcel": "^1.12.4",
