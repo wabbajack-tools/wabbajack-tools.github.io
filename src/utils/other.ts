@@ -53,3 +53,7 @@ export const toFileSizeString = (size: number) => {
 export const createNexusURL = (game: string, id: string | number) => {
   return `https://www.nexusmods.com/${game.toLowerCase()}/mods/${id}`;
 };
+
+export function notUndefined<T>(arr: Array<T | undefined>): Array<T> {
+  return arr.filter((x) => x !== undefined) as Array<T>;
+};

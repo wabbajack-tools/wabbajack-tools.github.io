@@ -12,7 +12,15 @@ import {
 import MaterialTable, { MTableToolbar } from 'material-table';
 
 import { toFileSizeString } from '../utils/other';
-import { tryGetMetaState, tryGetName, tryGetURL } from '../utils/archiveUtils';
+import {
+  filterArchives,
+  filterName,
+  archiveLinkAction,
+  archiveLinkActionDisabled,
+  renderName,
+  renderType,
+  sortName,
+} from '../utils/archiveUtils';
 import { IArchive } from '../types/archives';
 
 interface IArchiveTableProps {
@@ -21,19 +29,6 @@ interface IArchiveTableProps {
 }
 
 const ArchiveTable: React.FC<IArchiveTableProps> = (props) => {
-  const filterArchives = (archives: IArchive[], showNSFW: boolean) => {
-    return archives.filter((a) => {
-      //no need to filter if we show everything
-      if (showNSFW) return true;
-      if (a.State.$type === 'LoversLabDownloader, Wabbajack.Lib')
-        return showNSFW;
-
-      const metaState = tryGetMetaState(a.State);
-      if (metaState === undefined) return true;
-      return !metaState.IsNSFW;
-    });
-  };
-
   const store = useLocalStore(() => {
     const archives = filterArchives(props.archives, false);
     return {
@@ -46,40 +41,6 @@ const ArchiveTable: React.FC<IArchiveTableProps> = (props) => {
 
   const updateArchives = () => {
     store.archives = filterArchives(props.archives, store.showNSFW);
-  };
-
-  const renderName = (rowData: IArchive): string => {
-    return tryGetName(rowData, store.renderMetaNames);
-  };
-
-  const sortName = (data1: IArchive, data2: IArchive): number => {
-    const name1 = tryGetName(data1, store.renderMetaNames);
-    const name2 = tryGetName(data2, store.renderMetaNames);
-    return name1.localeCompare(name2);
-  };
-
-  const filterName = (filter: any, rowData: IArchive): boolean => {
-    const sFilter = filter as string;
-    if (sFilter === undefined) return true;
-    const name = tryGetName(rowData, store.renderMetaNames).toLocaleLowerCase();
-    return name.includes(sFilter.toLocaleLowerCase());
-  };
-
-  const renderType = (rowData: IArchive): string => {
-    return rowData.State.$type.replace(', Wabbajack.Lib', '');
-  };
-
-  const archiveLinkAction = (rowData: IArchive | IArchive[]) => {
-    const archive = rowData as IArchive;
-    if (archive === undefined) return;
-    const url = tryGetURL(archive);
-    if (url === undefined) return;
-    window.open(url, '_blank');
-  };
-
-  const archiveLinkActionDisabled = (rowData: IArchive): boolean => {
-    const url = tryGetURL(rowData);
-    return url === undefined;
   };
 
   const toggleNSFW = useObserver(() => {
@@ -177,14 +138,14 @@ const ArchiveTable: React.FC<IArchiveTableProps> = (props) => {
             {
               title: 'Name',
               field: 'Name',
-              render: (rowData) => renderName(rowData),
+              render: (rowData) => renderName(rowData, store.renderMetaNames),
               defaultSort: 'asc',
               sorting: true,
               customSort: (data1: IArchive, data2: IArchive) =>
-                sortName(data1, data2),
+                sortName(data1, data2, store.renderMetaNames),
               searchable: true,
               customFilterAndSearch: (filter: any, rowData: IArchive) =>
-                filterName(filter, rowData),
+                filterName(filter, rowData, store.renderMetaNames),
             },
             {
               title: 'Archive Name',

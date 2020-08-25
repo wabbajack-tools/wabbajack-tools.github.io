@@ -46,3 +46,60 @@ export function tryGetURL(archive: IArchive): string | undefined {
   if (nexusState.$type !== 'NexusDownloader, Wabbajack.Lib') return undefined;
   return createNexusURL(nexusState.GameName, nexusState.ModID);
 }
+
+export const filterArchives = (archives: IArchive[], showNSFW: boolean) => {
+  return archives.filter((a) => {
+    //no need to filter if we show everything
+    if (showNSFW) return true;
+    if (a.State.$type === 'LoversLabDownloader, Wabbajack.Lib') return showNSFW;
+
+    const metaState = tryGetMetaState(a.State);
+    if (metaState === undefined) return true;
+    return !metaState.IsNSFW;
+  });
+};
+
+export const renderName = (
+  rowData: IArchive,
+  renderMetaNames: boolean
+): string => {
+  return tryGetName(rowData, renderMetaNames);
+};
+
+export const sortName = (
+  data1: IArchive,
+  data2: IArchive,
+  renderMetaNames: boolean
+): number => {
+  const name1 = tryGetName(data1, renderMetaNames);
+  const name2 = tryGetName(data2, renderMetaNames);
+  return name1.localeCompare(name2);
+};
+
+export const filterName = (
+  filter: any,
+  rowData: IArchive,
+  renderMetaNames: boolean
+): boolean => {
+  const sFilter = filter as string;
+  if (sFilter === undefined) return true;
+  const name = tryGetName(rowData, renderMetaNames).toLocaleLowerCase();
+  return name.includes(sFilter.toLocaleLowerCase());
+};
+
+export const renderType = (rowData: IArchive): string => {
+  return rowData.State.$type.replace(', Wabbajack.Lib', '');
+};
+
+export const archiveLinkAction = (rowData: IArchive | IArchive[]) => {
+  const archive = rowData as IArchive;
+  if (archive === undefined) return;
+  const url = tryGetURL(archive);
+  if (url === undefined) return;
+  window.open(url, '_blank');
+};
+
+export const archiveLinkActionDisabled = (rowData: IArchive): boolean => {
+  const url = tryGetURL(rowData);
+  return url === undefined;
+};
