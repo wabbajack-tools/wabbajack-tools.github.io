@@ -24,7 +24,7 @@ const ModlistsPage: React.FC = () => {
           component={<DetailedStatusPage />}
         />
       </Container>
-      <Route exact name="modlists.search" component={<SearchPage />} />
+      <Route name="modlists.search" component={<SearchPage />} />
       <Route exact name="modlists.manifest" component={<ManifestPage />} />
     </React.Fragment>
   );

@@ -12,6 +12,8 @@ type RouteName =
   | 'modlists.status'
   | 'modlists.status.detailed'
   | 'modlists.search'
+  | 'modlists.search.all'
+  | 'modlists.search.single'
   | 'modlists.manifest';
 
 interface IRoute extends Route<Record<string, any>> {
@@ -27,7 +29,9 @@ const routes: IRoute[] = [
   { name: 'modlists.info', path: '/info?:machineURL' },
   { name: 'modlists.status', path: '/status' },
   { name: 'modlists.status.detailed', path: '?:machineURL' },
-  { name: 'modlists.search', path: '/search?:machineURL' },
+  { name: 'modlists.search', path: '/search' },
+  { name: 'modlists.search.all', path: '/all' },
+  { name: 'modlists.search.single', path: '?:machineURL' },
   { name: 'modlists.manifest', path: '/manifest' },
 ];
 

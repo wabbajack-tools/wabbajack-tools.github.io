@@ -20,6 +20,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import AppsIcon from '@material-ui/icons/Apps';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import DescriptionIcon from '@material-ui/icons/Description';
+import SearchIcon from '@material-ui/icons/Search';
 
 import RoutedLink from './RoutedLink';
 
@@ -93,6 +94,19 @@ const Header = observer(() => {
                     color="textPrimary"
                   >
                     Gallery
+                  </RoutedLink>
+                </ListItem>
+                <ListItem button key={uuidv4()}>
+                  <ListItemIcon>
+                    <SearchIcon />
+                  </ListItemIcon>
+                  <RoutedLink
+                    routeName="modlists.search.all"
+                    color="textPrimary"
+                    style={drawerLinkStyle}
+                    underline="none"
+                  >
+                    Archive Search
                   </RoutedLink>
                 </ListItem>
                 <ListItem button key={uuidv4()}>
