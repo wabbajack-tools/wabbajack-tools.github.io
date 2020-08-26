@@ -6,11 +6,20 @@ import RoutedLink from '../../../components/RoutedLink';
 import { useStores } from '../../../hooks/use-stores';
 import ErrorDisplay from '../../../components/ErrorDisplay';
 
-import { Typography } from '@material-ui/core';
+import {
+  Typography,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Checkbox,
+  Button,
+  Container,
+} from '@material-ui/core';
 
 import ModlistTable from '../../../components/ModlistTable';
-import { notUndefined } from '../../../utils/other';
-import { IDetailedStatus, IModlistMetadata } from '../../../types/modlists';
+import ModlistArchiveTable from '../../../components/ModlistArchiveTable';
+import { IModlistMetadata } from '../../../types/modlists';
 import { IArchive } from '../../../types/archives';
 
 const ArchiveSearchPage: React.FC = () => {
@@ -18,7 +27,8 @@ const ArchiveSearchPage: React.FC = () => {
   const store = useLocalStore(() => {
     return {
       currentIndex: -1,
-      length: -1,
+      selectedModlists: new Array<IModlistMetadata>(),
+      didSelectModlists: false,
     };
   });
 
@@ -41,23 +51,32 @@ const ArchiveSearchPage: React.FC = () => {
       );
     }
 
-    //if (store.length != 2) store.length = 2;
-
-    if (store.length != modlistsStore.modlists.length)
-      store.length = modlistsStore.modlists.length;
-
     return undefined;
+  });
+
+  const selectModlist = useObserver(() => {
+    if (loadingModlists !== undefined) return undefined;
+    if (modlistsStore.modlists === undefined) return undefined;
+    if (store.didSelectModlists) return undefined;
+
+    return (
+      <ModlistTable
+        modlists={modlistsStore.modlists}
+        updateSelection={(modlists) => (store.selectedModlists = modlists)}
+        loadModlists={() => (store.didSelectModlists = true)}
+      />
+    );
   });
 
   const loadingDetailedStatus = useObserver(() => {
     if (loadingModlists !== undefined) return undefined;
     if (modlistsStore.modlists === undefined) return undefined;
+    if (selectModlist !== undefined) return undefined;
 
-    if (store.length === -1) return <ErrorDisplay message="Lenght is -1!" />;
-    if (store.currentIndex >= store.length) return undefined;
+    if (store.currentIndex >= store.selectedModlists.length) return undefined;
     if (store.currentIndex === -1) store.currentIndex = 0;
 
-    const currentModlist = modlistsStore.modlists[store.currentIndex];
+    const currentModlist = store.selectedModlists[store.currentIndex];
     const machineURL = currentModlist.links.machineURL;
     if (detailedStatusStore.shouldFetch(machineURL)) {
       detailedStatusStore.fetchDetailedStatus(machineURL);
@@ -79,14 +98,15 @@ const ArchiveSearchPage: React.FC = () => {
     }
 
     store.currentIndex = store.currentIndex + 1;
-    if (store.currentIndex >= store.length) return undefined;
+    if (store.currentIndex >= store.selectedModlists.length) return undefined;
     return <Typography>Loading Detailed Status</Typography>;
   });
 
   const content = useObserver(() => {
     if (loadingModlists !== undefined) return undefined;
-    if (loadingDetailedStatus !== undefined) return undefined;
     if (modlistsStore.modlists === undefined) return undefined;
+    if (selectModlist !== undefined) return undefined;
+    if (loadingDetailedStatus !== undefined) return undefined;
 
     //TODO: labeled tuple elements with TS 4.0
     const data: [IModlistMetadata, IArchive[]][] = modlistsStore.modlists
@@ -103,7 +123,17 @@ const ArchiveSearchPage: React.FC = () => {
         return x[1] !== undefined;
       }) as [IModlistMetadata, IArchive[]][];
 
-    return <ModlistTable data={data} />;
+    return (
+      <React.Fragment>
+        <Button
+          color="secondary"
+          onClick={() => (store.didSelectModlists = false)}
+        >
+          Back to Modlist Selection
+        </Button>
+        <ModlistArchiveTable data={data} />
+      </React.Fragment>
+    );
   });
 
   return (
@@ -111,6 +141,7 @@ const ArchiveSearchPage: React.FC = () => {
       <RoutedLink routeName="modlists.gallery">Back to the Gallery</RoutedLink>
       {loadingModlists}
       {loadingDetailedStatus}
+      {selectModlist}
       {content}
     </React.Fragment>
   );
