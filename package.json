@@ -27,7 +27,7 @@
     "axios": "^0.20.0",
     "history": "^5.0.0",
     "markdown-to-jsx": "^7.0.0",
-    "material-table": "^1.69.0",
+    "material-table": "^1.69.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-dropzone": "^11.2.0",
