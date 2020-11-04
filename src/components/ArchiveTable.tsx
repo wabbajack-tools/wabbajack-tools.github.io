@@ -101,7 +101,7 @@ const ArchiveTable: React.FC<IArchiveTableProps> = (props) => {
             sorting: true,
             headerStyle: { backgroundColor: '#242424' },
             pageSize: 10,
-            pageSizeOptions: [5, 10, 20, 50],
+            pageSizeOptions: [10,50,100,250,500,1000],
           }}
           components={{
             Toolbar: (props) => (
