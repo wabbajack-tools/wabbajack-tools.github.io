@@ -56,7 +56,7 @@
     "@types/react-window": "^1.8.2",
     "@types/underscore": "^1.10.23",
     "@types/uuid": "^8.0.1",
-    "@typescript-eslint/eslint-plugin": "^4.2.0",
+    "@typescript-eslint/eslint-plugin": "^4.9.0",
     "@typescript-eslint/parser": "^4.2.0",
     "cross-env": "^7.0.2",
     "del": "^5.1.0",
