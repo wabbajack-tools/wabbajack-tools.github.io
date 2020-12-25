@@ -27,6 +27,13 @@ export const getGitHubLinkFromRaw = (rawURL: string): string | undefined => {
   return url;
 };
 
+export const getGitLabLinkFromRaw = (rawURL: string): string | undefined => {
+  if (!rawURL.startsWith('https://gitlab.com')) return undefined;
+  const base = rawURL.replace('https://gitlab.com/', '');
+  const split = base.split('/');
+  const url = `https://gitlab.com/${split[0]}/${split[1]}/~/blob/${split[4]}/`;
+};
+
 export const randomString = (length: number) => {
   const characters =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
