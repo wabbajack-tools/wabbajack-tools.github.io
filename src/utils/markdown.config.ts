@@ -2,6 +2,7 @@ import * as React from 'react';
 import { MarkdownOptions, ComponentOverride } from 'markdown-to-jsx';
 import { Typography, Link } from '@material-ui/core';
 import { getGitHubLinkFromRaw } from './other';
+import { getGitLabLinkFromRaw } from './other';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
 
 const headingStyle: CSSProperties = {
@@ -161,6 +162,10 @@ const options = (
         if (externalURL.startsWith('https://raw.githubusercontent.com')) {
           anyProps.href = `${getGitHubLinkFromRaw(externalURL)}${href}`;
         }
+		
+		else if (externalURL.startsWith('https://gitlab.com')) {
+			anyProps.href = `${getGitLabLinkFromRaw(externalURL)}${href}`;
+		}
       }
 
       return React.createElement(type, anyProps, children);
