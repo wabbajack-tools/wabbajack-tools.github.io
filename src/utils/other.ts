@@ -1,3 +1,5 @@
+import { getNexusGameName } from "./games";
+
 export const DateTimeFormatOptions: Intl.DateTimeFormatOptions = {
   year: 'numeric',
   month: 'numeric',
@@ -58,7 +60,7 @@ export const toFileSizeString = (size: number) => {
 };
 
 export const createNexusURL = (game: string, id: string | number) => {
-  return `https://www.nexusmods.com/${game.toLowerCase()}/mods/${id}`;
+  return `https://www.nexusmods.com/${getNexusGameName(game)}/mods/${id}`;
 };
 
 export function notUndefined<T>(arr: Array<T | undefined>): Array<T> {

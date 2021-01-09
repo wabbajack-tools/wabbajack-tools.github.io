@@ -48,3 +48,13 @@ export const getGameName = (game: Game) => {
   }
   return gameName;
 };
+
+export const getNexusGameName = (game: string) => {
+  let gameName = game;
+  switch (gameName) {
+    case 'falloutnewvegas':
+      gameName = "newvegas";
+      break;
+  }
+  return gameName;
+}
