@@ -50,7 +50,7 @@ export const getGameName = (game: Game) => {
 };
 
 export const getNexusGameName = (game: string) => {
-  let gameName = game;
+  let gameName = game.toLowerCase();
   switch (gameName) {
     case 'falloutnewvegas':
       gameName = "newvegas";
