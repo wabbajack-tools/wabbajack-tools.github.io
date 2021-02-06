@@ -6,6 +6,9 @@ name: Deployment Workflow
 on:
   push:
     branches: code
+  #cron schedule so we can update the download link (todo: find a better solution)
+  schedule:
+    - cron: "*/30 * * * *"
 
 jobs:
   build:
