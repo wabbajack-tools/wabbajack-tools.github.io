@@ -32,12 +32,12 @@ interface Item {
 }
 
 const ModlistArchiveTable: React.FC<IModlistArchiveTableProps> = (props) => {
-  const updateItems = (showNSFW: boolean) => {
+  const updateItems = (showNSFW: boolean, showGameFiles: boolean) => {
     const items = new Array<Item>();
 
     props.data.forEach((val) => {
       const modlist = val[0];
-      const archives = filterArchives(val[1], showNSFW);
+      const archives = filterArchives(val[1], showNSFW, showGameFiles);
 
       archives.forEach((a) => {
         const prevIndex = items.findIndex((x) => x.hash === a.Hash);
@@ -69,7 +69,7 @@ const ModlistArchiveTable: React.FC<IModlistArchiveTableProps> = (props) => {
         return acc;
       }, new Map<string, IArchive>());
 
-    const items = updateItems(false);
+    const items = updateItems(false, false);
 
     return {
       archiveMap: archiveMap,
@@ -77,6 +77,7 @@ const ModlistArchiveTable: React.FC<IModlistArchiveTableProps> = (props) => {
       items: items,
       showNSFW: false,
       renderMetaNames: true,
+      showGameFiles: false,
     };
   });
 
@@ -142,7 +143,7 @@ const ModlistArchiveTable: React.FC<IModlistArchiveTableProps> = (props) => {
             checked={store.showNSFW}
             onChange={() => {
               store.showNSFW = !store.showNSFW;
-              store.items = updateItems(store.showNSFW);
+              store.items = updateItems(store.showNSFW, store.showGameFiles);
             }}
           />
         }
@@ -160,11 +161,27 @@ const ModlistArchiveTable: React.FC<IModlistArchiveTableProps> = (props) => {
           onChange={() => {
             store.renderMetaNames = !store.renderMetaNames;
             //updateArchives();
-            //updateItems(store.showNSFW);
+            //updateItems(store.showNSFW, store.showGameFiles);
           }}
         />
       }
       label="Render Meta Names"
+    />
+  );
+
+  const toggleGameFiles = (
+    <FormControlLabel
+      control={
+        <Checkbox
+          name="toggleGameFiles"
+          checked={store.showGameFiles}
+          onChange={() => {
+            store.showGameFiles = !store.showGameFiles;
+            store.items = updateItems(store.showNSFW, store.showGameFiles);
+          }}
+        />
+      }
+      label="Show Game Files"
     />
   );
 
@@ -192,6 +209,12 @@ const ModlistArchiveTable: React.FC<IModlistArchiveTableProps> = (props) => {
                         placement="top"
                       >
                         <Grid item>{toggleNSFW}</Grid>
+                      </Tooltip>
+                      <Tooltip
+                        title="This will toggle the showcase of game files."
+                        placement="top"
+                      >
+                        <Grid item>{toggleGameFiles}</Grid>
                       </Tooltip>
                       <Tooltip
                         title="This will toggle the use of meta names instead of the archive file name."

@@ -47,11 +47,17 @@ export function tryGetURL(archive: IArchive): string | undefined {
   return createNexusURL(nexusState.GameName, nexusState.ModID);
 }
 
-export const filterArchives = (archives: IArchive[], showNSFW: boolean) => {
+export const filterArchives = (
+  archives: IArchive[],
+  showNSFW: boolean,
+  showGameFiles: boolean
+) => {
   return archives.filter((a) => {
     //no need to filter if we show everything
-    if (showNSFW) return true;
+    if (showNSFW && showGameFiles) return true;
     if (a.State.$type === 'LoversLabDownloader, Wabbajack.Lib') return showNSFW;
+    if (a.State.$type === 'GameFileSourceDownloader, Wabbajack.Lib')
+      return showGameFiles;
 
     const metaState = tryGetMetaState(a.State);
     if (metaState === undefined) return true;
