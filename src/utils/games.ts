@@ -42,6 +42,12 @@ export const getGameName = (game: Game) => {
     case 'witcher3':
       gameName = 'Witcher 3';
       break;
+    case 'dragonageorigins':
+      gameName = 'Dragon Age: Origins';
+      break;
+    case 'nomanssky':
+      gameName = "No Man's Sky";
+      break;
     default:
       gameName = 'UNKNOWN';
       break;
@@ -53,8 +59,11 @@ export const getNexusGameName = (game: string) => {
   let gameName = game.toLowerCase();
   switch (gameName) {
     case 'falloutnewvegas':
-      gameName = "newvegas";
+      gameName = 'newvegas';
+      break;
+    case 'dragonageorigins':
+      gameName = 'dragonage';
       break;
   }
   return gameName;
-}
+};
