@@ -6,8 +6,6 @@ name: Deployment Workflow
 on:
   push:
     branches: code
-  schedule:
-    - cron: "*/30 * * * *"
 
 jobs:
   build:
