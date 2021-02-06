@@ -30,17 +30,22 @@ interface IArchiveTableProps {
 
 const ArchiveTable: React.FC<IArchiveTableProps> = (props) => {
   const store = useLocalStore(() => {
-    const archives = filterArchives(props.archives, false);
+    const archives = filterArchives(props.archives, false, false);
     return {
       showNSFW: false,
       showImages: false,
       renderMetaNames: true,
       archives: archives,
+      showGameFiles: false,
     };
   });
 
   const updateArchives = () => {
-    store.archives = filterArchives(props.archives, store.showNSFW);
+    store.archives = filterArchives(
+      props.archives,
+      store.showNSFW,
+      store.showGameFiles
+    );
   };
 
   const toggleNSFW = useObserver(() => {
@@ -91,6 +96,22 @@ const ArchiveTable: React.FC<IArchiveTableProps> = (props) => {
     />
   );
 
+  const toggleGameFiles = (
+    <FormControlLabel
+      control={
+        <Checkbox
+          name="toggleGameFiles"
+          checked={store.showGameFiles}
+          onChange={() => {
+            store.showGameFiles = !store.showGameFiles;
+            updateArchives();
+          }}
+        />
+      }
+      label="Show Game Files"
+    />
+  );
+
   return useObserver(() => {
     return (
       <React.Fragment>
@@ -101,7 +122,7 @@ const ArchiveTable: React.FC<IArchiveTableProps> = (props) => {
             sorting: true,
             headerStyle: { backgroundColor: '#242424' },
             pageSize: 10,
-            pageSizeOptions: [10,50,100,250,500,1000],
+            pageSizeOptions: [10, 50, 100, 250, 500, 1000],
           }}
           components={{
             Toolbar: (props) => (
@@ -122,6 +143,12 @@ const ArchiveTable: React.FC<IArchiveTableProps> = (props) => {
                       >
                         <Grid item>{toggleImages}</Grid>
                       </Tooltip>*/}
+                      <Tooltip
+                        title="This will toggle the showcase of game files."
+                        placement="top"
+                      >
+                        <Grid item>{toggleGameFiles}</Grid>
+                      </Tooltip>
                       <Tooltip
                         title="This will toggle the use of meta names instead of the archive file name."
                         placement="top"
