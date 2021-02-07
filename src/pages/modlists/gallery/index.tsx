@@ -69,6 +69,7 @@ const ModlistsGalleryPage: React.FC = () => {
       });
     }
   });
+  gamesList.sort((a, b) => a.gameName.localeCompare(b.gameName));
 
   return (
     <React.Fragment>
