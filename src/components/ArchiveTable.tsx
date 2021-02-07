@@ -20,6 +20,7 @@ import {
   renderName,
   renderType,
   sortName,
+  sortType,
 } from '../utils/archiveUtils';
 import { IArchive } from '../types/archives';
 
@@ -211,6 +212,8 @@ const ArchiveTable: React.FC<IArchiveTableProps> = (props) => {
                   {renderType(rowData)}
                 </Typography>
               ),
+              customSort: (data1: IArchive, data2: IArchive) =>
+                sortType(data1, data2),
             },
           ]}
           actions={[

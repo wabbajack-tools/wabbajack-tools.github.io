@@ -3,10 +3,11 @@ import {
   IMetaState,
   MetaStateType,
   IArchive,
+  IGoogleDriveDownloaderState,
   INexusDownloaderState,
   IURLState,
 } from '../types/archives';
-import { createNexusURL } from './other';
+import { createGoogleDriveURL, createNexusURL } from './other';
 
 export function tryGetMetaState(
   state: IAbstractDownloadState
@@ -41,10 +42,21 @@ export function tryGetURL(archive: IArchive): string | undefined {
       return urlState.Url;
   }
 
+  const driveState = archive.State as IGoogleDriveDownloaderState;
+  if (
+    driveState !== undefined &&
+    driveState.$type === 'GoogleDriveDownloader, Wabbajack.Lib'
+  )
+    return createGoogleDriveURL(driveState.Id);
+
   const nexusState = archive.State as INexusDownloaderState;
-  if (nexusState === undefined) return undefined;
-  if (nexusState.$type !== 'NexusDownloader, Wabbajack.Lib') return undefined;
-  return createNexusURL(nexusState.GameName, nexusState.ModID);
+  if (
+    nexusState !== undefined &&
+    nexusState.$type === 'NexusDownloader, Wabbajack.Lib'
+  )
+    return createNexusURL(nexusState.GameName, nexusState.ModID);
+
+  return undefined;
 }
 
 export const filterArchives = (
@@ -80,6 +92,12 @@ export const sortName = (
   const name1 = tryGetName(data1, renderMetaNames);
   const name2 = tryGetName(data2, renderMetaNames);
   return name1.localeCompare(name2);
+};
+
+export const sortType = (data1: IArchive, data2: IArchive): number => {
+  const type1 = data1.State.$type;
+  const type2 = data2.State.$type;
+  return type1.localeCompare(type2);
 };
 
 export const filterName = (
