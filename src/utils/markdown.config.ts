@@ -161,13 +161,10 @@ const options = (
 
         if (externalURL.startsWith('https://raw.githubusercontent.com')) {
           anyProps.href = `${getGitHubLinkFromRaw(externalURL)}${href}`;
+        } else if (externalURL.startsWith('https://gitlab.com')) {
+          anyProps.href = `${getGitLabLinkFromRaw(externalURL)}${href}`;
         }
-		
-		else if (externalURL.startsWith('https://gitlab.com')) {
-			anyProps.href = `${getGitLabLinkFromRaw(externalURL)}${href}`;
-		}
       }
-
       return React.createElement(type, anyProps, children);
     },
   };

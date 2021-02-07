@@ -1,4 +1,4 @@
-import { getNexusGameName } from "./games";
+import { getNexusGameName } from './games';
 
 export const DateTimeFormatOptions: Intl.DateTimeFormatOptions = {
   year: 'numeric',
@@ -69,4 +69,4 @@ export const createGoogleDriveURL = (id: string) => {
 
 export function notUndefined<T>(arr: Array<T | undefined>): Array<T> {
   return arr.filter((x) => x !== undefined) as Array<T>;
-};
+}
