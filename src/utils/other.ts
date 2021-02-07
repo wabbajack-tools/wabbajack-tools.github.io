@@ -63,6 +63,10 @@ export const createNexusURL = (game: string, id: string | number) => {
   return `https://www.nexusmods.com/${getNexusGameName(game)}/mods/${id}`;
 };
 
+export const createGoogleDriveURL = (id: string) => {
+  return `https://drive.google.com/file/d/${id}`;
+};
+
 export function notUndefined<T>(arr: Array<T | undefined>): Array<T> {
   return arr.filter((x) => x !== undefined) as Array<T>;
 };
