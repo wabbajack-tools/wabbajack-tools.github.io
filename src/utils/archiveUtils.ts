@@ -94,6 +94,12 @@ export const sortName = (
   return name1.localeCompare(name2);
 };
 
+export const sortType = (data1: IArchive, data2: IArchive): number => {
+  const type1 = data1.State.$type;
+  const type2 = data2.State.$type;
+  return type1.localeCompare(type2);
+};
+
 export const filterName = (
   filter: any,
   rowData: IArchive,
