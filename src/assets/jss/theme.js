@@ -111,13 +111,18 @@ const createTheme = (theme) => {
           backgroundColor: '#323232',
         },
       },
+      MuiSelect: {
+        icon: {
+          color: white
+        }
+      },
       MuiIcon: {
         colorDisabled: 'grey',
       },
       MuiIconButton: {
         colorDisabled: 'grey',
         root: {
-          //color: 'white !important',
+          color: 'white',
         },
       },
       MuiSvgIcon: {
