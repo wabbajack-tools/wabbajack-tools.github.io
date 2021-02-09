@@ -8093,10 +8093,10 @@ react-transition-group@^4.0.0, react-transition-group@^4.4.0:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react-vtree@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/react-vtree/-/react-vtree-2.0.2.tgz#5d06195cebc105a1fd0e7e085e1f017ef1e6b7a5"
-  integrity sha512-3CmQZa1YyvXNlZwEpoVGh5bdb8mBNoX1fhWzMjbkiYpBNOW8RcK+u5IIwbXhWAoFW7tj9no//1ePZqGWVie9CQ==
+react-vtree@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/react-vtree/-/react-vtree-2.0.4.tgz#340e64255f5f4ec6f4c35dc44a7036f7fcd98bc5"
+  integrity sha512-UOld0VqyAZrryF06K753X4bcEVN6/wW831exvVlMZeZAVHk9KXnlHs4rpqDAeoiBgUwJqoW/rtn0hwsokRRxPA==
   dependencies:
     "@babel/runtime" "^7.11.0"
 
