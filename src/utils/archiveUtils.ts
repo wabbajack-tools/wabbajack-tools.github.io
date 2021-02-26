@@ -73,7 +73,7 @@ export const filterArchives = (
 
     const metaState = tryGetMetaState(a.State);
     if (metaState === undefined) return true;
-    return !metaState.IsNSFW;
+    return showNSFW || !metaState.IsNSFW;
   });
 };
 
