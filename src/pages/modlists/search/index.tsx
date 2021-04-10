@@ -8,7 +8,7 @@ import ArchiveSearchPage from './ArchiveSearchPage';
 const SearchPage: React.FC = () => {
   return (
     <React.Fragment>
-      <Route name="modlists.search" component={<ModlistSearchPage />} />
+      <Route exact name="modlists.search" component={<ModlistSearchPage />} />
       <Route
         exact
         name="modlists.search.all"
