@@ -15,7 +15,7 @@
     "test": "jest"
   },
   "engines": {
-    "node": "14.7.x",
+    "node": "14.16.x",
     "npm": "6.14.x",
     "yarn": "1.22.x"
   },

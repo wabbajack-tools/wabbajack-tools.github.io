@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js 14.7.x
+    - name: Use Node.js 14.16.x
       uses: actions/setup-node@v1
       with:
-        node-version: '14.7.x'
+        node-version: '14.16.x'
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
       run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -32,10 +32,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js 14.7.x
+    - name: Use Node.js 14.16.x
       uses: actions/setup-node@v1
       with:
-        node-version: '14.7.x'
+        node-version: '14.16.x'
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
       run: echo "::set-output name=dir::$(yarn cache dir)"
