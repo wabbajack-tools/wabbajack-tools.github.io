@@ -67,7 +67,7 @@ const ModlistGalleryCard: React.FC<IModlistGalleryCardProps> = (props) => {
         </RoutedButton>
         <Grid container alignItems="flex-start" justify="flex-end">
           <RoutedButton
-            routeName="modlists.search.single"
+            routeName="modlists.search"
             routeParams={{ machineURL }}
           >
             Archive Search

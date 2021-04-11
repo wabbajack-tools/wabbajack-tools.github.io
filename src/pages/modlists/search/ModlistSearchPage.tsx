@@ -12,7 +12,7 @@ import { Typography } from '@material-ui/core';
 import ArchiveTable from '../../../components/ArchiveTable';
 
 const ModlistSearchPage: React.FC = () => {
-  const { machineURL } = useRouteNode('modlists.search.single').route.params;
+  const { machineURL } = useRouteNode('modlists.search').route.params;
   const { detailedStatusStore } = useStores();
 
   const urlError = useObserver(() => {
