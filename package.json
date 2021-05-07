@@ -37,7 +37,7 @@
     "router5": "^8.0.1",
     "router5-plugin-browser": "^8.0.1",
     "router5-plugin-logger": "^8.0.1",
-    "underscore": "^1.11.0",
+    "underscore": "^1.12.1",
     "uuid": "^8.3.0"
   },
   "devDependencies": {
