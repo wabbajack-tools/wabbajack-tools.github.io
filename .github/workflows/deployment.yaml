@@ -8,7 +8,7 @@ on:
     branches: code
   #cron schedule so we can update the download link (todo: find a better solution)
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "0 12 */1 * *"
 
 jobs:
   build:
