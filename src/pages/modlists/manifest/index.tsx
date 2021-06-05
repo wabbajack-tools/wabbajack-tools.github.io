@@ -76,7 +76,6 @@ const ManifestPage: React.FC = () => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: onDrop,
-    maxSize: 1000000,
     accept: '.json',
     multiple: false,
   });
