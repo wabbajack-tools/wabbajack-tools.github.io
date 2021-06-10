@@ -45,7 +45,7 @@
     "@babel/plugin-transform-runtime": "^7.11.5",
     "@babel/preset-env": "^7.11.5",
     "@babel/preset-react": "^7.10.4",
-    "@babel/preset-typescript": "^7.10.4",
+    "@babel/preset-typescript": "^7.14.5",
     "@types/gulp": "^4.0.6",
     "@types/history": "^4.7.8",
     "@types/jest": "^26.0.14",
