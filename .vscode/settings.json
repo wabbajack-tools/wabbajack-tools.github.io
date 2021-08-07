@@ -1,7 +1,0 @@
-{
-    "cSpell.words": [
-        "prebuild",
-        "prestart"
-    ],
-    "typescript.tsdk": "node_modules\\typescript\\lib"
-}
