@@ -14,3 +14,4 @@
 - [SteveSandersonMS/BlazorOnGitHubPages](https://github.com/SteveSandersonMS/BlazorOnGitHubPages)
 - [How to deploy ASP.NET Blazor WebAssembly to GitHub Pages](https://swimburger.net/blog/dotnet/how-to-deploy-aspnet-blazor-webassembly-to-github-pages)
 - [How to deploy Blazor WebAssembly to Heroku](https://swimburger.net/blog/dotnet/how-to-deploy-blazor-webassembly-to-heroku)
+- [Pre-render Blazor WebAssembly at build time to optimize for search engines](https://swimburger.net/blog/dotnet/pre-render-blazor-webassembly-at-build-time-to-optimize-for-search-engines)

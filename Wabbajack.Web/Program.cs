@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +24,10 @@ namespace Wabbajack.Web
             {
                 BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
             });
-            builder.Services.AddSingleton<StateContainer>();
+            builder.Services.AddSingleton<IStateContainer>(provider => new StateContainer(
+                provider.GetRequiredService<HttpClient>(),
+                provider.GetRequiredService<IEnumerable<JsonConverter>>())
+            );
 
             // Wabbajack.DTO
             builder.Services.AddDTOConverters();

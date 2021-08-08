@@ -14,10 +14,7 @@ using Wabbajack.DTOs;
 
 namespace Wabbajack.Web.Services
 {
-    /// <summary>
-    /// Singleton managing the state of the application.
-    /// </summary>
-    public class StateContainer
+    public class StateContainer : IStateContainer
     {
         private const string ModlistsJsonUrl = "https://raw.githubusercontent.com/wabbajack-tools/mod-lists/master/modlists.json";
         private const string ModlistsSummaryUrl = "https://build.wabbajack.org/lists/status.json";

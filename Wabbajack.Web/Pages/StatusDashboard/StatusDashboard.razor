@@ -1,7 +1,7 @@
 ﻿@page "/status"
 @using Wabbajack.Web.Services
 @using Wabbajack.DTOs
-@inject StateContainer _stateContainer;
+@inject IStateContainer _stateContainer;
 
 <MudContainer Class="mt-16" MaxWidth="MaxWidth.Large">
     <MudText Typo="Typo.h5">Failing Modlists: @Failing</MudText>
