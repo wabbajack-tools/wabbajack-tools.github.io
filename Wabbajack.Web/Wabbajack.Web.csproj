@@ -2,6 +2,18 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
+        
+        <!-- Currently required in the StatusDashboard converting DateTime to local time. -->
+        <!-- <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>-->
+        
+        <!-- Remove Collaction Support. -->
+        <BlazorWebAssemblyPreserveCollationData>false</BlazorWebAssemblyPreserveCollationData>
+
+        <!-- Remove insecure UTF-7 encoding code. -->
+        <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
+
+        <!-- Remove globalization-specific code and data. -->
+        <InvariantGlobalization>false</InvariantGlobalization>
     </PropertyGroup>
     
     <ItemGroup>
