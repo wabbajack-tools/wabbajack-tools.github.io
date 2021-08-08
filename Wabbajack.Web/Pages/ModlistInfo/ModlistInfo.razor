@@ -1,0 +1,65 @@
+﻿@page "/modlist/{machineUrl}"
+@using Wabbajack.Web.Services
+@using Wabbajack.DTOs
+@using Wabbajack.Web.Pages.Gallery
+@using Wabbajack.Web.Utils
+@inject StateContainer _stateContainer;
+@inject NavigationManager _navigationManager;
+
+<MudContainer Class="mt-16" MaxWidth="MaxWidth.Large">
+    <MudButton Size="Size.Large" Variant="Variant.Text" Link="@Gallery.Route" StartIcon="@Icons.Material.Filled.ArrowBack">
+        Back to the Gallery
+    </MudButton>
+
+    <MudText Typo="Typo.h3" Align="Align.Center">@_modlist.Title</MudText>
+    <img src="@_modlist.Links.ImageUri"
+         alt="Image of the Modlist @_modlist.Title"
+         style="width: 100%; height: auto"
+         loading="eager"
+         crossorigin="anonymous"/>
+    <MudText Typo="Typo.caption">Created by @_modlist.Author, current Version: @_modlist.Version</MudText>
+
+    <div class="markdown-body mt-2">
+        <MarkdownComponent MarkdownUrl="@_modlist.Links.Readme"></MarkdownComponent>
+    </div>
+
+</MudContainer>
+
+@code {
+    [Parameter]
+    public string MachineUrl { get; set; }
+
+    private ModlistMetadata _modlist;
+
+    private bool _shouldRender;
+    protected override bool ShouldRender() => _shouldRender;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!_stateContainer.Modlists.Any())
+        {
+            // TODO: use result
+            var res = await _stateContainer.LoadModlistMetadata();
+
+            if (!res) return;
+        }
+
+        if (!_stateContainer.TryGetModlistMetadata(MachineUrl, out var modlist))
+        {
+            // TODO: show error
+            return;
+        }
+
+        _modlist = modlist;
+
+        if (!LinkUtils.CanRenderReadme(_modlist.Links.Readme))
+        {
+            _navigationManager.NavigateTo(modlist.Links.Readme);
+            return;
+        }
+
+        _shouldRender = true;
+    }
+
+    public static string CreateRedirect(string machineUrl) => $"/modlist/{machineUrl}";
+}

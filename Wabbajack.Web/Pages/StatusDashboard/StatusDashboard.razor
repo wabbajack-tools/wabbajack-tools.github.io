@@ -1,0 +1,81 @@
+﻿@page "/status"
+@using Wabbajack.Web.Services
+@using Wabbajack.DTOs
+@inject StateContainer _stateContainer;
+
+<MudContainer Class="mt-16" MaxWidth="MaxWidth.Large">
+    <MudText Typo="Typo.h5">Failing Modlists: @Failing</MudText>
+    <MudText Typo="Typo.h5">Succeeding Modlists: @Succeeding</MudText>
+
+    <MudGrid Class="mt-3">
+        @foreach (var modlistSummary in OrderedModlistSummaries)
+        {
+            @_renderModlistSummary(modlistSummary)
+        }
+    </MudGrid>
+</MudContainer>
+
+@code {
+    public const string Route = "/status";
+
+    private bool _shouldRender;
+    protected override bool ShouldRender() => _shouldRender;
+
+    private IEnumerable<ModListSummary> ModlistSummaries => _stateContainer.ModlistSummaries;
+    private IEnumerable<ModListSummary> OrderedModlistSummaries => ModlistSummaries
+        .OrderByDescending(x => x.HasFailures)
+        .ThenBy(x => x.Name);
+
+    private int Failing => ModlistSummaries.Count(x => x.HasFailures);
+    private int Succeeding => ModlistSummaries.Count(x => !x.HasFailures);
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!_stateContainer.ModlistSummaries.Any())
+        {
+            // TODO: use result
+            var res = await _stateContainer.LoadModlistSummaries();
+
+            if (!res) return;
+        }
+
+        _shouldRender = true;
+    }
+
+    // DO NOT CHANGE "__builder"
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable once UnusedParameter.Local
+    private readonly RenderFragment<ModListSummary> _renderModlistSummary = modlistSummary => __builder =>
+    {
+        // TODO: https://github.com/wabbajack-tools/wabbajack/issues/1548#issuecomment-894808346
+        var detailedStatusLink = $"https://build.wabbajack.org{modlistSummary.Report}";
+
+        var time = modlistSummary.Checked.ToLocalTime();
+
+        <MudItem xs="12" sm="6" md="4" lg="4" xl="4">
+            <MudCard>
+                <MudCardHeader Class="pb-1 align-stretch">
+                    <CardHeaderAvatar>
+                        @if (modlistSummary.HasFailures)
+                        {
+                            <MudAvatar Color="Color.Error"/>
+                        }
+                        else
+                        {
+                            <MudAvatar Color="Color.Info"/>
+                        }
+                    </CardHeaderAvatar>
+                    <CardHeaderContent>
+                        <MudLink Href="@detailedStatusLink" Color="Color.Dark" Typo="Typo.h5">@modlistSummary.Name</MudLink>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText Typo="Typo.body1">Passed: @modlistSummary.Passed</MudText>
+                    <MudText Typo="Typo.body1">Failed: @modlistSummary.Failed</MudText>
+                    <MudText Typo="Typo.body2">Last Checked: @time.ToString("G")</MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    };
+
+}

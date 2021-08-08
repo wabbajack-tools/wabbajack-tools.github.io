@@ -1,0 +1,115 @@
+﻿@page "/gallery"
+@using Wabbajack.Web.Services
+@using Wabbajack.DTOs
+@using Wabbajack.Web.Pages.ModlistInfo
+@using Wabbajack.Web.Utils
+@inject StateContainer _stateContainer;
+
+<MudContainer Class="mt-16" MaxWidth="MaxWidth.Large">
+    <MudGrid Class="d-inline-flex flex-nowrap align-end">
+        <MudItem xs="8">
+            <MudCheckBox @bind-Checked="@_showNsfw" Class="mud-float-end">Show NSFW</MudCheckBox>
+        </MudItem>
+        <MudItem xs="4">
+            <MudSelect T="string" @bind-Value="@_selectedGame" Label="Game" Variant="Variant.Outlined">
+                @foreach (var game in AllGames)
+                {
+                    <MudSelectItem Value="@game">@game</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+    </MudGrid>
+
+    <MudGrid Class="mt-2" Spacing="2" Justify="Justify.FlexStart">
+        @foreach (var modlist in FilteredModlists)
+        {
+            <MudItem xs="12" sm="12" md="6" lg="6" xl="4">
+                @_renderModlistInfo(modlist)
+            </MudItem>
+        }
+    </MudGrid>
+</MudContainer>
+
+@code {
+    public const string Route = "/gallery";
+    private const string All = "All";
+
+    private bool _shouldRender;
+    protected override bool ShouldRender() => _shouldRender;
+
+    private IEnumerable<ModlistMetadata> Modlists => _stateContainer.Modlists;
+    private IEnumerable<ModlistMetadata> FilteredModlists => Modlists
+        .Where(x => _showNsfw || !x.NSFW)
+        .Where(x =>
+        {
+            if (_selectedGame == All) return true;
+            return x.Game == _gamesByName[_selectedGame];
+        });
+
+    private bool _showNsfw;
+    private string _selectedGame = All;
+
+    private Dictionary<string, Game> _gamesByName = new();
+    private IEnumerable<string> AllGames => _gamesByName
+        .Select(x => x.Key)
+        .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
+        .Prepend(All);
+
+    protected override async Task OnInitializedAsync()
+    {
+        _showNsfw = false;
+
+        if (!_stateContainer.Modlists.Any())
+        {
+            // TODO: use result
+            var res = await _stateContainer.LoadModlistMetadata();
+
+            if (!res) return;
+        }
+
+        _gamesByName = Modlists
+            .Select(x => x.Game)
+            .Distinct()
+            .ToDictionary(x => x.GetDescription(), x => x, StringComparer.OrdinalIgnoreCase);
+
+        _shouldRender = true;
+    }
+
+    // DO NOT CHANGE "__builder"
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable once UnusedParameter.Local
+    private readonly RenderFragment<ModlistMetadata> _renderModlistInfo = modlist => __builder =>
+    {
+        var readme = modlist.Links.Readme;
+        var viewLink = LinkUtils.CanRenderReadme(readme)
+            ? ModlistInfo.CreateRedirect(modlist.Links.MachineURL)
+            : readme;
+
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">@modlist.Title</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <img src="@modlist.Links.ImageUri"
+                 alt="Image of the Modlist @modlist.Title"
+                 style="width: 100%; height: auto"
+                 loading="lazy"
+                 crossorigin="anonymous"/>
+            <MudCardContent>
+                <MudText Typo="Typo.caption">Created by @modlist.Author</MudText>
+                <MudText Typo="Typo.body1">@modlist.Description</MudText>
+                @foreach (var tag in modlist.tags)
+                {
+                    <MudChip Size="Size.Small">@tag</MudChip>
+                }
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Link="@viewLink" Variant="Variant.Text" ButtonType="ButtonType.Button" Color="Color.Info">
+                    View
+                </MudButton>
+            </MudCardActions>
+        </MudCard>
+    };
+
+}
