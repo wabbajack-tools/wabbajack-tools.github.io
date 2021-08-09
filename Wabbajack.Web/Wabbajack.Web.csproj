@@ -24,5 +24,10 @@
         <PackageReference Include="Wabbajack.DTOs" Version="3.0.0-alpha3" />
         <!--<PackageReference Include="MudBlazor.Markdown" Version="0.0.1" />-->
     </ItemGroup>
+    
+    <ItemGroup>
+      <Content Remove="wwwroot\_content\MudBlazor\MudBlazor.min.css"/>
+      <None Include="wwwroot\_content\MudBlazor\MudBlazor.min.css" />
+    </ItemGroup>
 
 </Project>
