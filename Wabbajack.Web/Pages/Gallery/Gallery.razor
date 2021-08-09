@@ -23,7 +23,7 @@
     <MudGrid Class="mt-2" Spacing="2" Justify="Justify.FlexStart">
         @foreach (var modlist in FilteredModlists)
         {
-            <MudItem xs="12" sm="12" md="6" lg="6" xl="4">
+            <MudItem @key="modlist.Title" xs="12" sm="12" md="6" lg="6" xl="4">
                 @_renderModlistInfo(modlist)
             </MudItem>
         }

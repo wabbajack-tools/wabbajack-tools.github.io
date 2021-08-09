@@ -10,7 +10,9 @@
     <MudGrid Class="mt-3">
         @foreach (var modlistSummary in OrderedModlistSummaries)
         {
-            @_renderModlistSummary(modlistSummary)
+            <MudItem xs="12" sm="6" md="4" lg="4" xl="4" @key="modlistSummary.MachineURL">
+                @_renderModlistSummary(modlistSummary)
+            </MudItem>
         }
     </MudGrid>
 </MudContainer>
@@ -52,30 +54,28 @@
 
         var time = modlistSummary.Checked.ToLocalTime();
 
-        <MudItem xs="12" sm="6" md="4" lg="4" xl="4">
-            <MudCard>
-                <MudCardHeader Class="pb-1 align-stretch">
-                    <CardHeaderAvatar>
-                        @if (modlistSummary.HasFailures)
-                        {
-                            <MudAvatar Color="Color.Error"/>
-                        }
-                        else
-                        {
-                            <MudAvatar Color="Color.Info"/>
-                        }
-                    </CardHeaderAvatar>
-                    <CardHeaderContent>
-                        <MudLink Href="@detailedStatusLink" Color="Color.Dark" Typo="Typo.h5">@modlistSummary.Name</MudLink>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent>
-                    <MudText Typo="Typo.body1">Passed: @modlistSummary.Passed</MudText>
-                    <MudText Typo="Typo.body1">Failed: @modlistSummary.Failed</MudText>
-                    <MudText Typo="Typo.body2">Last Checked: @time.ToString("G")</MudText>
-                </MudCardContent>
-            </MudCard>
-        </MudItem>
+        <MudCard>
+            <MudCardHeader Class="pb-1 align-stretch">
+                <CardHeaderAvatar>
+                    @if (modlistSummary.HasFailures)
+                    {
+                        <MudAvatar Color="Color.Error"/>
+                    }
+                    else
+                    {
+                        <MudAvatar Color="Color.Info"/>
+                    }
+                </CardHeaderAvatar>
+                <CardHeaderContent>
+                    <MudLink Href="@detailedStatusLink" Color="Color.Dark" Typo="Typo.h5">@modlistSummary.Name</MudLink>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText Typo="Typo.body1">Passed: @modlistSummary.Passed</MudText>
+                <MudText Typo="Typo.body1">Failed: @modlistSummary.Failed</MudText>
+                <MudText Typo="Typo.body2">Last Checked: @time.ToString("G")</MudText>
+            </MudCardContent>
+        </MudCard>
     };
 
 }
