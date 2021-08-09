@@ -2,10 +2,10 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        
+
         <!-- Currently required in the StatusDashboard converting DateTime to local time. -->
         <!-- <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>-->
-        
+
         <!-- Remove Collaction Support. -->
         <BlazorWebAssemblyPreserveCollationData>false</BlazorWebAssemblyPreserveCollationData>
 
@@ -15,7 +15,7 @@
         <!-- Remove globalization-specific code and data. -->
         <InvariantGlobalization>false</InvariantGlobalization>
     </PropertyGroup>
-    
+
     <ItemGroup>
         <PackageReference Include="Markdig" Version="0.25.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0-preview.6.21355.2" />
@@ -24,10 +24,15 @@
         <PackageReference Include="Wabbajack.DTOs" Version="3.0.0-alpha3" />
         <PackageReference Include="MudBlazor.Markdown" Version="0.0.2" />
     </ItemGroup>
-    
+
     <ItemGroup>
-      <Content Remove="wwwroot\_content\MudBlazor\MudBlazor.min.css"/>
-      <None Include="wwwroot\_content\MudBlazor\MudBlazor.min.css" />
+        <ProjectReference Include="..\Wabbajack.Web.Generator\Wabbajack.Web.Generator.csproj" OutputItemType="Analyzer" />
+        <AdditionalFiles Include="..\posts\*.md" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Remove="wwwroot\_content\MudBlazor\MudBlazor.min.css" />
+        <None Include="wwwroot\_content\MudBlazor\MudBlazor.min.css" />
     </ItemGroup>
 
 </Project>
