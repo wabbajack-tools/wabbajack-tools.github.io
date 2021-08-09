@@ -5,13 +5,14 @@
 @using Wabbajack.Web.Utils
 @inject IStateContainer _stateContainer;
 @inject NavigationManager _navigationManager;
+@inject HttpClient _client;
 
 <MudContainer Class="mt-16" MaxWidth="MaxWidth.Large">
     <MudButton Size="Size.Large" Variant="Variant.Text" Link="@Gallery.Route" StartIcon="@Icons.Material.Filled.ArrowBack">
         Back to the Gallery
     </MudButton>
 
-    <MudText Typo="Typo.h3" Align="Align.Center">@_modlist.Title</MudText>
+    <!--<MudText Typo="Typo.h3" Align="Align.Center">@_modlist.Title</MudText>-->
     <img src="@_modlist.Links.ImageUri"
          alt="Image of the Modlist @_modlist.Title"
          style="width: 100%; height: auto"
@@ -19,9 +20,11 @@
          crossorigin="anonymous"/>
     <MudText Typo="Typo.caption">Created by @_modlist.Author, current Version: @_modlist.Version</MudText>
 
-    <div class="markdown-body mt-2">
+    <MudMarkdown Value="@_readme"/>
+
+    <!--<div class="markdown-body mt-2">
         <MarkdownComponent MarkdownUrl="@_modlist.Links.Readme"></MarkdownComponent>
-    </div>
+    </div>-->
 
 </MudContainer>
 
@@ -34,8 +37,12 @@
     private bool _shouldRender;
     protected override bool ShouldRender() => _shouldRender;
 
+    private string _readme;
+
     protected override async Task OnInitializedAsync()
     {
+        if (MachineUrl == null) return;
+
         if (!_stateContainer.Modlists.Any())
         {
             // TODO: use result
@@ -57,6 +64,8 @@
             _navigationManager.NavigateTo(modlist.Links.Readme);
             return;
         }
+
+        _readme = await _client.GetStringAsync(_modlist.Links.Readme);
 
         _shouldRender = true;
     }
