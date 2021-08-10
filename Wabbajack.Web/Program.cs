@@ -25,6 +25,7 @@ namespace Wabbajack.Web
                 BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
             });
             builder.Services.AddSingleton<IStateContainer>(provider => new StateContainer(
+                provider.GetRequiredService<ILogger<StateContainer>>(),
                 provider.GetRequiredService<HttpClient>(),
                 provider.GetRequiredService<IEnumerable<JsonConverter>>())
             );

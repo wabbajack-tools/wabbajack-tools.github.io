@@ -8,23 +8,44 @@
 @inject HttpClient _client;
 
 <MudContainer Class="mt-16" MaxWidth="MaxWidth.Large">
-    <MudButton Size="Size.Large" Variant="Variant.Text" Link="@Gallery.Route" StartIcon="@Icons.Material.Filled.ArrowBack">
+    <MudButton Class="mb-4" Size="Size.Large" Variant="Variant.Text" Link="@Gallery.Route"
+               StartIcon="@Icons.Material.Filled.ArrowBack">
         Back to the Gallery
     </MudButton>
 
-    <!--<MudText Typo="Typo.h3" Align="Align.Center">@_modlist.Title</MudText>-->
-    <img src="@_modlist.Links.ImageUri"
-         alt="Image of the Modlist @_modlist.Title"
-         style="width: 100%; height: auto"
-         loading="eager"
-         crossorigin="anonymous"/>
-    <MudText Typo="Typo.caption">Created by @_modlist.Author, current Version: @_modlist.Version</MudText>
-
-    <MudMarkdown Value="@_readme"/>
-
-    <!--<div class="markdown-body mt-2">
-        <MarkdownComponent MarkdownUrl="@_modlist.Links.Readme"></MarkdownComponent>
-    </div>-->
+    @if (_modlist == null)
+    {
+        @if (ErrorMachineUrlNull)
+        {
+            <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                <MudText>MachineUrl is null!</MudText>
+            </MudAlert>
+        } else if (_errorLoadingModlists)
+        {
+            <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                <MudText>Unable to load Modlists from GitHub!</MudText>
+            </MudAlert>
+        } else if (_errorNoMatchingModlist)
+        {
+            <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                <MudText>Found no Modlist with machineUrl "@MachineUrl"!</MudText>
+            </MudAlert>
+        }
+        else
+        {
+            <MudText>Loading...</MudText>
+        }
+    }
+    else
+    {
+        <img src="@_modlist.Links.ImageUri"
+             alt="Image of the Modlist @_modlist.Title"
+             style="width: 100%; height: auto"
+             loading="eager"
+             crossorigin="anonymous"/>
+        <MudText Typo="Typo.caption">Created by @_modlist.Author, current Version: @_modlist.Version</MudText>
+        <MudMarkdown Value="@_readme"/>
+    }
 
 </MudContainer>
 
@@ -32,12 +53,15 @@
     [Parameter]
     public string MachineUrl { get; set; }
 
-    private ModlistMetadata _modlist;
-
     private bool _shouldRender;
     protected override bool ShouldRender() => _shouldRender;
 
+    private ModlistMetadata _modlist;
     private string _readme;
+
+    private bool ErrorMachineUrlNull => MachineUrl == null;
+    private bool _errorLoadingModlists;
+    private bool _errorNoMatchingModlist;
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,15 +69,20 @@
 
         if (!_stateContainer.Modlists.Any())
         {
-            // TODO: use result
             var res = await _stateContainer.LoadModlistMetadata();
 
-            if (!res) return;
+            if (!res)
+            {
+                _errorLoadingModlists = true;
+                _shouldRender = true;
+                return;
+            }
         }
 
         if (!_stateContainer.TryGetModlistMetadata(MachineUrl, out var modlist))
         {
-            // TODO: show error
+            _errorNoMatchingModlist = true;
+            _shouldRender = true;
             return;
         }
 
@@ -66,7 +95,6 @@
         }
 
         _readme = await _client.GetStringAsync(_modlist.Links.Readme);
-
         _shouldRender = true;
     }
 

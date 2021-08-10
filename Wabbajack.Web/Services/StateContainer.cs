@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Wabbajack.DTOs;
 
 #nullable enable
@@ -19,11 +20,13 @@ namespace Wabbajack.Web.Services
         private const string ModlistsJsonUrl = "https://raw.githubusercontent.com/wabbajack-tools/mod-lists/master/modlists.json";
         private const string ModlistsSummaryUrl = "https://build.wabbajack.org/lists/status.json";
 
+        private readonly ILogger<StateContainer> _logger;
         private readonly HttpClient _client;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        public StateContainer(HttpClient client, IEnumerable<JsonConverter> converters)
+        public StateContainer(ILogger<StateContainer> logger, HttpClient client, IEnumerable<JsonConverter> converters)
         {
+            _logger = logger;
             _client = client;
 
             _jsonSerializerOptions = new JsonSerializerOptions
@@ -40,14 +43,23 @@ namespace Wabbajack.Web.Services
 
         public async Task<bool> LoadModlistMetadata()
         {
-            var res = await _client.GetFromJsonAsync<List<ModlistMetadata>>(
-                ModlistsJsonUrl,
-                _jsonSerializerOptions,
-                CancellationToken.None);
+            try
+            {
+                var res = await _client.GetFromJsonAsync<List<ModlistMetadata>>(
+                    ModlistsJsonUrl,
+                    _jsonSerializerOptions,
+                    CancellationToken.None);
 
-            if (res == null) return false;
+                if (res == null) return false;
 
-            _modlists = res;
+                _modlists = res;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Exception loading Modlists from {Url}", ModlistsJsonUrl);
+                return false;
+            }
+
             return true;
         }
 
@@ -62,14 +74,23 @@ namespace Wabbajack.Web.Services
 
         public async Task<bool> LoadModlistSummaries()
         {
-            var res = await _client.GetFromJsonAsync<List<ModListSummary>>(
-                ModlistsSummaryUrl,
-                _jsonSerializerOptions,
-                CancellationToken.None);
+            try
+            {
+                var res = await _client.GetFromJsonAsync<List<ModListSummary>>(
+                    ModlistsSummaryUrl,
+                    _jsonSerializerOptions,
+                    CancellationToken.None);
 
-            if (res == null) return false;
+                if (res == null) return false;
 
-            _modlistSummaries = res;
+                _modlistSummaries = res;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Exception loading Modlist Summaries from {Url}", ModlistSummaries);
+                return false;
+            }
+
             return true;
         }
     }
