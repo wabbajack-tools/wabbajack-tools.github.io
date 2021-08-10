@@ -8,6 +8,8 @@ ProjectSection(SolutionItems) = preProject
 	.gitattributes = .gitattributes
 	.gitignore = .gitignore
 	README.md = README.md
+	CONTRIBUTING.md = CONTRIBUTING.md
+	LICENSE = LICENSE
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wabbajack.Web.Test", "Wabbajack.Web.Test\Wabbajack.Web.Test.csproj", "{2250E45B-C127-488D-909B-43BA78BC1F44}"
