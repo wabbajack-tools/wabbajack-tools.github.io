@@ -10,9 +10,9 @@ using Microsoft.CodeAnalysis.Text;
 namespace Wabbajack.Web.Generator
 {
     [Generator]
-    public class PostGenerator : AGenerator
+    public class DocsGenerator : AGenerator
     {
-        protected override string DirectoryName => "posts";
+        protected override string DirectoryName => "docs";
 
         protected override (string, SourceText) GenerateManagerClass(List<string> classes)
         {
@@ -20,12 +20,12 @@ namespace Wabbajack.Web.Generator
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Wabbajack.Web.Posts;
+using Wabbajack.Web.Docs;
 namespace Wabbajack.Web.Services
 {
-    public partial class PostManager
+    public partial class DocsManager
     {
-        public IReadOnlyList<IPost> Posts => ");
+        public IReadOnlyList<IDocumentation> Docs => ");
             if (classes.Any())
             {
                 var classString = classes.Aggregate((x, y) => $"{x},{y}");
@@ -33,19 +33,19 @@ namespace Wabbajack.Web.Services
             }
             else
             {
-                sb.Append("Array.Empty<IPost>();");
+                sb.Append("Array.Empty<IDocumentation>();");
             }
             sb.Append(@"
-        public bool TryGetPost(Guid id, out IPost res)
+        public bool TryGetDocumentation(Guid id, out IDocumentation res)
         {
-            res = Posts.FirstOrDefault(x => x.Id.Equals(id));
+            res = Docs.FirstOrDefault(x => x.Id.Equals(id));
             return res == null;
         }
     }
 }
 ");
 
-            return ("PostManager.generated.cs", SourceText.From(sb.ToString(), Encoding.UTF8, SourceHashAlgorithm.Sha256));
+            return ("DocsManager.generated.cs", SourceText.From(sb.ToString(), Encoding.UTF8, SourceHashAlgorithm.Sha256));
         }
 
         protected override (string, string, SourceText) GenerateClass(string file)
@@ -53,14 +53,8 @@ namespace Wabbajack.Web.Services
             if (!File.Exists(file))
                 throw new ArgumentException($"File does not exist at \"{file}\"!", nameof(file));
 
-            var fileName = Path.GetFileNameWithoutExtension(file)!;
-
-            var sDate = fileName.Substring(0, 4 + 1 + 2 + 1 + 2);
-            var date = DateTime.ParseExact(sDate, "yyyy-MM-dd", new NumberFormatInfo());
-            var dateBinary = date.ToBinary();
-
             var guid = Guid.NewGuid();
-            var className = $"Post_{date:yyyy_MM_dd}_{guid:N}";
+            var className = $"Documentation_{guid:N}";
 
             var contents = File.ReadAllText(file);
             var yaml = ParseYamlInMarkdown(contents, file);
@@ -69,6 +63,14 @@ namespace Wabbajack.Web.Services
                 throw new Exception($"File \"{file}\" does not have a title!");
             if (!yaml.TryGetValue("author", out var author))
                 throw new Exception($"File \"{file}\" does not have an author!");
+            if (!yaml.TryGetValue("published", out var sPublished))
+                throw new Exception($"File \"{file}\" does not have a published date!");
+            yaml.TryGetValue("updated", out var sUpdated);
+
+            var published = DateTime.ParseExact(sPublished, "yyyy-MM-dd", new NumberFormatInfo());
+            var updated = sUpdated == null
+                ? DateTime.MinValue
+                : DateTime.ParseExact(sUpdated, "yyyy-MM-dd", new NumberFormatInfo());
 
             var startIndex = contents.LastIndexOf("---", StringComparison.OrdinalIgnoreCase) + 3;
             if (startIndex == -1)
@@ -79,12 +81,12 @@ namespace Wabbajack.Web.Services
 
             var sb = new StringBuilder(@"
 using System;
-namespace Wabbajack.Web.Posts
+namespace Wabbajack.Web.Docs
 {
     public class ");
             sb.Append(className);
 
-            sb.Append(@" : IPost
+            sb.Append(@" : IDocumentation
     {
         public Guid Id => ");
             sb.Append($"Guid.ParseExact(\"{guid:N}\", \"N\");");
@@ -95,9 +97,11 @@ namespace Wabbajack.Web.Posts
         public string Author => ");
             sb.Append($"\"{author}\";");
             sb.Append(@"
-        public DateTime Date => ");
-            sb.Append($"DateTime.FromBinary({dateBinary});");
-
+        public DateTime Published => ");
+            sb.Append($"DateTime.FromBinary({published.ToBinary()});");
+            sb.Append(@"
+        public DateTime Updated => ");
+            sb.Append($"DateTime.FromBinary({updated.ToBinary()});");
             sb.Append(@"
         public string Markdown => @""");
             sb.Append(contentStringBuilder);

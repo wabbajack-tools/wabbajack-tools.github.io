@@ -29,7 +29,10 @@ namespace Wabbajack.Web
                 provider.GetRequiredService<HttpClient>(),
                 provider.GetRequiredService<IEnumerable<JsonConverter>>())
             );
-            builder.Services.AddSingleton<IPostManager>(new Wabbajack.Web.Services.PostManager());
+
+            // generated with Wabbajack.Web.Generator
+            builder.Services.AddSingleton<IPostManager>(new PostManager());
+            builder.Services.AddSingleton<IDocsManager>(new DocsManager());
 
             // Wabbajack.DTO
             builder.Services.AddDTOConverters();
