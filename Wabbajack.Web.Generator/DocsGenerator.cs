@@ -73,9 +73,9 @@ namespace Wabbajack.Web.Services
                 ? DateTime.MinValue
                 : DateTime.ParseExact(sUpdated, "yyyy-MM-dd", new NumberFormatInfo());
 
-            var startIndex = contents.LastIndexOf("---", StringComparison.OrdinalIgnoreCase) + 3;
-            if (startIndex == -1)
-                throw new Exception($"Unable to find start index of \"---\" in file \"{file}\"");
+            var startIndex = contents.IndexOf("---",
+                contents.IndexOf("---", StringComparison.OrdinalIgnoreCase) + 4,
+                StringComparison.OrdinalIgnoreCase) + 3;
 
             var contentStringBuilder = new StringBuilder(contents, startIndex, contents.Length - startIndex, contents.Length);
             contentStringBuilder.Replace("\"", "\"\"");
