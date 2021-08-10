@@ -28,6 +28,22 @@ namespace Wabbajack.Web.Test.ComponentTests
             Context.Services.AddDTOConverters();
         }
 
+        protected IStateContainer SetupBrokenStateContainer(bool useModlistMetadata = false)
+        {
+            var mock = new Mock<IStateContainer>();
+            Context.Services.AddSingleton(mock.Object);
+
+            if (useModlistMetadata)
+            {
+                mock.Setup(x => x.Modlists)
+                    .Returns(new List<ModlistMetadata>());
+                mock.Setup(x => x.LoadModlistMetadata())
+                    .ReturnsAsync(false);
+            }
+
+            return mock.Object;
+        }
+
         protected IStateContainer SetupStateContainer(bool useModlistMetadata = false)
         {
             var mock = new Mock<IStateContainer>();
