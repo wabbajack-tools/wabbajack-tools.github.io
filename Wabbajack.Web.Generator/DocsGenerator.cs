@@ -53,12 +53,11 @@ namespace Wabbajack.Web.Services
             if (!File.Exists(file))
                 throw new ArgumentException($"File does not exist at \"{file}\"!", nameof(file));
 
-            var guid = Guid.NewGuid();
-            var className = $"Documentation_{guid:N}";
-
             var contents = File.ReadAllText(file);
             var yaml = ParseYamlInMarkdown(contents, file);
 
+            if (!yaml.TryGetValue("id", out var sId))
+                throw new Exception($"File \"{file}\" does not have an id!");
             if (!yaml.TryGetValue("title", out var title))
                 throw new Exception($"File \"{file}\" does not have a title!");
             if (!yaml.TryGetValue("author", out var author))
@@ -66,6 +65,8 @@ namespace Wabbajack.Web.Services
             if (!yaml.TryGetValue("published", out var sPublished))
                 throw new Exception($"File \"{file}\" does not have a published date!");
             yaml.TryGetValue("updated", out var sUpdated);
+
+            var guid = Guid.ParseExact(sId, "N");
 
             var published = DateTime.ParseExact(sPublished, "yyyy-MM-dd", new NumberFormatInfo());
             var updated = sUpdated == null
@@ -78,6 +79,8 @@ namespace Wabbajack.Web.Services
 
             var contentStringBuilder = new StringBuilder(contents, startIndex, contents.Length - startIndex, contents.Length);
             contentStringBuilder.Replace("\"", "\"\"");
+
+            var className = $"Documentation_{guid:N}";
 
             var sb = new StringBuilder(@"
 using System;

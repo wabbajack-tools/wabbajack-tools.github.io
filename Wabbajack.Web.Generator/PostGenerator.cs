@@ -59,16 +59,18 @@ namespace Wabbajack.Web.Services
             var date = DateTime.ParseExact(sDate, "yyyy-MM-dd", new NumberFormatInfo());
             var dateBinary = date.ToBinary();
 
-            var guid = Guid.NewGuid();
-            var className = $"Post_{date:yyyy_MM_dd}_{guid:N}";
 
             var contents = File.ReadAllText(file);
             var yaml = ParseYamlInMarkdown(contents, file);
 
+            if (!yaml.TryGetValue("id", out var sId))
+                throw new Exception($"File \"{file}\" does not have an id!");
             if (!yaml.TryGetValue("title", out var title))
                 throw new Exception($"File \"{file}\" does not have a title!");
             if (!yaml.TryGetValue("author", out var author))
                 throw new Exception($"File \"{file}\" does not have an author!");
+
+            var guid = Guid.ParseExact(sId, "N");
 
             var startIndex = contents.LastIndexOf("---", StringComparison.OrdinalIgnoreCase) + 3;
             if (startIndex == -1)
@@ -76,6 +78,8 @@ namespace Wabbajack.Web.Services
 
             var contentStringBuilder = new StringBuilder(contents, startIndex, contents.Length - startIndex, contents.Length);
             contentStringBuilder.Replace("\"", "\"\"");
+
+            var className = $"Post_{date:yyyy_MM_dd}_{guid:N}";
 
             var sb = new StringBuilder(@"
 using System;
