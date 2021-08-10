@@ -20,14 +20,26 @@
         </MudItem>
     </MudGrid>
 
-    <MudGrid Class="mt-2" Spacing="2" Justify="Justify.FlexStart">
-        @foreach (var modlist in FilteredModlists)
-        {
-            <MudItem @key="modlist.Title" xs="12" sm="12" md="6" lg="6" xl="4">
-                @_renderModlistInfo(modlist)
-            </MudItem>
-        }
-    </MudGrid>
+    @if (_errorLoadingModlists)
+    {
+        <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+            <MudText>Unable to load Modlists from GitHub!</MudText>
+        </MudAlert>
+    } else if (!Modlists.Any())
+    {
+        <MudText>Loading...</MudText>
+    }
+    else
+    {
+        <MudGrid Class="mt-2" Spacing="2" Justify="Justify.FlexStart">
+            @foreach (var modlist in FilteredModlists)
+            {
+                <MudItem @key="modlist.Title" xs="12" sm="12" md="6" lg="6" xl="4">
+                    @_renderModlistInfo(modlist)
+                </MudItem>
+            }
+        </MudGrid>
+    }
 </MudContainer>
 
 @code {
@@ -55,16 +67,22 @@
         .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
         .Prepend(All);
 
+    private bool _errorLoadingModlists;
+
     protected override async Task OnInitializedAsync()
     {
         _showNsfw = false;
 
         if (!_stateContainer.Modlists.Any())
         {
-            // TODO: use result
             var res = await _stateContainer.LoadModlistMetadata();
 
-            if (!res) return;
+            if (!res)
+            {
+                _errorLoadingModlists = true;
+                _shouldRender = true;
+                return;
+            }
         }
 
         _gamesByName = Modlists
