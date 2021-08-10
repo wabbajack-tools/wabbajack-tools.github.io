@@ -1,5 +1,6 @@
 @using Wabbajack.Web.Pages.Gallery
 @using Wabbajack.Web.Pages.StatusDashboard
+@using Wabbajack.Web.Pages.Docs
 @inherits LayoutComponentBase
 
 <MudThemeProvider Theme="CustomTheme"/>
@@ -25,6 +26,9 @@
             </MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Href="@StatusDashboard.Route" Icon="@Icons.Material.Filled.Dashboard">
                 Status Dashboard
+            </MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="@Docs.Route" Icon="@Icons.Material.Filled.Book">
+                Documentation
             </MudNavLink>
         </MudNavMenu>
     </MudDrawer>

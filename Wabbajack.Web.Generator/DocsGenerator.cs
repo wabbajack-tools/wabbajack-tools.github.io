@@ -113,7 +113,7 @@ namespace Wabbajack.Web.Docs
 }
 ");
 
-            return (className, $"{className}.generated.cs", SourceText.From(sb.ToString(), Encoding.UTF8, SourceHashAlgorithm.Sha256));
+            return (className, $"{className}.generated.cs", SourceText.From(sb.ToString().Trim(), Encoding.UTF8, SourceHashAlgorithm.Sha256));
         }
     }
 }

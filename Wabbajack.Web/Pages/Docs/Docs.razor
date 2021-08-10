@@ -1,0 +1,47 @@
+﻿@page "/docs"
+@using Wabbajack.Web.Services
+@using Wabbajack.Web.Docs
+@using Wabbajack.Web.Utils
+@inject IDocsManager _docsManager;
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-8">
+    @foreach (var documentation in Documentations)
+    {
+        <div @key="documentation.Id">
+            @_renderModlistSummary(documentation)
+        </div>
+    }
+</MudContainer>
+
+@code {
+    public const string Route = "/docs";
+
+    protected override bool ShouldRender() => false;
+
+    private IEnumerable<IDocumentation> Documentations => _docsManager.Docs
+        .OrderByDescending(x => x.Updated)
+        .ThenBy(x => x.Title);
+
+    // DO NOT CHANGE "__builder"
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable once UnusedParameter.Local
+    private readonly RenderFragment<IDocumentation> _renderModlistSummary = documentation => __builder =>
+    {
+        <MudCard Elevation="DesignConstants.MudCardElevation2">
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">@documentation.Title</MudText>
+                    <MudText Typo="Typo.caption">By @documentation.Author</MudText>
+                    <MudText Typo="Typo.caption">Created: @documentation.Published.ToLocalTime().ToString("d")</MudText>
+                    @if (documentation.Updated != DateTime.MinValue)
+                    {
+                        <MudText Typo="Typo.caption">Updated: @documentation.Updated.ToLocalTime().ToString("d")</MudText>
+                    }
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudMarkdown Value="@documentation.Markdown"/>
+            </MudCardContent>
+        </MudCard>
+    };
+}
