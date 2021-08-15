@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Wabbajack.DTOs;
+using Wabbajack.DTOs.JsonConverters;
 
 #nullable enable
 
@@ -24,18 +25,14 @@ namespace Wabbajack.Web.Services
         private readonly HttpClient _client;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        public StateContainer(ILogger<StateContainer> logger, HttpClient client, IEnumerable<JsonConverter> converters)
+        public StateContainer(ILogger<StateContainer> logger, HttpClient client, DTOSerializer dtoSerializer)
         {
             _logger = logger;
             _client = client;
 
-            _jsonSerializerOptions = new JsonSerializerOptions
-            {
-                ReadCommentHandling = JsonCommentHandling.Skip,
-                AllowTrailingCommas = true
-            };
-
-            foreach (var c in converters) _jsonSerializerOptions.Converters.Add(c);
+            _jsonSerializerOptions = dtoSerializer.Options;
+            _jsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
+            _jsonSerializerOptions.AllowTrailingCommas = true;
         }
 
         private List<ModlistMetadata> _modlists = new();

@@ -27,7 +27,7 @@ namespace Wabbajack.Web
             builder.Services.AddSingleton<IStateContainer>(provider => new StateContainer(
                 provider.GetRequiredService<ILogger<StateContainer>>(),
                 provider.GetRequiredService<HttpClient>(),
-                provider.GetRequiredService<IEnumerable<JsonConverter>>())
+                provider.GetRequiredService<DTOSerializer>())
             );
 
             // generated with Wabbajack.Web.Generator
@@ -36,7 +36,7 @@ namespace Wabbajack.Web
 
             // Wabbajack.DTO
             builder.Services.AddDTOConverters();
-            // TODO: builder.Services.AddDTOSerializer();
+            builder.Services.AddDTOSerializer();
 
             //MudBlazor
             builder.Services.AddMudServices();
