@@ -8,14 +8,26 @@
     <MudText Typo="Typo.h5">Failing Modlists: @Failing</MudText>
     <MudText Typo="Typo.h5">Succeeding Modlists: @Succeeding</MudText>
 
-    <MudGrid Class="mt-3">
-        @foreach (var modlistSummary in OrderedModlistSummaries)
-        {
-            <MudItem xs="12" sm="6" md="4" lg="4" xl="4" @key="modlistSummary.MachineURL">
-                @_renderModlistSummary(modlistSummary)
-            </MudItem>
-        }
-    </MudGrid>
+    @if (_errorLoadingModlists)
+    {
+        <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+            <MudText>Unable to load Modlists from GitHub!</MudText>
+        </MudAlert>
+    } else if (!ModlistSummaries.Any())
+    {
+        <MudText>Loading...</MudText>
+    }
+    else
+    {
+        <MudGrid Class="mt-3">
+            @foreach (var modlistSummary in OrderedModlistSummaries)
+            {
+                <MudItem xs="12" sm="6" md="4" lg="4" xl="4" @key="modlistSummary.MachineURL">
+                    @_renderModlistSummary(modlistSummary)
+                </MudItem>
+            }
+        </MudGrid>
+    }
 </MudContainer>
 
 @code {
@@ -32,14 +44,20 @@
     private int Failing => ModlistSummaries.Count(x => x.HasFailures);
     private int Succeeding => ModlistSummaries.Count(x => !x.HasFailures);
 
+    private bool _errorLoadingModlists;
+
     protected override async Task OnInitializedAsync()
     {
         if (!_stateContainer.ModlistSummaries.Any())
         {
-            // TODO: use result
             var res = await _stateContainer.LoadModlistSummaries();
 
-            if (!res) return;
+            if (!res)
+            {
+                _errorLoadingModlists = true;
+                _shouldRender = true;
+                return;
+            }
         }
 
         _shouldRender = true;

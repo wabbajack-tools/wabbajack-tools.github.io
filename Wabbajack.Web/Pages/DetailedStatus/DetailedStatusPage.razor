@@ -10,7 +10,20 @@
         Back to the Status Dashboard
     </MudButton>
 
-    @if (_modlistStatus != null)
+    @if (_modlistStatus == null)
+    {
+        @if (_errorFoundNoMatchingModlist)
+        {
+            <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                <MudText>Found no Modlist with machineUrl "@MachineUrl"!</MudText>
+            </MudAlert>
+        }
+        else
+        {
+            <MudText>Loading...</MudText>
+        }
+    }
+    else
     {
         <MudText Typo="Typo.h5">@_modlistStatus.Name</MudText>
         <MudText Typo="Typo.body1">Last Checked: @_modlistStatus.Checked.ToLocalTime().ToString("g")</MudText>
@@ -50,6 +63,8 @@
     private string FailingArchivesHeight => $"{Math.Min(FailingArchives.Count, MaxItems) * ItemSize}px";
     private string SucceedingArchivesHeight => $"{Math.Min(SucceedingArchives.Count, MaxItems) * ItemSize}px";
 
+    private bool _errorFoundNoMatchingModlist;
+
     protected override async Task OnInitializedAsync()
     {
         if (MachineUrl == null) return;
@@ -58,8 +73,12 @@
         {
             var res = await _stateContainer.LoadModlistStatus(MachineUrl);
 
-            //TODO: use result
-            if (res == null) return;
+            if (res == null)
+            {
+                _errorFoundNoMatchingModlist = true;
+                _shouldRender = true;
+                return;
+            }
 
             _modlistStatus = res;
         }
