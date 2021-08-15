@@ -1,0 +1,71 @@
+﻿@page "/status/{machineUrl}"
+@using Wabbajack.Web.Services
+@using Wabbajack.DTOs.ServerResponses
+@using Wabbajack.Web.Pages.StatusDashboard
+@inject IStateContainer _stateContainer;
+
+<MudContainer Class="mt-16" MaxWidth="MaxWidth.Large">
+    <MudButton Class="mb-4" Size="Size.Large" Variant="Variant.Text" Link="@StatusDashboard.Route"
+               StartIcon="@Icons.Material.Filled.ArrowBack">
+        Back to the Status Dashboard
+    </MudButton>
+
+    @if (_modlistStatus != null)
+    {
+        <MudText Typo="Typo.h5">@_modlistStatus.Name</MudText>
+        <MudText Typo="Typo.body1">Last Checked: @_modlistStatus.Checked.ToLocalTime().ToString("g")</MudText>
+
+        <MudText Typo="Typo.h6">Failing Archives (@FailingArchives.Count):</MudText>
+        <div style="height: @FailingArchivesHeight;overflow-y: scroll">
+            <Virtualize ItemSize="ItemSize" Items="FailingArchives" Context="archive" TItem="DetailedStatusItem">
+                <p @key="archive.Name">@archive.Name</p>
+            </Virtualize>
+        </div>
+
+        <MudText Typo="Typo.h6">Succeeding Archives (@SucceedingArchives.Count):</MudText>
+        <div style="height: @SucceedingArchivesHeight;overflow-y: scroll">
+            <Virtualize ItemSize="ItemSize" Items="SucceedingArchives" Context="archive" TItem="DetailedStatusItem">
+                <p @key="archive.Name">@archive.Name</p>
+            </Virtualize>
+        </div>
+    }
+
+</MudContainer>
+
+@code {
+    [Parameter]
+    public string MachineUrl { get; set; }
+
+    private const int ItemSize = 20;
+    private const int MaxItemListSize = 400;
+    private const int MaxItems = MaxItemListSize / ItemSize;
+
+    private bool _shouldRender;
+    protected override bool ShouldRender() => _shouldRender;
+
+    private DetailedStatus _modlistStatus;
+    private List<DetailedStatusItem> FailingArchives => _modlistStatus.Archives.Where(x => x.IsFailing).ToList();
+    private List<DetailedStatusItem> SucceedingArchives => _modlistStatus.Archives.Where(x => !x.IsFailing).ToList();
+
+    private string FailingArchivesHeight => $"{Math.Min(FailingArchives.Count, MaxItems) * ItemSize}px";
+    private string SucceedingArchivesHeight => $"{Math.Min(SucceedingArchives.Count, MaxItems) * ItemSize}px";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (MachineUrl == null) return;
+
+        if (!_stateContainer.TryGetModlistStatus(MachineUrl, out _modlistStatus))
+        {
+            var res = await _stateContainer.LoadModlistStatus(MachineUrl);
+
+            //TODO: use result
+            if (res == null) return;
+
+            _modlistStatus = res;
+        }
+
+        _shouldRender = true;
+    }
+
+    public static string CreateRedirect(string machineUrl) => $"/status/{machineUrl}";
+}

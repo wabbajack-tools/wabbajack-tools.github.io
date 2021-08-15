@@ -1,6 +1,7 @@
 ﻿@page "/status"
 @using Wabbajack.Web.Services
 @using Wabbajack.DTOs
+@using Wabbajack.Web.Pages.DetailedStatus
 @inject IStateContainer _stateContainer;
 
 <MudContainer Class="mt-16" MaxWidth="MaxWidth.Large">
@@ -49,8 +50,7 @@
     // ReSharper disable once UnusedParameter.Local
     private readonly RenderFragment<ModListSummary> _renderModlistSummary = modlistSummary => __builder =>
     {
-        // TODO: https://github.com/wabbajack-tools/wabbajack/issues/1548#issuecomment-894808346
-        var detailedStatusLink = $"https://build.wabbajack.org{modlistSummary.Report}";
+        var detailedStatusLink = DetailedStatusPage.CreateRedirect(modlistSummary.MachineURL);
 
         var time = modlistSummary.Checked.ToLocalTime();
 
