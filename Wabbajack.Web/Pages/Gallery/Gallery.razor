@@ -1,6 +1,7 @@
 ﻿@page "/gallery"
 @using Wabbajack.Web.Services
 @using Wabbajack.DTOs
+@using Wabbajack.Web.Pages.ModlistArchiveSearch
 @using Wabbajack.Web.Pages.ModlistInfo
 @using Wabbajack.Web.Utils
 @inject IStateContainer _stateContainer;
@@ -125,6 +126,10 @@
             <MudCardActions>
                 <MudButton Link="@viewLink" Variant="Variant.Text" ButtonType="ButtonType.Button" Color="Color.Info">
                     View
+                </MudButton>
+                <MudButton Link="@ModlistArchiveSearch.CreateRedirect(modlist.Links.MachineURL)"
+                           Variant="Variant.Text" ButtonType="ButtonType.Button" Color="Color.Info">
+                    Archive Search
                 </MudButton>
             </MudCardActions>
         </MudCard>

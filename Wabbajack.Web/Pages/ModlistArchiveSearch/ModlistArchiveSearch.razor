@@ -1,0 +1,161 @@
+﻿@page "/search/{machineUrl}"
+@using Wabbajack.DTOs.ServerResponses
+@using Wabbajack.Web.Pages.Gallery
+@using Wabbajack.Web.Services
+@using Wabbajack.Web.Utils
+@using Wabbajack.DTOs.DownloadStates
+@using Wabbajack.DTOs
+@inject IStateContainer _stateContainer;
+@inject NavigationManager _navigationManager;
+
+<MudContainer Class="mt-16" MaxWidth="MaxWidth.Large">
+    <MudButton Class="mb-4" Size="Size.Large" Variant="Variant.Text" Link="@Gallery.Route"
+               StartIcon="@Icons.Material.Filled.ArrowBack">
+        Back to the Gallery
+    </MudButton>
+
+    @if (_modlistStatus == null)
+    {
+        @if (_errorFoundNoMatchingModlist)
+        {
+            <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                <MudText>Found no Modlist with machineUrl "@MachineUrl"!</MudText>
+            </MudAlert>
+        }
+        else
+        {
+            <MudText>Loading...</MudText>
+        }
+    }
+    else
+    {
+        <MudTable Items="@Archives" Filter="DisplayArchive" Height="500px"
+                  Dense="true" Striped="true" FixedHeader="true" Virtualize="true">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">@_modlistStatus.Name</MudText>
+                <MudSpacer/>
+                <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"
+                              Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Actions</MudTh>
+                <MudTh>
+                    Name
+                </MudTh>
+                <MudTh>
+                    <MudTableSortLabel InitialDirection="SortDirection.Ascending"
+                                       SortBy="new Func<DetailedStatusItem, object>(x => x.Name)">
+                        Archive Name
+                    </MudTableSortLabel>
+                </MudTh>
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<DetailedStatusItem, object>(x => x.Archive.Size)">
+                        Size
+                    </MudTableSortLabel>
+                </MudTh>
+                <MudTh>Hash</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Actions">
+                    <MudButton StartIcon="@Icons.Material.Filled.Link" Size="Size.Small"
+                               OnClick="() => OpenArchiveLink(context)"/>
+                </MudTd>
+                <MudTd DataLabel="Name">@GetName(context)</MudTd>
+                <MudTd DataLabel="Archive Name">@context.Name</MudTd>
+                <MudTd DataLabel="Size">@context.Archive.Size.ToFileSizeString()</MudTd>
+                <MudTd DataLabel="Hash">@context.Archive.Hash</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager PageSizeOptions="new []{50, 100, 500}"/>
+            </PagerContent>
+        </MudTable>
+    }
+</MudContainer>
+
+@code {
+    [Parameter]
+    public string MachineUrl { get; set; }
+
+    private bool _shouldRender;
+    protected override bool ShouldRender() => _shouldRender;
+
+    private bool _errorFoundNoMatchingModlist;
+
+    private DetailedStatus _modlistStatus;
+    private IEnumerable<DetailedStatusItem> Archives => _modlistStatus.Archives;
+
+    private string _searchString;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (MachineUrl == null) return;
+
+        if (!_stateContainer.TryGetModlistStatus(MachineUrl, out _modlistStatus))
+        {
+            var res = await _stateContainer.LoadModlistStatus(MachineUrl);
+
+            if (res == null)
+            {
+                _errorFoundNoMatchingModlist = true;
+                _shouldRender = true;
+                return;
+            }
+
+            _modlistStatus = res;
+        }
+
+        _shouldRender = true;
+    }
+
+    private static string GetName(DetailedStatusItem archive)
+    {
+        var state = archive.Archive.State;
+        var name = state switch
+        {
+            Nexus nexusState => $"{nexusState.Name}",
+            IMetaState metaState => $"{metaState.Name}",
+            _ => archive.Name
+        };
+
+        return string.IsNullOrWhiteSpace(name) ? archive.Name : name;
+    }
+
+    private bool DisplayArchive(DetailedStatusItem archive)
+    {
+        // returns true if the item should be displayed in the table
+        if (string.IsNullOrWhiteSpace(_searchString)) return true;
+
+        var archiveName = archive.Name;
+        if (archiveName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        var stateName = GetName(archive);
+        if (stateName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
+    }
+
+    private void OpenArchiveLink(DetailedStatusItem archive)
+    {
+        var state = archive.Archive.State;
+        var url = state switch
+        {
+            Nexus nexusState => $"https://nexusmods.com/{nexusState.Game.MetaData().NexusName}/mods/{nexusState.ModID}",
+            IMetaState metaState => $"{metaState.URL}",
+            GoogleDrive googleDriveState => $"https://drive.google.com/file/d/{googleDriveState.Id}",
+            Http httpState => $"{httpState.Url}",
+            //IPS4OAuth2 ips4State => $"{ips4State.URL}",
+            Mega megaState => $"{megaState.Url}",
+            _ => null
+        };
+
+        if (string.IsNullOrWhiteSpace(url)) return;
+
+        // TODO: open in new tab
+        _navigationManager.NavigateTo(url);
+    }
+
+    public static string CreateRedirect(string machineUrl) => $"/search/{machineUrl}";
+}
