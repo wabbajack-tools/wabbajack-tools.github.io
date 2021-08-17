@@ -1,0 +1,7 @@
+﻿{
+  "root": "/",
+  "routes": {
+    "/**": "index.html"
+  },
+  "error_page": "404.html"
+}
