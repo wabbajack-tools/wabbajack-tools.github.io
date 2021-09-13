@@ -15,7 +15,7 @@
     
     <ItemGroup>
         <!-- Generator dependencies -->
-        <PackageReference Include="Markdig" Version="0.25.0" PrivateAssets="all" GeneratePathProperty="true" />
+        <PackageReference Include="Markdig" Version="0.26.0" PrivateAssets="all" GeneratePathProperty="true" />
         <PackageReference Include="YamlDotNet" Version="11.2.1" PrivateAssets="all" GeneratePathProperty="true" />
     </ItemGroup>
     
