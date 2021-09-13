@@ -1,0 +1,19 @@
+{
+  "name": "wabbajack.web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "postcss postcss-import.css -o wwwroot/compiled.css",
+    "watch": "nodemon --watch tailwind.config.js --exec \"npm run build\""
+  },
+  "author": "erri120",
+  "license": "GPLv3.0",
+  "devDependencies": {
+    "autoprefixer": "^10.3.4",
+    "nodemon": "^2.0.12",
+    "postcss": "^8.3.6",
+    "postcss-cli": "^8.3.1",
+    "tailwindcss": "^2.2.15"
+  }
+}

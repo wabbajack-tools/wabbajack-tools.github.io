@@ -13,11 +13,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Setup .NET Core SDK 6.0.x
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '6.0.x'
         include-prerelease: true
+
+    - name: Setup Node 16.x
+      uses: actions/setup-node@v1
+      with:
+          node-version: 16.x
+    - name: npm install
+      run: npm install
+      working-directory: Wabbajack.Web
+
     - name: Restore dependencies
       run: dotnet restore
     - name: Build

@@ -29,10 +29,9 @@
         <AdditionalFiles Include="..\posts\*.md" />
         <AdditionalFiles Include="..\docs\*.md" />
     </ItemGroup>
-
-    <ItemGroup>
-        <Content Remove="wwwroot\_content\MudBlazor\MudBlazor.min.css" />
-        <None Include="wwwroot\_content\MudBlazor\MudBlazor.min.css" />
-    </ItemGroup>
-
+    
+    <Target Name="RunPostcss" BeforeTargets="Build">
+        <Exec Command="npm run build"/>
+    </Target>
+    
 </Project>
