@@ -7,7 +7,7 @@ namespace Wabbajack.Web.Test.ComponentTests
 {
     public class GalleryTests : ComponentTest
     {
-        [Fact]
+        /*[Fact]
         public void TestRender()
         {
             SetupStateContainer(true);
@@ -21,6 +21,6 @@ namespace Wabbajack.Web.Test.ComponentTests
             SetupBrokenStateContainer(true);
             var cut = Context.RenderComponent<Gallery>();
             Assert.True(cut.HasComponent<MudAlert>());
-        }
+        }*/
     }
 }
