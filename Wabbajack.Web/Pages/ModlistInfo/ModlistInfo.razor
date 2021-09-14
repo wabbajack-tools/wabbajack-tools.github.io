@@ -36,11 +36,9 @@
                  class="max-w-full"
                  loading="eager"
                  crossorigin="anonymous"/>
-            <div class="pt-6 max-w-prose mx-auto">
+            <div class="pt-6 px-2 max-w-6xl mx-auto">
                 <p>Created by @_modlist.Author, current Version: @_modlist.Version</p>
-                <div class="markdown-body" style="color: white !important;">
-                    @_renderReadme(_readme)
-                </div>
+                @MarkdownComponent.RenderMarkdown(_readme)
             </div>
         </div>
     }
@@ -94,14 +92,6 @@
         _readme = await _client.GetStringAsync(_modlist.Links.Readme);
         _shouldRender = true;
     }
-
-    // DO NOT CHANGE "__builder"
-    // ReSharper disable InconsistentNaming
-    // ReSharper disable once UnusedParameter.Local
-    private readonly RenderFragment<string> _renderReadme = readme => __builder =>
-    {
-        __builder.AddContent(0, MarkdownUtils.MarkdownToMarkupString(readme));
-    };
 
     public static string CreateRedirect(string machineUrl) => $"/modlist/{machineUrl}";
 }

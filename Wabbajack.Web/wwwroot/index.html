@@ -21,7 +21,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- for https://github.com/sindresorhus/github-markdown-css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css" integrity="sha512-Oy18vBnbSJkXTndr2n6lDMO5NN31UljR8e/ICzVPrGpSud4Gkckb8yUpqhKuUNoE+o9gAb4O/rAxxw1ojyUVzg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css" integrity="sha512-Oy18vBnbSJkXTndr2n6lDMO5NN31UljR8e/ICzVPrGpSud4Gkckb8yUpqhKuUNoE+o9gAb4O/rAxxw1ojyUVzg==" crossorigin="anonymous" referrerpolicy="no-referrer" />-->
+    <!-- from https://github.com/hyrious/generate-github-markdown-css/tree/743d36d0fcd4a2594f707ec26fc1ec60a015ddda -->
+    <link href="github-markdown.min.css" rel="stylesheet">
+
+    <style>
+        .fixed-markdown-body {
+            background: #1d1d1d !important;
+        }
+
+        .fixed-markdown-body ol, .fixed-markdown-body ul {
+            list-style: circle !important;
+        }
+    </style>
 
     <!-- Start Single Page Apps for GitHub Pages -->
     <script type="text/javascript">
@@ -54,6 +66,9 @@
         }(window.location))
     </script>
     <!-- End Single Page Apps for GitHub Pages -->
+
+    <!-- Blazor CSS isolation -->
+    <link href="Wabbajack.Web.styles.css" rel="stylesheet" >
 </head>
 
 <body class="dark:bg-black-800 dark:text-white">

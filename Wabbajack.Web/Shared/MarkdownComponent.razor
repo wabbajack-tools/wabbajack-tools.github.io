@@ -1,0 +1,22 @@
+﻿@using Wabbajack.Web.Utils
+@code {
+
+    // DO NOT CHANGE "__builder"
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable once UnusedParameter.Local
+    public static readonly RenderFragment<string> RenderMarkdown = markdown => __builder =>
+    {
+        <div data-color-mode="dark" data-dark-theme="dark" class="markdown-body fixed-markdown-body">
+            @_insertMarkupString(markdown)
+        </div>
+    };
+
+    // DO NOT CHANGE "__builder"
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable once UnusedParameter.Local
+    private static readonly RenderFragment<string> _insertMarkupString = markdown => __builder =>
+    {
+        __builder.AddContent(0, MarkdownUtils.MarkdownToMarkupString(markdown));
+    };
+
+}
