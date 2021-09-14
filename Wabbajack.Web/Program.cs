@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using MudBlazor.Services;
 using Wabbajack.DTOs.JsonConverters;
 using Wabbajack.Web.Services;
 
@@ -37,9 +34,6 @@ namespace Wabbajack.Web
             // Wabbajack.DTO
             builder.Services.AddDTOConverters();
             builder.Services.AddDTOSerializer();
-
-            //MudBlazor
-            builder.Services.AddMudServices();
 
             builder.Logging.SetMinimumLevel(builder.HostEnvironment.IsDevelopment()
                 ? LogLevel.Debug

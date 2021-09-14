@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using MudBlazor.Services;
 using Wabbajack.DTOs;
 using Wabbajack.DTOs.JsonConverters;
 using Wabbajack.Web.Services;
@@ -24,7 +22,7 @@ namespace Wabbajack.Web.Test.ComponentTests
             Context = new TestContext();
             Context.JSInterop.Mode = JSRuntimeMode.Loose;
 
-            Context.Services.AddMudServices();
+            //Context.Services.AddMudServices();
             Context.Services.AddDTOConverters();
         }
 
