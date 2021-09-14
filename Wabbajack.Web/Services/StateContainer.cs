@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Wabbajack.DTOs;
 using Wabbajack.DTOs.JsonConverters;
-using Wabbajack.DTOs.ServerResponses;
+using Wabbajack.DTOs.ModListValidation;
 
 #nullable enable
 
@@ -19,9 +19,9 @@ namespace Wabbajack.Web.Services
     public class StateContainer : IStateContainer
     {
         private const string ModlistsJsonUrl = "https://raw.githubusercontent.com/wabbajack-tools/mod-lists/master/modlists.json";
-        private const string BuildServerBaseUrl = "https://build.wabbajack.org/";
-        private const string ModlistsSummaryUrl = BuildServerBaseUrl + "lists/status.json";
-        private const string ModlistStatusFormatUrl = BuildServerBaseUrl + "lists/status/{0}.json";
+        private const string ModlistRepoBaseUrl = "https://raw.githubusercontent.com/wabbajack-tools/mod-lists/master/reports/";
+        private const string ModlistsSummaryUrl = ModlistRepoBaseUrl + "modListSummary.json";
+        private const string ModlistStatusFormatUrl = ModlistRepoBaseUrl + "{0}/status.json";
 
         private readonly ILogger<StateContainer> _logger;
         private readonly HttpClient _client;
@@ -86,21 +86,21 @@ namespace Wabbajack.Web.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Exception loading Modlist Summaries from {Url}", ModlistSummaries);
+                _logger.LogError(e, "Exception loading Modlist Summaries from {Url}", ModlistsSummaryUrl);
                 return false;
             }
 
             return true;
         }
 
-        private readonly Dictionary<string, DetailedStatus> _modlistStatusDictionary = new (StringComparer.OrdinalIgnoreCase);
-        public IReadOnlyDictionary<string, DetailedStatus> ModlistStatusDictionary => _modlistStatusDictionary;
+        private readonly Dictionary<string, ValidatedModList> _modlistStatusDictionary = new (StringComparer.OrdinalIgnoreCase);
+        public IReadOnlyDictionary<string, ValidatedModList> ModlistStatusDictionary => _modlistStatusDictionary;
         public bool HasModlistStatus(string machineUrl)
         {
             return _modlistStatusDictionary.ContainsKey(machineUrl);
         }
 
-        public async Task<DetailedStatus?> LoadModlistStatus(string machineUrl)
+        public async Task<ValidatedModList?> LoadModlistStatus(string machineUrl)
         {
             if (TryGetModlistStatus(machineUrl, out var tmp)) return tmp;
 
@@ -108,7 +108,7 @@ namespace Wabbajack.Web.Services
 
             try
             {
-                var res = await _client.GetFromJsonAsync<DetailedStatus>(
+                var res = await _client.GetFromJsonAsync<ValidatedModList>(
                     url,
                     _jsonSerializerOptions,
                     CancellationToken.None);
@@ -120,12 +120,12 @@ namespace Wabbajack.Web.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Exception loading Modlist Summaries from {Url}", ModlistSummaries);
+                _logger.LogError(e, "Exception loading Modlist Status of {MachineUrl} from {Url}", machineUrl, url);
                 return null;
             }
         }
 
-        public bool TryGetModlistStatus(string machineUrl, [MaybeNullWhen(false)] out DetailedStatus modlistStatus)
+        public bool TryGetModlistStatus(string machineUrl, [MaybeNullWhen(false)] out ValidatedModList modlistStatus)
         {
             return _modlistStatusDictionary.TryGetValue(machineUrl, out modlistStatus);
         }

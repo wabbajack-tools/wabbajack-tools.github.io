@@ -5,10 +5,11 @@
 @using Wabbajack.Web.Utils
 @using Wabbajack.DTOs.DownloadStates
 @using Wabbajack.DTOs
+@using Wabbajack.DTOs.ModListValidation
 @inject IStateContainer _stateContainer;
 @inject NavigationManager _navigationManager;
 
-<MudContainer Class="mt-16" MaxWidth="MaxWidth.Large">
+<!--<MudContainer Class="mt-16" MaxWidth="MaxWidth.Large">
     <MudButton Class="mb-4" Size="Size.Large" Variant="Variant.Text" Link="@Gallery.Route"
                StartIcon="@Icons.Material.Filled.ArrowBack">
         Back to the Gallery
@@ -71,7 +72,9 @@
             </PagerContent>
         </MudTable>
     }
-</MudContainer>
+</MudContainer>-->
+
+<!-- TODO -->
 
 @code {
     [Parameter]
@@ -82,8 +85,8 @@
 
     private bool _errorFoundNoMatchingModlist;
 
-    private DetailedStatus _modlistStatus;
-    private IEnumerable<DetailedStatusItem> Archives => _modlistStatus.Archives;
+    private ValidatedModList _modlistStatus;
+    private IEnumerable<ValidatedArchive> Archives => _modlistStatus.Archives;
 
     private string _searchString;
 

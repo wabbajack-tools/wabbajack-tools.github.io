@@ -33,7 +33,7 @@
         @ErrorComponent.RenderError("Unable to load Modlists from Github!")
     } else if (!Modlists.Any())
     {
-        <!-- TODO: show loading -->
+        @LoadingComponent.RenderLoadingThing("Loading Modlists...")
     }
     else
     {

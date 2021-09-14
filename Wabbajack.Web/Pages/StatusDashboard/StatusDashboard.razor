@@ -5,15 +5,15 @@
 @inject IStateContainer _stateContainer;
 
 <div class="px-1 md:p-16">
-    <p class="font-bold text-xl">Failing Modlists: @Failing</p>
-    <p class="font-bold text-xl">Succeeding Modlists: @Succeeding</p>
+    <p class="font-bold text-xl">Failing Modlists: @Failing.ToString()</p>
+    <p class="font-bold text-xl">Succeeding Modlists: @Succeeding.ToString()</p>
 
     @if (_errorLoadingModlists)
     {
         @ErrorComponent.RenderError("Unable to load Modlists from GitHub!")
     } else if (!ModlistSummaries.Any())
     {
-        <!-- TODO: show loading text -->
+        @LoadingComponent.RenderLoadingThing("Loading Modlists...")
     }
     else
     {
@@ -67,7 +67,7 @@
     private readonly RenderFragment<ModListSummary> _renderModlistSummary = modlistSummary => __builder =>
     {
         var detailedStatusLink = DetailedStatusPage.CreateRedirect(modlistSummary.MachineURL);
-        var time = modlistSummary.Checked.ToLocalTime();
+        //var time = modlistSummary.Checked.ToLocalTime();
 
         var bgClass = modlistSummary.HasFailures ? "bg-red-600" : "bg-green-600";
         <div class="@bgClass text-white rounded-md shadow-md">
@@ -76,7 +76,6 @@
                 <a href="@detailedStatusLink" class="font-semibold text-lg hover:underline">@modlistSummary.Name</a>
                 <p>Passed: @modlistSummary.Passed</p>
                 <p>Failed: @modlistSummary.Failed</p>
-                <p class="font-light">Last checked: @time.ToString("G")</p>
             </div>
         </div>
     };

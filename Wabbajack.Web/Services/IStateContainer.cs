@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Wabbajack.DTOs;
+using Wabbajack.DTOs.ModListValidation;
 using Wabbajack.DTOs.ServerResponses;
 
 namespace Wabbajack.Web.Services
@@ -20,9 +21,9 @@ namespace Wabbajack.Web.Services
         IEnumerable<ModListSummary> ModlistSummaries { get; }
         Task<bool> LoadModlistSummaries();
 
-        IReadOnlyDictionary<string, DetailedStatus> ModlistStatusDictionary { get; }
+        IReadOnlyDictionary<string, ValidatedModList> ModlistStatusDictionary { get; }
         bool HasModlistStatus(string machineUrl);
-        Task<DetailedStatus?> LoadModlistStatus(string machineUrl);
-        bool TryGetModlistStatus(string machineUrl, [MaybeNullWhen(false)] out DetailedStatus modlistStatus);
+        Task<ValidatedModList?> LoadModlistStatus(string machineUrl);
+        bool TryGetModlistStatus(string machineUrl, [MaybeNullWhen(false)] out ValidatedModList modlistStatus);
     }
 }

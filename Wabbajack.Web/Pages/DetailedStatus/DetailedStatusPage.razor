@@ -1,66 +1,61 @@
 ﻿@page "/status/{machineUrl}"
 @using Wabbajack.Web.Services
 @using Wabbajack.DTOs.ServerResponses
-@using Wabbajack.Web.Pages.StatusDashboard
+@using Wabbajack.DTOs.ModListValidation
+@using Wabbajack.DTOs
 @inject IStateContainer _stateContainer;
 
-<MudContainer Class="mt-16" MaxWidth="MaxWidth.Large">
-    <MudButton Class="mb-4" Size="Size.Large" Variant="Variant.Text" Link="@StatusDashboard.Route"
-               StartIcon="@Icons.Material.Filled.ArrowBack">
-        Back to the Status Dashboard
-    </MudButton>
-
+<div class="px-1 md:p-16 md:pb-6">
     @if (_modlistStatus == null)
     {
         @if (_errorFoundNoMatchingModlist)
         {
-            <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
-                <MudText>Found no Modlist with machineUrl "@MachineUrl"!</MudText>
-            </MudAlert>
+            @ErrorComponent.RenderError($"Found no Modlist with machineUrl {MachineUrl}")
         }
         else
         {
-            <MudText>Loading...</MudText>
+            @LoadingComponent.RenderLoadingThing("Loading Modlist...")
         }
     }
     else
     {
-        <MudText Typo="Typo.h5">@_modlistStatus.Name</MudText>
-        <MudText Typo="Typo.body1">Last Checked: @_modlistStatus.Checked.ToLocalTime().ToString("g")</MudText>
+        <div>
+            <p class="mb-1 font-bold text-xl">@_modlistStatus.Name</p>
 
-        <MudText Typo="Typo.h6">Failing Archives (@FailingArchives.Count):</MudText>
-        <div style="height: @FailingArchivesHeight;overflow-y: scroll">
-            <Virtualize ItemSize="ItemSize" Items="FailingArchives" Context="archive" TItem="DetailedStatusItem">
-                <p @key="archive.Name">@archive.Name</p>
-            </Virtualize>
-        </div>
+            <p class="mb-2 font-medium text-lg">Failing Archives (@FailingArchives.Count.ToString())</p>
+            <div style="height: @FailingArchivesHeight; overflow-y: scroll">
+                <Virtualize Items="FailingArchives" Context="archive" TItem="Archive">
+                    <p @key="archive.Name" class="font-light">@archive.Name</p>
+                </Virtualize>
+            </div>
 
-        <MudText Typo="Typo.h6">Succeeding Archives (@SucceedingArchives.Count):</MudText>
-        <div style="height: @SucceedingArchivesHeight;overflow-y: scroll">
-            <Virtualize ItemSize="ItemSize" Items="SucceedingArchives" Context="archive" TItem="DetailedStatusItem">
-                <p @key="archive.Name">@archive.Name</p>
-            </Virtualize>
+            <p class="mt-3 mb-2 font-medium text-lg">Succeeding Archives (@SucceedingArchives.Count.ToString())</p>
+            <div style="height: @SucceedingArchivesHeight; overflow-y: scroll">
+                <Virtualize Items="SucceedingArchives" Context="archive" TItem="Archive">
+                    <p @key="archive.Name" class="font-light">@archive.Name</p>
+                </Virtualize>
+            </div>
         </div>
     }
-</MudContainer>
+</div>
 
 @code {
     [Parameter]
     public string MachineUrl { get; set; }
 
-    private const int ItemSize = 20;
+    private const int ItemSize = 24;
     private const int MaxItemListSize = 400;
     private const int MaxItems = MaxItemListSize / ItemSize;
 
     private bool _shouldRender;
     protected override bool ShouldRender() => _shouldRender;
 
-    private DetailedStatus _modlistStatus;
-    private List<DetailedStatusItem> FailingArchives => _modlistStatus.Archives.Where(x => x.IsFailing).ToList();
-    private List<DetailedStatusItem> SucceedingArchives => _modlistStatus.Archives.Where(x => !x.IsFailing).ToList();
+    private ValidatedModList _modlistStatus;
+    private List<Archive> FailingArchives => _modlistStatus.Archives.Where(x => x.Status == ArchiveStatus.InValid).Select(x => x.Original).ToList();
+    private List<Archive> SucceedingArchives => _modlistStatus.Archives.Where(x => x.Status != ArchiveStatus.InValid).Select(x => x.Original).ToList();
 
-    private string FailingArchivesHeight => $"{Math.Min(FailingArchives.Count, MaxItems) * ItemSize}px";
-    private string SucceedingArchivesHeight => $"{Math.Min(SucceedingArchives.Count, MaxItems) * ItemSize}px";
+    private string FailingArchivesHeight => $"{(Math.Min(FailingArchives.Count, MaxItems) * ItemSize).ToString()}px";
+    private string SucceedingArchivesHeight => $"{(Math.Min(SucceedingArchives.Count, MaxItems) * ItemSize).ToString()}px";
 
     private bool _errorFoundNoMatchingModlist;
 
