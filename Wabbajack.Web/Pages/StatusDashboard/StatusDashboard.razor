@@ -4,31 +4,29 @@
 @using Wabbajack.Web.Pages.DetailedStatus
 @inject IStateContainer _stateContainer;
 
-<MudContainer Class="mt-16" MaxWidth="MaxWidth.Large">
-    <MudText Typo="Typo.h5">Failing Modlists: @Failing</MudText>
-    <MudText Typo="Typo.h5">Succeeding Modlists: @Succeeding</MudText>
+<div class="px-1 md:p-16">
+    <p class="font-bold text-xl">Failing Modlists: @Failing</p>
+    <p class="font-bold text-xl">Succeeding Modlists: @Succeeding</p>
 
     @if (_errorLoadingModlists)
     {
-        <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
-            <MudText>Unable to load Modlists from GitHub!</MudText>
-        </MudAlert>
+        @ErrorComponent.RenderError("Unable to load Modlists from GitHub!")
     } else if (!ModlistSummaries.Any())
     {
-        <MudText>Loading...</MudText>
+        <!-- TODO: show loading text -->
     }
     else
     {
-        <MudGrid Class="mt-3">
+        <div class="my-1 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             @foreach (var modlistSummary in OrderedModlistSummaries)
             {
-                <MudItem xs="12" sm="6" md="4" lg="4" xl="4" @key="modlistSummary.MachineURL">
+                <div @key="modlistSummary.MachineURL">
                     @_renderModlistSummary(modlistSummary)
-                </MudItem>
+                </div>
             }
-        </MudGrid>
+        </div>
     }
-</MudContainer>
+</div>
 
 @code {
     public const string Route = "/status";
@@ -39,7 +37,7 @@
     private IEnumerable<ModListSummary> ModlistSummaries => _stateContainer.ModlistSummaries;
     private IEnumerable<ModListSummary> OrderedModlistSummaries => ModlistSummaries
         .OrderByDescending(x => x.HasFailures)
-        .ThenBy(x => x.Name);
+        .ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase);
 
     private int Failing => ModlistSummaries.Count(x => x.HasFailures);
     private int Succeeding => ModlistSummaries.Count(x => !x.HasFailures);
@@ -69,31 +67,18 @@
     private readonly RenderFragment<ModListSummary> _renderModlistSummary = modlistSummary => __builder =>
     {
         var detailedStatusLink = DetailedStatusPage.CreateRedirect(modlistSummary.MachineURL);
-
         var time = modlistSummary.Checked.ToLocalTime();
 
-        <MudCard>
-            <MudCardHeader Class="pb-1 align-stretch">
-                <CardHeaderAvatar>
-                    @if (modlistSummary.HasFailures)
-                    {
-                        <MudAvatar Color="Color.Error"/>
-                    }
-                    else
-                    {
-                        <MudAvatar Color="Color.Info"/>
-                    }
-                </CardHeaderAvatar>
-                <CardHeaderContent>
-                    <MudLink Href="@detailedStatusLink" Color="Color.Dark" Typo="Typo.h5">@modlistSummary.Name</MudLink>
-                </CardHeaderContent>
-            </MudCardHeader>
-            <MudCardContent>
-                <MudText Typo="Typo.body1">Passed: @modlistSummary.Passed</MudText>
-                <MudText Typo="Typo.body1">Failed: @modlistSummary.Failed</MudText>
-                <MudText Typo="Typo.body2">Last Checked: @time.ToString("G")</MudText>
-            </MudCardContent>
-        </MudCard>
+        var bgClass = modlistSummary.HasFailures ? "bg-red-600" : "bg-green-600";
+        <div class="@bgClass text-white rounded-md shadow-md">
+            <div class="p-2">
+                <!-- TODO: use detailedStatusLink -->
+                <a href="@detailedStatusLink" class="font-semibold text-lg hover:underline">@modlistSummary.Name</a>
+                <p>Passed: @modlistSummary.Passed</p>
+                <p>Failed: @modlistSummary.Failed</p>
+                <p class="font-light">Last checked: @time.ToString("G")</p>
+            </div>
+        </div>
     };
 
 }

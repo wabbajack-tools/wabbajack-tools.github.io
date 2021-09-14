@@ -1,51 +1,38 @@
 @using Wabbajack.Web.Pages.Gallery
 @using Wabbajack.Web.Pages.StatusDashboard
-@using Wabbajack.Web.Pages.Docs
 @inherits LayoutComponentBase
 
-<MudThemeProvider Theme="CustomTheme"/>
-<MudDialogProvider />
-<MudSnackbarProvider />
+<div>
+    <nav class="px-6 py-3 bg-black-600">
+        <div class="flex flex-wrap gap-3 items-center justify-end">
+            <div class="flex-grow">
+                <a class="font-medium text-xl hover:underline" href="/">Wabbajack</a>
+            </div>
 
-<MudLayout>
-    <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
-        <MudLink Typo="Typo.h5" Class="ml-3" Href="/" Style="color: var(--mud-palette-primary-text) !important" Underline="Underline.None">
-            Wabbajack
-        </MudLink>
-        <MudSpacer />
-        <MudLink Class="mx-1 mx-sm-3" Typo="Typo.h6" Href="/" Style="color: var(--mud-palette-primary-text) !important" Underline="Underline.None">Home</MudLink>
-                <MudLink Class="mx-1 mx-sm-3" Typo="Typo.h6" Href="@Gallery.Route" Style="color: var(--mud-palette-primary-text) !important" Underline="Underline.None">Gallery</MudLink>
-                <MudLink Class="mx-1 mx-sm-3" Typo="Typo.h6" Href="@StatusDashboard.Route" Style="color: var(--mud-palette-primary-text) !important" Underline="Underline.None">Status</MudLink>
-        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/wabbajack-tools/wabbajack" Target="_blank" />
-    </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen" Elevation="1" Variant="DrawerVariant.Responsive" Breakpoint="Breakpoint.Xl" ClipMode="DrawerClipMode.Always">
-        <MudNavMenu>
-            <MudNavLink Match="NavLinkMatch.All" Href="@Gallery.Route" Icon="@Icons.Material.Filled.Album">
-                Gallery
-            </MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Href="@StatusDashboard.Route" Icon="@Icons.Material.Filled.Dashboard">
-                Status Dashboard
-            </MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Href="@Docs.Route" Icon="@Icons.Material.Filled.Book">
-                Documentation
-            </MudNavLink>
-        </MudNavMenu>
-    </MudDrawer>
-    <MudMainContent>
-        @Body
-    </MudMainContent>
-    <CustomFooter/>
-</MudLayout>
+            <a class="font-light text-lg hover:underline" href="/">Home</a>
+            <a class="font-light text-lg hover:underline" href="@Gallery.Route">Gallery</a>
+            <a class="font-light text-lg hover:underline" href="@StatusDashboard.Route">Status</a>
 
-@code{
-    private bool _drawerOpen;
+            <!--
+                <a href="https://github.com/wabbajack-tools/wabbajack" class="px-3 py-2 text-white font-medium">
+                    <span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2 0 1.9 1.2 1.9 1.2 1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6 0-3.2 0 0 1-.3 3.4 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8 0 3.2.9.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1 .9 2.2v3.3c0 .3.1.7.8.6A12 12 0 0 0 12 .3"></path>
+                        </svg>
+                    </span>
+                </a>
+            -->
+        </div>
+    </nav>
+    @Body
+    <footer class="mt-16 px-4 sm:px-6 py-2 bg-black-600">
+        <div class="flex flex-wrap gap-3 items-center">
+            <a class="font-medium hover:underline" href="https://github.com/wabbajack-tools/wabbajack">GitHub</a>
+            <a class="font-medium hover:underline" href="https://discord.gg/wabbajack">Discord</a>
+            <a class="font-medium hover:underline" href="https://www.patreon.com/user?u=11907933">Patreon</a>
+            <a class="font-medium hover:underline" href="https://reddit.com/r/wabbajack">Reddit</a>
 
-    // TODO: update Theme
-    private static readonly MudTheme CustomTheme = new();
-
-    private void ToggleDrawer()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
-}
+            <p class="flex-grow sm:text-right">The Wabbajack Team 2019 - 2021</p>
+        </div>
+    </footer>
+</div>

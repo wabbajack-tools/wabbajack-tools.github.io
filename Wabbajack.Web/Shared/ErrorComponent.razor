@@ -1,0 +1,13 @@
+﻿@code {
+
+    // DO NOT CHANGE "__builder"
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable once UnusedParameter.Local
+    public static readonly RenderFragment<string> RenderError = errorMessage => __builder =>
+    {
+        <div class="p-2 m-6 bg-red-base rounded-md">
+            <p class="text-lg">@errorMessage</p>
+        </div>
+    };
+
+}

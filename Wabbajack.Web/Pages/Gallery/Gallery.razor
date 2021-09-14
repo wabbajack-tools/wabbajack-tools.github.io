@@ -6,42 +6,47 @@
 @using Wabbajack.Web.Utils
 @inject IStateContainer _stateContainer;
 
-<MudContainer Class="mt-16" MaxWidth="MaxWidth.Large">
-    <MudGrid Class="d-inline-flex flex-nowrap align-end">
-        <MudItem xs="8">
-            <MudCheckBox @bind-Checked="@_showNsfw" Class="mud-float-end">Show NSFW</MudCheckBox>
-        </MudItem>
-        <MudItem xs="4">
-            <MudSelect T="string" @bind-Value="@_selectedGame" Label="Game" Variant="Variant.Outlined">
+<div class="px-1 md:p-16">
+    <p class="font-semibold my-1 text-4xl text-center">Gallery</p>
+
+    <div class="mb-3 flex flex-wrap items-end justify-end md:gap-4">
+        <label for="show-nsfw" class="w-full md:w-auto font-semibold text-lg inline-flex items-center mt-1">
+            Show NSFW:
+            <input @bind="_showNsfw" id="show-nsfw" type="checkbox" class="ml-2 h-5 w-5"/>
+        </label>
+
+        <div class="w-full md:w-auto">
+            <label for="select-game" class="font-semibold text-lg">Select Game:</label>
+            <select @bind="_selectedGame" id="select-game" class="w-full p-2 text-black-900 bg-white rounded-md">
+                <option value="All">All</option>
+
                 @foreach (var game in AllGames)
                 {
-                    <MudSelectItem Value="@game">@game</MudSelectItem>
+                    <option value="@game">@game</option>
                 }
-            </MudSelect>
-        </MudItem>
-    </MudGrid>
+            </select>
+        </div>
+    </div>
 
     @if (_errorLoadingModlists)
     {
-        <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
-            <MudText>Unable to load Modlists from GitHub!</MudText>
-        </MudAlert>
+        @ErrorComponent.RenderError("Unable to load Modlists from Github!")
     } else if (!Modlists.Any())
     {
-        <MudText>Loading...</MudText>
+        <!-- TODO: show loading -->
     }
     else
     {
-        <MudGrid Class="mt-2" Spacing="2" Justify="Justify.FlexStart">
+        <div class="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 items-start">
             @foreach (var modlist in FilteredModlists)
             {
-                <MudItem @key="modlist.Title" xs="12" sm="12" md="6" lg="6" xl="4">
+                <div @key="modlist.Title" class="bg-white dark:bg-black-700 rounded-md shadow-md">
                     @_renderModlistInfo(modlist)
-                </MudItem>
+                </div>
             }
-        </MudGrid>
+        </div>
     }
-</MudContainer>
+</div>
 
 @code {
     public const string Route = "/gallery";
@@ -65,8 +70,7 @@
     private Dictionary<string, Game> _gamesByName = new();
     private IEnumerable<string> AllGames => _gamesByName
         .Select(x => x.Key)
-        .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
-        .Prepend(All);
+        .OrderBy(x => x, StringComparer.OrdinalIgnoreCase);
 
     private bool _errorLoadingModlists;
 
@@ -103,36 +107,39 @@
         var viewLink = LinkUtils.CanRenderReadme(readme)
             ? ModlistInfo.CreateRedirect(modlist.Links.MachineURL)
             : readme;
+        var archiveSearchLink = ModlistArchiveSearch.CreateRedirect(modlist.Links.MachineURL);
 
-        <MudCard Elevation="DesignConstants.MudCardElevation2">
-            <MudCardHeader>
-                <CardHeaderContent>
-                    <MudText Typo="Typo.h6">@modlist.Title</MudText>
-                </CardHeaderContent>
-            </MudCardHeader>
+        <div>
             <img src="@modlist.Links.ImageUri"
                  alt="Image of the Modlist @modlist.Title"
-                 style="width: 100%; height: auto"
                  loading="lazy"
                  crossorigin="anonymous"/>
-            <MudCardContent>
-                <MudText Typo="Typo.caption">Created by @modlist.Author</MudText>
-                <MudText Typo="Typo.body1">@modlist.Description</MudText>
-                @foreach (var tag in modlist.tags)
-                {
-                    <MudChip Size="Size.Small">@tag</MudChip>
-                }
-            </MudCardContent>
-            <MudCardActions>
-                <MudButton Link="@viewLink" Variant="Variant.Text" ButtonType="ButtonType.Button" Color="Color.Info">
-                    View
-                </MudButton>
-                <MudButton Link="@ModlistArchiveSearch.CreateRedirect(modlist.Links.MachineURL)"
-                           Variant="Variant.Text" ButtonType="ButtonType.Button" Color="Color.Info">
-                    Archive Search
-                </MudButton>
-            </MudCardActions>
-        </MudCard>
+            <div class="p-4">
+                <p class="font-title font-semibold text-2xl">@modlist.Title</p>
+                <p class="font-subtitle font-light text-lg">Created by @modlist.Author</p>
+                <p class="mt-1 font-normal text-base">@modlist.Description</p>
+
+                <!-- TODO: human readable game name -->
+                <p class="mt-2 font-medium text-md">Game: @modlist.Game.ToString()</p>
+
+                <div class="flex flex-wrap gap-1">
+                    <p class="font-medium text-md">Tags:</p>
+                    @foreach (var tag in modlist.tags)
+                    {
+                        <p @key="tag" class="text-white bg-purple-500 dark:bg-purple-dark rounded-md px-2">@tag</p>
+                    }
+                </div>
+
+                <div class="mt-4 flex flex-nowrap justify-between">
+                    <a href="@archiveSearchLink" class="py-1 px-5 font-semibold rounded-lg shadow-md text-white bg-green-500">
+                        Archive Search
+                    </a>
+                    <a href="@viewLink" class="py-1 px-5 font-semibold rounded-lg shadow-md text-white bg-green-500">
+                        View
+                    </a>
+                </div>
+            </div>
+        </div>
     };
 
 }

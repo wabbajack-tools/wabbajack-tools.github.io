@@ -1,4 +1,4 @@
-﻿//const colors = require('tailwindcss/colors')
+﻿const colors = require('tailwindcss/colors')
 
 module.exports = {
     purge: [],
@@ -29,6 +29,17 @@ module.exports = {
                     dark: '#a43edf'
                 }
             }
+        },
+        colors: {
+            transparent: 'transparent',
+            current: 'currentColor',
+            white: colors.white,
+            black: colors.black,
+            gray: colors.coolGray,
+            red: colors.red,
+            green: colors.emerald,
+            purple: colors.violet,
+            pink: colors.pink
         }
     },
     variants: {

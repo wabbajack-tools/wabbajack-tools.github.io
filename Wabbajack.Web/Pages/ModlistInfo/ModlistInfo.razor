@@ -1,53 +1,50 @@
 ﻿@page "/modlist/{machineUrl}"
 @using Wabbajack.Web.Services
 @using Wabbajack.DTOs
-@using Wabbajack.Web.Pages.Gallery
 @using Wabbajack.Web.Utils
 @inject IStateContainer _stateContainer;
 @inject NavigationManager _navigationManager;
 @inject HttpClient _client;
 
-<MudContainer Class="mt-16" MaxWidth="MaxWidth.Large">
-    <MudButton Class="mb-4" Size="Size.Large" Variant="Variant.Text" Link="@Gallery.Route"
-               StartIcon="@Icons.Material.Filled.ArrowBack">
-        Back to the Gallery
-    </MudButton>
+<div>
+    <!-- TODO: back button -->
 
     @if (_modlist == null)
     {
         @if (ErrorMachineUrlNull)
         {
-            <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
-                <MudText>MachineUrl is null!</MudText>
-            </MudAlert>
-        } else if (_errorLoadingModlists)
+            @ErrorComponent.RenderError("machineUrl is null!")
+        }
+        else if (_errorLoadingModlists)
         {
-            <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
-                <MudText>Unable to load Modlists from GitHub!</MudText>
-            </MudAlert>
-        } else if (_errorNoMatchingModlist)
+            @ErrorComponent.RenderError("Unable to load Modlists from GitHub!")
+        }
+        else if (_errorNoMatchingModlist)
         {
-            <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
-                <MudText>Found no Modlist with machineUrl "@MachineUrl"!</MudText>
-            </MudAlert>
+            @ErrorComponent.RenderError($"Found no matching Modlist for machineUrl {MachineUrl}")
         }
         else
         {
-            <MudText>Loading...</MudText>
+            // TODO: loading
         }
     }
     else
     {
-        <img src="@_modlist.Links.ImageUri"
-             alt="Image of the Modlist @_modlist.Title"
-             style="width: 100%; height: auto"
-             loading="eager"
-             crossorigin="anonymous"/>
-        <MudText Typo="Typo.caption">Created by @_modlist.Author, current Version: @_modlist.Version</MudText>
-        <MudMarkdown Value="@_readme"/>
+        <div>
+            <img src="@_modlist.Links.ImageUri"
+                 alt="Image of the Modlist @_modlist.Title"
+                 class="max-w-full"
+                 loading="eager"
+                 crossorigin="anonymous"/>
+            <div class="pt-6 max-w-prose mx-auto">
+                <p>Created by @_modlist.Author, current Version: @_modlist.Version</p>
+                <div class="markdown-body" style="color: white !important;">
+                    @_renderReadme(_readme)
+                </div>
+            </div>
+        </div>
     }
-
-</MudContainer>
+</div>
 
 @code {
     [Parameter]
@@ -97,6 +94,14 @@
         _readme = await _client.GetStringAsync(_modlist.Links.Readme);
         _shouldRender = true;
     }
+
+    // DO NOT CHANGE "__builder"
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable once UnusedParameter.Local
+    private readonly RenderFragment<string> _renderReadme = readme => __builder =>
+    {
+        __builder.AddContent(0, MarkdownUtils.MarkdownToMarkupString(readme));
+    };
 
     public static string CreateRedirect(string machineUrl) => $"/modlist/{machineUrl}";
 }
