@@ -6,75 +6,53 @@
 @using Wabbajack.DTOs.DownloadStates
 @using Wabbajack.DTOs
 @using Wabbajack.DTOs.ModListValidation
+@using Wabbajack.Common
 @inject IStateContainer _stateContainer;
 @inject NavigationManager _navigationManager;
 
-<!--<MudContainer Class="mt-16" MaxWidth="MaxWidth.Large">
-    <MudButton Class="mb-4" Size="Size.Large" Variant="Variant.Text" Link="@Gallery.Route"
-               StartIcon="@Icons.Material.Filled.ArrowBack">
-        Back to the Gallery
-    </MudButton>
-
+<div class="md:m-8">
     @if (_modlistStatus == null)
     {
         @if (_errorFoundNoMatchingModlist)
         {
-            <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
-                <MudText>Found no Modlist with machineUrl "@MachineUrl"!</MudText>
-            </MudAlert>
+            @ErrorComponent.RenderError($"Found no Modlist with machineUrl {MachineUrl}")
         }
         else
         {
-            <MudText>Loading...</MudText>
+            @LoadingComponent.RenderLoadingThing("Loading Modlist...")
         }
     }
     else
     {
-        <MudTable Items="@Archives" Filter="DisplayArchive" Height="500px"
-                  Dense="true" Striped="true" FixedHeader="true" Virtualize="true">
-            <ToolBarContent>
-                <MudText Typo="Typo.h6">@_modlistStatus.Name</MudText>
-                <MudSpacer/>
-                <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start"
-                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"
-                              Class="mt-0"/>
-            </ToolBarContent>
-            <HeaderContent>
-                <MudTh>Actions</MudTh>
-                <MudTh>
-                    Name
-                </MudTh>
-                <MudTh>
-                    <MudTableSortLabel InitialDirection="SortDirection.Ascending"
-                                       SortBy="new Func<DetailedStatusItem, object>(x => x.Name)">
-                        Archive Name
-                    </MudTableSortLabel>
-                </MudTh>
-                <MudTh>
-                    <MudTableSortLabel SortBy="new Func<DetailedStatusItem, object>(x => x.Archive.Size)">
-                        Size
-                    </MudTableSortLabel>
-                </MudTh>
-                <MudTh>Hash</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Actions">
-                    <MudButton StartIcon="@Icons.Material.Filled.Link" Size="Size.Small"
-                               OnClick="() => OpenArchiveLink(context)"/>
-                </MudTd>
-                <MudTd DataLabel="Name">@GetName(context)</MudTd>
-                <MudTd DataLabel="Archive Name">@context.Name</MudTd>
-                <MudTd DataLabel="Size">@context.Archive.Size.ToFileSizeString()</MudTd>
-                <MudTd DataLabel="Hash">@context.Archive.Hash</MudTd>
-            </RowTemplate>
-            <PagerContent>
-                <MudTablePager PageSizeOptions="new []{50, 100, 500}"/>
-            </PagerContent>
-        </MudTable>
-    }
-</MudContainer>-->
+        <from>
+            <label for="search-archive">Name:</label>
+            <input class="text-black-900 sm:text-sm p-1" @bind="_searchString" id="search-archive" type="search" maxlength="100"/>
+        </from>
 
-<!-- TODO -->
+        <div class="w-full overflow-hidden">
+            <div class="p-4 w-full overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                    <tr class="text-md font-semibold tracking-wide text-left bg-black-700">
+                        <th class="px-4 py-3">Action</th>
+                        <th class="px-4 py-3">Name</th>
+                        <th class="px-4 py-3">Archive Name</th>
+                        <th class="px-4 py-3">Size</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var archive in Archives)
+                    {
+                        <tr @key="archive.Name" class="bg-black-600">
+                            @_renderRow(archive)
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
 
 @code {
     [Parameter]
@@ -86,7 +64,9 @@
     private bool _errorFoundNoMatchingModlist;
 
     private ValidatedModList _modlistStatus;
-    private IEnumerable<ValidatedArchive> Archives => _modlistStatus.Archives;
+    private IEnumerable<Archive> Archives => _modlistStatus.Archives
+        .Select(x => x.Original)
+        .Where(ShouldRenderArchive);
 
     private string _searchString;
 
@@ -111,32 +91,40 @@
         _shouldRender = true;
     }
 
-    private static string GetName(DetailedStatusItem archive)
+    // DO NOT CHANGE "__builder"
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable once UnusedParameter.Local
+    private static readonly RenderFragment<Archive> _renderRow = archive => __builder =>
     {
-        var state = archive.Archive.State;
+        <td class="px-4 font-light">
+            <a href="https://github.com/ModOrganizer/ModOrganizer2">Open</a>
+        </td>
+        <td class="px-4 font-light">@GetMetaName(archive)</td>
+        <td class="px-4 font-light">@archive.Name</td>
+        <td class="px-4 font-light">@archive.Size.ToFileSizeString()</td>
+    };
+
+    private static string GetMetaName(Archive archive)
+    {
+        var state = archive.State;
         var name = state switch
         {
-            Nexus nexusState => $"{nexusState.Name}",
-            IMetaState metaState => $"{metaState.Name}",
+            Nexus nexusState => nexusState.Name ?? string.Empty,
+            IMetaState metaState => metaState.Name ?? string.Empty,
             _ => archive.Name
         };
 
-        return string.IsNullOrWhiteSpace(name) ? archive.Name : name;
+        return string.IsNullOrEmpty(name) ? archive.Name : name;
     }
 
-    private bool DisplayArchive(DetailedStatusItem archive)
+    private bool ShouldRenderArchive(Archive archive)
     {
         // returns true if the item should be displayed in the table
         if (string.IsNullOrWhiteSpace(_searchString)) return true;
 
         var archiveName = archive.Name;
-        if (archiveName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-
-        var stateName = GetName(archive);
-        if (stateName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-
+        if (archiveName.Contains(_searchString, StringComparison.OrdinalIgnoreCase)) return true;
+        if (GetMetaName(archive).Contains(_searchString, StringComparison.OrdinalIgnoreCase)) return true;
         return false;
     }
 

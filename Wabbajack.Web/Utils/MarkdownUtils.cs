@@ -19,6 +19,8 @@ namespace Wabbajack.Web.Utils
 
         public static MarkupString MarkdownToMarkupString(string? markdown)
         {
+            // TODO: fix links
+            // TODO: fix anchors
             if (markdown == null) return new MarkupString(string.Empty);
             return new MarkupString(Markdown.ToHtml(markdown, MarkdownPipeline));
         }
