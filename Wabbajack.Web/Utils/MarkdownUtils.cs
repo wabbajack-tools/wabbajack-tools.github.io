@@ -1,4 +1,5 @@
-﻿using Markdig;
+﻿#nullable enable
+using Markdig;
 using Markdig.Extensions.AutoIdentifiers;
 using Markdig.Extensions.AutoLinks;
 using Microsoft.AspNetCore.Components;
@@ -16,8 +17,9 @@ namespace Wabbajack.Web.Utils
             .UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
             .Build();
 
-        public static MarkupString MarkdownToMarkupString(string markdown)
+        public static MarkupString MarkdownToMarkupString(string? markdown)
         {
+            if (markdown == null) return new MarkupString(string.Empty);
             return new MarkupString(Markdown.ToHtml(markdown, MarkdownPipeline));
         }
     }
