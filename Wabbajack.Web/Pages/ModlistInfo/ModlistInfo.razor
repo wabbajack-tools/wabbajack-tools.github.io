@@ -30,16 +30,14 @@
     }
     else
     {
-        <div>
+        <div class="pt-6 px-2 max-w-6xl mx-auto">
             <img src="@_modlist.Links.ImageUri"
                  alt="Image of the Modlist @_modlist.Title"
-                 class="max-w-full"
+                 class="max-w-full mx-auto"
                  loading="eager"
                  crossorigin="anonymous"/>
-            <div class="pt-6 px-2 max-w-6xl mx-auto">
-                <p>Created by @_modlist.Author, current Version: @_modlist.Version</p>
-                @MarkdownComponent.RenderMarkdown(_readme)
-            </div>
+            <p>Created by @_modlist.Author, current Version: @_modlist.Version</p>
+            @MarkdownComponent.RenderMarkdown(_readme)
         </div>
     }
 </div>
