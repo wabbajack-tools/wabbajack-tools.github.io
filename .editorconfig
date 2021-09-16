@@ -18,7 +18,10 @@ insert_final_newline = false
 
 # levels: error, warning, suggestion, silent, none, default
 
-# CS1591: // Missing XML comment for publicly visible type or member
+# CS8785: Generator failed to generate source due to exception
+dotnet_diagnostic.CS8785.severity = error
+
+# CS1591: Missing XML comment for publicly visible type or member
 dotnet_diagnostic.CS1591.severity = suggestion
 
 # CS8602: Dereference of a possibly null reference.

@@ -32,11 +32,11 @@ jobs:
         run: npm install
         working-directory: Wabbajack.Web
 
-      - name: Restore dependencies
-        run: dotnet restore
+      #- name: Restore dependencies
+      #  run: dotnet restore
 
       - name: Publish
-        run: dotnet publish -c Release Wabbajack.Web/Wabbajack.Web.csproj --no-restore
+        run: dotnet publish -c Release Wabbajack.Web/Wabbajack.Web.csproj #--no-restore
 
       #- name: Rewrite base href
       #  uses: SteveSandersonMS/ghaction-rewrite-base-href@v1
