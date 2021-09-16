@@ -69,13 +69,12 @@
         var detailedStatusLink = DetailedStatusPage.CreateRedirect(modlistSummary.MachineURL);
         //var time = modlistSummary.Checked.ToLocalTime();
 
-        var bgClass = modlistSummary.HasFailures ? "bg-red-600" : "bg-green-600";
+        var bgClass = modlistSummary.HasFailures ? "bg-wabbajack-red" : "bg-black-700";
         <div class="@bgClass text-white rounded-md shadow-md">
             <div class="p-2">
-                <!-- TODO: use detailedStatusLink -->
                 <a href="@detailedStatusLink" class="font-semibold text-lg hover:underline">@modlistSummary.Name</a>
-                <p>Passed: @modlistSummary.Passed</p>
-                <p>Failed: @modlistSummary.Failed</p>
+                <p>Passed: @modlistSummary.Passed.ToString()</p>
+                <p>Failed: @modlistSummary.Failed.ToString()</p>
             </div>
         </div>
     };

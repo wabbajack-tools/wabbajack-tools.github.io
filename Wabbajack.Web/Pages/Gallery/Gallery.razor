@@ -40,7 +40,7 @@
         <div class="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 items-start">
             @foreach (var modlist in FilteredModlists)
             {
-                <div @key="modlist.Title" class="bg-white dark:bg-black-700 rounded-md shadow-md">
+                <div @key="modlist.Title" class="bg-black-700 rounded-md shadow-md">
                     @_renderModlistInfo(modlist)
                 </div>
             }
@@ -126,15 +126,15 @@
                     <p class="font-medium text-md">Tags:</p>
                     @foreach (var tag in modlist.tags)
                     {
-                        <p @key="tag" class="text-white bg-purple-500 dark:bg-purple-dark rounded-md px-2">@tag</p>
+                        <p @key="tag" class="text-white bg-wabbajack-purple rounded-md px-2">@tag</p>
                     }
                 </div>
 
                 <div class="mt-4 flex flex-nowrap justify-between">
-                    <a href="@archiveSearchLink" class="py-1 px-5 font-semibold rounded-lg shadow-md text-white bg-green-500">
+                    <a href="@archiveSearchLink" class="py-1 px-5 font-semibold rounded-lg shadow-md text-white bg-wabbajack-green">
                         Archive Search
                     </a>
-                    <a href="@viewLink" class="py-1 px-5 font-semibold rounded-lg shadow-md text-white bg-green-500">
+                    <a href="@viewLink" class="py-1 px-5 font-semibold rounded-lg shadow-md text-white bg-wabbajack-green">
                         View
                     </a>
                 </div>

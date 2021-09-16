@@ -2,8 +2,7 @@
 
 module.exports = {
     purge: [],
-    //darkMode: false, // or 'media' or 'class'
-    darkMode: 'class',
+    darkMode: false, // or 'media' or 'class'
     theme: {
         fontFamily: {
             "title": ["Montserrat"],
@@ -14,8 +13,11 @@ module.exports = {
                 '3xl': '1930px'
             },
             colors: {
-                red: {
-                    base: '#df3e3e'
+                wabbajack: {
+                    green: colors.emerald["600"],
+                    red: '#df3e3e',
+                    purple: '#a43edf',
+                    background: '#1f1b24'
                 },
                 black: {
                     900: '#000000',
@@ -26,7 +28,6 @@ module.exports = {
                 },
                 purple: {
                     light: '#c76efb',
-                    dark: '#a43edf'
                 }
             }
         },
@@ -36,10 +37,6 @@ module.exports = {
             white: colors.white,
             black: colors.black,
             gray: colors.coolGray,
-            red: colors.red,
-            green: colors.emerald,
-            purple: colors.violet,
-            pink: colors.pink
         }
     },
     variants: {
