@@ -24,9 +24,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Wabbajack.Web.Generator\Wabbajack.Web.Generator.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+        <!--<ProjectReference Include="..\Wabbajack.Web.Generator\Wabbajack.Web.Generator.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
         <AdditionalFiles Include="..\posts\*.md" />
-        <AdditionalFiles Include="..\docs\*.md" />
+        <AdditionalFiles Include="..\docs\*.md" />-->
     </ItemGroup>
     
     <Target Name="RunPostcss" BeforeTargets="Build">

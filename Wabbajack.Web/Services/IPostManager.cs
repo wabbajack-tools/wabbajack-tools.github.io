@@ -12,7 +12,7 @@ namespace Wabbajack.Web.Services
         public bool TryGetPost(Guid id, [MaybeNullWhen(false)] out IPost res);
     }
 
-    public partial class PostManager : IPostManager { }
+    //public partial class PostManager : IPostManager { }
 }
 
 namespace Wabbajack.Web.Posts

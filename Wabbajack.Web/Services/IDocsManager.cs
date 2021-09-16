@@ -12,7 +12,7 @@ namespace Wabbajack.Web.Services
         public bool TryGetDocumentation(Guid id, [MaybeNullWhen(false)] out IDocumentation res);
     }
 
-    public partial class DocsManager : IDocsManager { }
+    //public partial class DocsManager : IDocsManager { }
 }
 
 namespace Wabbajack.Web.Docs

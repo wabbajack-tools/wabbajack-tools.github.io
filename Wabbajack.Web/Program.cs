@@ -28,8 +28,8 @@ namespace Wabbajack.Web
             );
 
             // generated with Wabbajack.Web.Generator
-            builder.Services.AddSingleton<IPostManager>(new PostManager());
-            builder.Services.AddSingleton<IDocsManager>(new DocsManager());
+            //builder.Services.AddSingleton<IPostManager>(new PostManager());
+            //builder.Services.AddSingleton<IDocsManager>(new DocsManager());
 
             // Wabbajack.DTO
             builder.Services.AddDTOConverters();
