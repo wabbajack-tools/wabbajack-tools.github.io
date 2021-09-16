@@ -118,9 +118,7 @@
                 <p class="font-title font-semibold text-2xl">@modlist.Title</p>
                 <p class="font-subtitle font-light text-lg">Created by @modlist.Author</p>
                 <p class="mt-1 font-normal text-base">@modlist.Description</p>
-
-                <!-- TODO: human readable game name -->
-                <p class="mt-2 font-medium text-md">Game: @modlist.Game.ToString()</p>
+                <p class="mt-2 font-medium text-md">Game: @modlist.Game.GetDescription()</p>
 
                 <div class="flex flex-wrap gap-1">
                     <p class="font-medium text-md">Tags:</p>
