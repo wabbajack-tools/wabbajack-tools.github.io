@@ -4,6 +4,8 @@
 @using Wabbajack.Web.Pages.DetailedStatus
 @inject IStateContainer _stateContainer;
 
+<PageTitle>Status Dashboard | Wabbajack</PageTitle>
+
 <div class="px-1 md:p-16">
     <p class="font-bold text-xl">Failing Modlists: @Failing.ToString()</p>
     <p class="font-bold text-xl">Succeeding Modlists: @Succeeding.ToString()</p>
