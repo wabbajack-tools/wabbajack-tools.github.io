@@ -5,6 +5,6 @@ updates:
     schedule:
       interval: daily
   - package-ecosystem: npm
-    directory: /Wabbajack.Web/
+    directory: Wabbajack.Web/
     schedule:
       interval: weekly
