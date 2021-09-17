@@ -1,0 +1,109 @@
+﻿@using Wabbajack.DTOs
+@using Wabbajack.Web.Pages.ModlistInfo
+@using Wabbajack.Web.Services
+@using Wabbajack.Web.Utils
+@inject IStateContainer _stateContainer;
+
+<div class="max-w-6xl mx-auto bg-black-900">
+
+    <div class="overflow-hidden max-w-full relative">
+        <!--
+        Very hacky solution for dealing with images that are not 16:9.
+        The div has "position: relative" and "padding-top: 56.25%" (9 / 16 = 0.5625).
+        The child element is absolute positioned and fills the div completely however the div
+        has height 0, the height comes from the padding. This makes more sense if you open the
+        inspector in the browser and look at the layout.
+        -->
+        <div class="w-full relative bg-gray-900" style="padding-top: 56.25%">
+            @if (_currentModlist != null)
+            {
+                <img class="absolute top-0 left-0 bottom-0 right-0 h-full w-full"
+                     loading="eager"
+                     src="@_currentModlist.Links.ImageUri"
+                     alt="Image of Modlist @_currentModlist.Title"/>
+
+                <div class="absolute w-full bottom-0 bg-gray-900 bg-opacity-80 h-12 flex justify-center">
+                    <a class="hover:underline flex gap-2" href="@ModlistInfo.CreateRedirect(_currentModlist.Links.MachineURL)">
+                        <p class="text-3xl text-center font-semibold">@_currentModlist.Title</p>
+                        <p class="text-3xl text-center font-light">(@_currentModlist.Game.GetDescription())</p>
+                    </a>
+                </div>
+            }
+        </div>
+
+        <div class="flex justify-between absolute top-1/2 w-full" style="transform: translateY(-50%)">
+            <button @onclick="@(() => UpdateModlistPosition(false))"
+                    class="rounded-full bg-wabbajack-green w-10 h-10 ml-3 text-lg font-semibold"
+                    aria-label="Previous Modlist">&lt;</button>
+            <button @onclick="@(() => UpdateModlistPosition(true))"
+                    class="rounded-full bg-wabbajack-green w-10 h-10 mr-3 text-lg font-semibold"
+                    aria-label="Next Modlist">&gt;</button>
+        </div>
+    </div>
+
+</div>
+
+@code {
+    private bool _shouldRender;
+    protected override bool ShouldRender() => _shouldRender;
+
+    private List<ModlistMetadata> _filteredModlists;
+
+    private int _currentModlistIndex = 0;
+    private ModlistMetadata _currentModlist;
+
+    private bool _errorLoadingModlists;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!_stateContainer.Modlists.Any())
+        {
+            var res = await _stateContainer.LoadModlistMetadata();
+
+            if (!res)
+            {
+                _errorLoadingModlists = true;
+                _shouldRender = true;
+                return;
+            }
+        }
+
+        if (_stateContainer.Modlists.Any())
+        {
+            var filteredModlists = _stateContainer.Modlists
+                .Where(x => !x.NSFW)
+                .OrderBy(_ => Guid.NewGuid())
+                .ToList();
+
+            //EnumerableUtils.ShuffleList(filteredModlists);
+            _filteredModlists = filteredModlists;
+            _currentModlist = _filteredModlists.First();
+        }
+
+        _shouldRender = true;
+    }
+
+    private void UpdateModlistPosition(bool isNext)
+    {
+        _shouldRender = false;
+
+        if (isNext)
+        {
+            if (_currentModlistIndex == _filteredModlists.Count - 1)
+                _currentModlistIndex = 0;
+            else
+                _currentModlistIndex++;
+            _currentModlist = _filteredModlists[_currentModlistIndex];
+        }
+        else
+        {
+            if (_currentModlistIndex == 0)
+                _currentModlistIndex = _filteredModlists.Count - 1;
+            else
+                _currentModlistIndex--;
+            _currentModlist = _filteredModlists[_currentModlistIndex];
+        }
+
+        _shouldRender = true;
+    }
+}
