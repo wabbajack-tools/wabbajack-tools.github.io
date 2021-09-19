@@ -2,6 +2,8 @@
 using System.Web;
 using Microsoft.AspNetCore.Components;
 
+#nullable enable
+
 namespace Wabbajack.Web.Pages.Gallery
 {
     public class GalleryState
@@ -15,13 +17,14 @@ namespace Wabbajack.Web.Pages.Gallery
 
         public const string All = "All";
 
-        private bool _showNSFW;
-        public bool ShowNSFW
+        private bool _showNsfw;
+        public bool ShowNsfw
         {
-            get => _showNSFW;
+            get => _showNsfw;
             set
             {
-                _showNSFW = value;
+                if (value == _showNsfw) return;
+                _showNsfw = value;
                 UpdateQueryString();
             }
         }
@@ -32,19 +35,21 @@ namespace Wabbajack.Web.Pages.Gallery
             get => _selectedGame;
             set
             {
+                if (value == _selectedGame) return;
                 _selectedGame = value;
                 UpdateQueryString();
             }
         }
 
-        private void UpdateQueryString()
+        public void UpdateQueryString()
         {
-            var newUri = _navigationManager.GetUriWithQueryParameters(new Dictionary<string, object>
+            var queryParams = new Dictionary<string, object?>
             {
-                {"selectedGame", SelectedGame},
-                {"showNSFW", ShowNSFW ? "true" : "false"}
-            });
+                { "selectedGame", _selectedGame == All ? null : _selectedGame },
+                { "showNSFW", _showNsfw ? "true" : null }
+            };
 
+            var newUri = _navigationManager.GetUriWithQueryParameters(queryParams);
             _navigationManager.NavigateTo(newUri);
         }
 
@@ -52,8 +57,10 @@ namespace Wabbajack.Web.Pages.Gallery
         {
             var query = HttpUtility.ParseQueryString(_navigationManager.ToAbsoluteUri(_navigationManager.Uri).Query);
 
-            _selectedGame = query.Get("selectedGame") ?? string.Empty;
-            _showNSFW = query.Get("showNSFW") == "true";
+            if (_selectedGame == All)
+                _selectedGame = query.Get("selectedGame") ?? All;
+            if (!_showNsfw)
+                _showNsfw = query.Get("showNSFW") == "true";
         }
     }
 }

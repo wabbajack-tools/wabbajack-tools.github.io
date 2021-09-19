@@ -15,7 +15,7 @@
     <div class="mb-3 flex flex-wrap items-end justify-end md:gap-4">
         <label for="show-nsfw" class="w-full md:w-auto font-semibold text-lg inline-flex items-center mt-1">
             Show NSFW:
-            <input @bind="_galleryState.ShowNSFW" id="show-nsfw" type="checkbox" class="ml-2 h-5 w-5"/>
+            <input @bind="_galleryState.ShowNsfw" id="show-nsfw" type="checkbox" class="ml-2 h-5 w-5"/>
         </label>
 
         <div class="w-full md:w-auto">
@@ -59,7 +59,7 @@
 
     private IEnumerable<ModlistMetadata> Modlists => _stateContainer.Modlists;
     private IEnumerable<ModlistMetadata> FilteredModlists => Modlists
-        .Where(x => _galleryState.ShowNSFW || !x.NSFW)
+        .Where(x => _galleryState.ShowNsfw || !x.NSFW)
         .Where(x =>
         {
             if (_galleryState.SelectedGame == GalleryState.All) return true;
@@ -76,6 +76,7 @@
     protected override async Task OnInitializedAsync()
     {
         _galleryState.GetValuesFromQueryString();
+        _galleryState.UpdateQueryString();
 
         if (!_stateContainer.Modlists.Any())
         {
@@ -93,6 +94,9 @@
             .Select(x => x.Game)
             .Distinct()
             .ToDictionary(x => x.GetDescription(), x => x, StringComparer.OrdinalIgnoreCase);
+
+        if (_galleryState.SelectedGame != GalleryState.All && !_gamesByName.ContainsKey(_galleryState.SelectedGame))
+            _galleryState.SelectedGame = GalleryState.All;
 
         _shouldRender = true;
     }
