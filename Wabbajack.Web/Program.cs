@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Wabbajack.DTOs.JsonConverters;
+using Wabbajack.Web.Pages.Gallery;
 using Wabbajack.Web.Services;
 
 namespace Wabbajack.Web
@@ -23,11 +24,15 @@ namespace Wabbajack.Web
             {
                 BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
             });
+
             builder.Services.AddSingleton<IStateContainer>(provider => new StateContainer(
                 provider.GetRequiredService<ILogger<StateContainer>>(),
                 provider.GetRequiredService<HttpClient>(),
                 provider.GetRequiredService<DTOSerializer>())
             );
+
+            // states of pages
+            builder.Services.AddSingleton(_ => new GalleryState());
 
             // generated with Wabbajack.Web.Generator
             //builder.Services.AddSingleton<IPostManager>(new PostManager());
