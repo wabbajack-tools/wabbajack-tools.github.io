@@ -10,7 +10,7 @@
 <PageTitle>Gallery | Wabbajack</PageTitle>
 
 <div class="px-1 md:p-16">
-    <p class="font-semibold my-1 text-4xl text-center">Gallery</p>
+    <h1 class="font-semibold my-1 text-4xl text-center">Gallery</h1>
 
     <div class="mb-3 flex flex-wrap items-end justify-end md:gap-4">
         <label for="show-nsfw" class="w-full md:w-auto font-semibold text-lg inline-flex items-center mt-1">
@@ -56,9 +56,9 @@
         <div class="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 items-start">
             @foreach (var modlist in FilteredModlists)
             {
-                <div @key="modlist.Title" class="bg-black-700 rounded-md shadow-md">
+                <section @key="modlist.Title" class="bg-black-700 rounded-md shadow-md">
                     @_renderModlistInfo(modlist)
-                </div>
+                </section>
             }
         </div>
     }
@@ -155,8 +155,8 @@
                  loading="lazy"
                  crossorigin="anonymous"/>
             <div class="p-4">
-                <p class="font-title font-semibold text-2xl">@modlist.Title</p>
-                <p class="font-subtitle font-light text-lg">Created by @modlist.Author</p>
+                <h2 class="font-title font-semibold text-2xl">@modlist.Title</h2>
+                <h3 class="font-subtitle font-light text-lg">Created by @modlist.Author</h3>
                 <p class="mt-1 font-normal text-base">@modlist.Description</p>
                 <p class="mt-2 font-medium text-md">Game: @modlist.Game.GetDescription()</p>
 
