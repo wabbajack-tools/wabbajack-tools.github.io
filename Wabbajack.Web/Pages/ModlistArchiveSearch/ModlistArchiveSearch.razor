@@ -8,7 +8,9 @@
 @inject IStateContainer _stateContainer;
 @inject NavigationManager _navigationManager;
 
-<div class="md:m-8">
+<PageTitle>Archive Search | Wabbajack</PageTitle>
+
+<div class="m-8">
     @if (_modlistStatus == null)
     {
         @if (_errorFoundNoMatchingModlist)
@@ -22,23 +24,25 @@
     }
     else
     {
-        <from>
+        <h1 class="font-semibold my-1 text-3xl text-center">Archive Search: @_modlistStatus.Name</h1>
+
+        <div class="mt-5 mb-2">
             <label for="search-archive">Name:</label>
             <input class="text-black-900 sm:text-sm p-1" @bind="_searchString" id="search-archive" type="search" maxlength="100"/>
-        </from>
+        </div>
 
         <div class="w-full overflow-hidden">
-            <div class="p-4 w-full overflow-x-auto">
-                <table class="w-full">
+            <div class="p-4 min-w-full overflow-x-auto">
+                <table class="min-w-full divide-y divide-wabbajack-background">
+                    <caption>TODO: explain what this is</caption>
                     <thead>
                     <tr class="text-md font-semibold tracking-wide text-left bg-black-700">
-                        <th class="px-4 py-3">Action</th>
-                        <th class="px-4 py-3">Name</th>
-                        <th class="px-4 py-3">Archive Name</th>
-                        <th class="px-4 py-3">Size</th>
+                        <th class="px-6 py-3">Archive Name</th>
+                        <th class="px-6 py-3">Name</th>
+                        <th class="px-6 py-3">Size</th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="divide-y divide-wabbajack-background">
                     @foreach (var archive in Archives)
                     {
                         <tr @key="archive.Name" class="bg-black-600">
@@ -94,12 +98,20 @@
     // ReSharper disable once UnusedParameter.Local
     private static readonly RenderFragment<Archive> _renderRow = archive => __builder =>
     {
-        <td class="px-4 font-light">
-            <a href="https://github.com/ModOrganizer/ModOrganizer2">Open</a>
-        </td>
-        <td class="px-4 font-light">@GetMetaName(archive)</td>
-        <td class="px-4 font-light">@archive.Name</td>
-        <td class="px-4 font-light">@archive.Size.ToFileSizeString()</td>
+        var archiveName = archive.Name;
+        var metaName = GetMetaName(archive);
+
+        if (archiveName.Equals(metaName, StringComparison.OrdinalIgnoreCase))
+        {
+            <td colspan="2" class="px-6 py-4 font-light">@archive.Name</td>
+        }
+        else
+        {
+            <td class="px-6 py-4 font-light">@archive.Name</td>
+            <td class="px-6 py-4 font-light">@GetMetaName(archive)</td>
+        }
+
+        <td class="px-6 py-4 font-light whitespace-nowrap">@archive.Size.ToFileSizeString()</td>
     };
 
     private static string GetMetaName(Archive archive)
@@ -131,12 +143,11 @@
         var state = archive.Archive.State;
         var url = state switch
         {
-            Nexus nexusState => $"https://nexusmods.com/{nexusState.Game.MetaData().NexusName}/mods/{nexusState.ModID}",
-            IMetaState metaState => $"{metaState.URL}",
+            Nexus nexusState => $"https://nexusmods.com/{nexusState.Game.MetaData().NexusName}/mods/{nexusState.ModID.ToString()}",
+            IMetaState metaState => metaState.URL.ToString(),
+            Http httpState => httpState.Url.ToString(),
+            Mega megaState => megaState.Url.ToString(),
             GoogleDrive googleDriveState => $"https://drive.google.com/file/d/{googleDriveState.Id}",
-            Http httpState => $"{httpState.Url}",
-            //IPS4OAuth2 ips4State => $"{ips4State.URL}",
-            Mega megaState => $"{megaState.Url}",
             _ => null
         };
 
