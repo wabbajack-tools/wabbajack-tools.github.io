@@ -75,6 +75,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _galleryState.GetValuesFromQueryString();
+
         if (!_stateContainer.Modlists.Any())
         {
             var res = await _stateContainer.LoadModlistMetadata();

@@ -32,7 +32,7 @@ namespace Wabbajack.Web
             );
 
             // states of pages
-            builder.Services.AddSingleton(_ => new GalleryState());
+            builder.Services.AddSingleton<GalleryState>();
 
             // generated with Wabbajack.Web.Generator
             //builder.Services.AddSingleton<IPostManager>(new PostManager());
