@@ -31,6 +31,19 @@
         </div>
     </div>
 
+    <div class="mb-5 flex flex-wrap gap-3">
+        @foreach (var (tagName, modlistCount) in AllTags)
+        {
+            <div @key="tagName">
+                <input checked="@(_galleryState.SelectedTags.Contains(tagName, StringComparer.OrdinalIgnoreCase) ? "true" : null)"
+                       @onchange="@(() => SelectTag(tagName))"
+                       id="@($"id{tagName.GetHashCode().ToString()}")"
+                       type="checkbox"/>
+                <label for="@($"id{tagName.GetHashCode().ToString()}")">@tagName (@modlistCount.ToString())</label>
+            </div>
+        }
+    </div>
+
     @if (_errorLoadingModlists)
     {
         @ErrorComponent.RenderError("Unable to load Modlists from Github!")
@@ -64,12 +77,24 @@
         {
             if (_galleryState.SelectedGame == GalleryState.All) return true;
             return x.Game == _gamesByName[_galleryState.SelectedGame];
+        })
+        .Where(x =>
+        {
+            if (_galleryState.SelectedTags.Count == 0) return true;
+            return _galleryState.SelectedTags.All(tag => x.tags.Contains(tag, StringComparer.OrdinalIgnoreCase));
         });
 
     private Dictionary<string, Game> _gamesByName = new();
     private IEnumerable<string> AllGames => _gamesByName
         .Select(x => x.Key)
         .OrderBy(x => x, StringComparer.OrdinalIgnoreCase);
+
+    private Dictionary<string, int> AllTags => Modlists
+        .SelectMany(x => x.tags)
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
+        .Select(x => (x, FilteredModlists.Count(y => y.tags.Contains(x, StringComparer.OrdinalIgnoreCase))))
+        .ToDictionary(x => x.x, x => x.Item2, StringComparer.OrdinalIgnoreCase);
 
     private bool _errorLoadingModlists;
 
@@ -99,6 +124,18 @@
             _galleryState.SelectedGame = GalleryState.All;
 
         _shouldRender = true;
+    }
+
+    private void SelectTag(string tag)
+    {
+        if (tag == string.Empty) return;
+
+        if (_galleryState.SelectedTags.Contains(tag))
+            _galleryState.SelectedTags.Remove(tag);
+        else
+            _galleryState.SelectedTags.Add(tag);
+
+        _galleryState.UpdateQueryString();
     }
 
     // DO NOT CHANGE "__builder"

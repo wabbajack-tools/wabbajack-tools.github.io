@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using Microsoft.AspNetCore.Components;
 
@@ -41,12 +42,15 @@ namespace Wabbajack.Web.Pages.Gallery
             }
         }
 
+        public List<string> SelectedTags { get; set; } = new();
+
         public void UpdateQueryString()
         {
             var queryParams = new Dictionary<string, object?>
             {
                 { "selectedGame", _selectedGame == All ? null : _selectedGame },
-                { "showNSFW", _showNsfw ? "true" : null }
+                { "showNSFW", _showNsfw ? "true" : null },
+                { "selectedTags", SelectedTags.Count == 0 ? null : SelectedTags.Aggregate((x,y) => $"{x},{y}") }
             };
 
             var newUri = _navigationManager.GetUriWithQueryParameters(queryParams);
@@ -61,6 +65,10 @@ namespace Wabbajack.Web.Pages.Gallery
                 _selectedGame = query.Get("selectedGame") ?? All;
             if (!_showNsfw)
                 _showNsfw = query.Get("showNSFW") == "true";
+
+            var selectedTags = query.Get("selectedTags");
+            if (selectedTags != null)
+                SelectedTags = selectedTags.Split(',').ToList();
         }
     }
 }
