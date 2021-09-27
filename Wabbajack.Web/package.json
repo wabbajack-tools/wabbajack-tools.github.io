@@ -10,7 +10,7 @@
   "author": "erri120",
   "license": "GPLv3.0",
   "devDependencies": {
-    "autoprefixer": "^10.3.4",
+    "autoprefixer": "^10.3.6",
     "nodemon": "^2.0.12",
     "postcss": "^8.3.6",
     "postcss-cli": "^8.3.1",
