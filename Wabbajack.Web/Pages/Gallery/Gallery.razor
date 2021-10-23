@@ -47,7 +47,7 @@
     @if (_errorLoadingModlists)
     {
         @ErrorComponent.RenderError("Unable to load Modlists from Github!")
-    } else if (!Modlists.Any())
+    } else if (!_modlists.Any())
     {
         @LoadingComponent.RenderLoadingThing("Loading Modlists...")
     }
@@ -70,8 +70,8 @@
     private bool _shouldRender;
     protected override bool ShouldRender() => _shouldRender;
 
-    private IEnumerable<ModlistMetadata> Modlists => _stateContainer.Modlists;
-    private IEnumerable<ModlistMetadata> FilteredModlists => Modlists
+    private List<ModlistMetadata> _modlists;
+    private IEnumerable<ModlistMetadata> FilteredModlists => _modlists
         .Where(x => _galleryState.ShowNsfw || !x.NSFW)
         .Where(x =>
         {
@@ -89,7 +89,7 @@
         .Select(x => x.Key)
         .OrderBy(x => x, StringComparer.OrdinalIgnoreCase);
 
-    private Dictionary<string, int> AllTags => Modlists
+    private Dictionary<string, int> AllTags => _modlists
         .SelectMany(x => x.tags)
         .Distinct(StringComparer.OrdinalIgnoreCase)
         .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
@@ -115,7 +115,9 @@
             }
         }
 
-        _gamesByName = Modlists
+        _modlists = _stateContainer.Modlists.OrderBy(_ => Guid.NewGuid()).ToList();
+
+        _gamesByName = _modlists
             .Select(x => x.Game)
             .Distinct()
             .ToDictionary(x => x.GetDescription(), x => x, StringComparer.OrdinalIgnoreCase);
