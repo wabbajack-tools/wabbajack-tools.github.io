@@ -2,7 +2,7 @@
 
 module.exports = {
     purge: {
-        enabled: true,
+        //enabled: true,
         content: [
             "./**/*.razor",
             "./**/*.cshtml",
