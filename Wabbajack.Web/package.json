@@ -10,10 +10,12 @@
   "author": "erri120",
   "license": "GPLv3.0",
   "devDependencies": {
-    "autoprefixer": "^10.3.7",
-    "nodemon": "^2.0.13",
+    "nodemon": "^2.0.13"
+  },
+  "dependencies": {
     "postcss": "^8.3.9",
     "postcss-cli": "^9.0.1",
-    "tailwindcss": "^2.2.17"
+    "tailwindcss": "^2.2.17",
+    "autoprefixer": "^10.3.7"
   }
 }
