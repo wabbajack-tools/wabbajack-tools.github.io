@@ -37,10 +37,7 @@
 			var tagSelected = _galleryState.SelectedTags.Contains(tagName, StringComparer.OrdinalIgnoreCase);
 			var selectedStyles = tagSelected ? "bg-wabbajack-purple text-white" : "border-2 border-gray-200";
 			<div @key="tagName" class="flex items-center justify-center rounded-md px-2 py-1 @(selectedStyles)">
-                <button
-                    @onclick="@(() => SelectTag(tagName))"
-                    id="@($"id{tagName.GetHashCode().ToString()}")"
-				>
+                <button @onclick="@(() => SelectTag(tagName))">
 					@tagName (@modlistCount.ToString())
 				</button>
             </div>
