@@ -1,4 +1,4 @@
-﻿@page "/gallery"
+@page "/gallery"
 @using Wabbajack.Web.Services
 @using Wabbajack.DTOs
 @using Wabbajack.Web.Pages.ModlistArchiveSearch
@@ -34,12 +34,15 @@
     <div class="mb-5 flex flex-wrap gap-3">
         @foreach (var (tagName, modlistCount) in AllTags)
         {
-            <div @key="tagName">
-                <input checked="@(_galleryState.SelectedTags.Contains(tagName, StringComparer.OrdinalIgnoreCase) ? "true" : null)"
-                       @onchange="@(() => SelectTag(tagName))"
-                       id="@($"id{tagName.GetHashCode().ToString()}")"
-                       type="checkbox"/>
-                <label for="@($"id{tagName.GetHashCode().ToString()}")">@tagName (@modlistCount.ToString())</label>
+			var tagSelected = _galleryState.SelectedTags.Contains(tagName, StringComparer.OrdinalIgnoreCase);
+			var selectedStyles = tagSelected ? "bg-wabbajack-purple text-white" : "border-2 border-gray-200";
+			<div @key="tagName" class="flex items-center justify-center rounded-md px-2 py-1 @(selectedStyles)">
+                <button
+                    @onclick="@(() => SelectTag(tagName))"
+                    id="@($"id{tagName.GetHashCode().ToString()}")"
+				>
+					@tagName (@modlistCount.ToString())
+				</button>
             </div>
         }
     </div>
