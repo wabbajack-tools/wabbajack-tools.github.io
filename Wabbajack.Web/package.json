@@ -10,7 +10,7 @@
   "author": "erri120",
   "license": "GPLv3.0",
   "devDependencies": {
-    "nodemon": "^2.0.14"
+    "nodemon": "^2.0.15"
   },
   "dependencies": {
     "postcss": "^8.3.11",
