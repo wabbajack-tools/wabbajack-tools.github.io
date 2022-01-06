@@ -35,8 +35,8 @@
         @foreach (var (tagName, modlistCount) in AllTags)
         {
 			var tagSelected = _galleryState.SelectedTags.Contains(tagName, StringComparer.OrdinalIgnoreCase);
-			var selectedStyles = tagSelected ? "bg-wabbajack-purple text-white" : "border-2 border-gray-200";
-			<div @key="tagName" class="flex items-center justify-center rounded-2xl px-2 py-1 @(selectedStyles)">
+			var selectedStyles = tagSelected ? "bg-wabbajack-purple text-white" : "";
+			<div @key="tagName" class="flex items-center justify-center rounded-2xl px-2 py-1 border-2 border-gray-200 @(selectedStyles)">
                 <button @onclick="@(() => SelectTag(tagName))">
 					@tagName (@modlistCount.ToString())
 				</button>
