@@ -9,7 +9,7 @@
 
 <PageTitle>Gallery | Wabbajack</PageTitle>
 
-<div class="px-1 md:p-16">
+<div class="px-1 md:p-8">
     <h1 class="font-semibold my-1 text-4xl text-center">Gallery</h1>
 
     <div class="mb-3 flex flex-wrap items-end justify-end md:gap-4">
@@ -35,8 +35,8 @@
         @foreach (var (tagName, modlistCount) in AllTags)
         {
 			var tagSelected = _galleryState.SelectedTags.Contains(tagName, StringComparer.OrdinalIgnoreCase);
-			var selectedStyles = tagSelected ? "bg-wabbajack-purple text-white" : "border-2 border-gray-200";
-			<div @key="tagName" class="flex items-center justify-center rounded-2xl px-2 py-1 @(selectedStyles)">
+			var selectedStyles = tagSelected ? "bg-wabbajack-purple text-white" : "";
+			<div @key="tagName" class="flex items-center justify-center rounded-2xl px-2 py-1 border-2 border-gray-200 @(selectedStyles)">
                 <button @onclick="@(() => SelectTag(tagName))">
 					@tagName (@modlistCount.ToString())
 				</button>
@@ -56,7 +56,7 @@
         <div class="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 items-start">
             @foreach (var modlist in FilteredModlists)
             {
-                <section @key="modlist.Title" class="bg-black-700 rounded-md shadow-md">
+                <section @key="modlist.Title" class="bg-black-700 rounded-md shadow-md h-full flex flex-col">
                     @_renderModlistInfo(modlist)
                 </section>
             }
@@ -151,15 +151,15 @@
             : readme;
         var archiveSearchLink = ModlistArchiveSearch.CreateRedirect(modlist.Links.MachineURL);
 
-        <div>
-            <img src="@modlist.Links.ImageUri"
-                 alt="Image of the Modlist @modlist.Title"
-                 loading="lazy"
-                 crossorigin="anonymous"/>
-            <div class="p-4">
-                <h2 class="font-title font-semibold text-2xl">@modlist.Title</h2>
-                <h3 class="font-subtitle font-light text-lg">Created by @modlist.Author</h3>
-                <p class="mt-1 font-normal text-base">@modlist.Description</p>
+        <img src="@modlist.Links.ImageUri"
+                alt="Image of the Modlist @modlist.Title"
+                loading="lazy"
+                crossorigin="anonymous"/>
+        <div class="p-4 flex-grow flex flex-col">
+            <h2 class="font-title font-semibold text-2xl">@modlist.Title</h2>
+            <h3 class="font-subtitle font-light text-lg">Created by @modlist.Author</h3>
+            <p class="mt-1 font-normal text-base">@modlist.Description</p>
+            <div class="mt-auto">
                 <p class="mt-2 font-medium text-md">Game: @modlist.Game.GetDescription()</p>
 
                 <div class="flex flex-wrap gap-1">
