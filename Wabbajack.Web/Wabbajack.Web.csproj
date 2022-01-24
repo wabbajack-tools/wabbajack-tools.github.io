@@ -19,7 +19,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.1" PrivateAssets="all" />
-        <PackageReference Include="Markdig" Version="0.26.0" />
+        <PackageReference Include="Markdig" Version="0.27.0" />
         <PackageReference Include="Wabbajack.DTOs" Version="3.0.0-alpha5" />
     </ItemGroup>
 
