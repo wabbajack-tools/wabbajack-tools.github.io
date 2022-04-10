@@ -81,7 +81,7 @@
         .Where(x =>
         {
             if (_galleryState.SelectedTags.Count == 0) return true;
-            return _galleryState.SelectedTags.All(tag => x.tags.Contains(tag, StringComparer.OrdinalIgnoreCase));
+            return _galleryState.SelectedTags.All(tag => x.Tags.Contains(tag, StringComparer.OrdinalIgnoreCase));
         });
 
     private Dictionary<string, Game> _gamesByName = new();
@@ -90,10 +90,10 @@
         .OrderBy(x => x, StringComparer.OrdinalIgnoreCase);
 
     private Dictionary<string, int> AllTags => _modlists
-        .SelectMany(x => x.tags)
+        .SelectMany(x => x.Tags)
         .Distinct(StringComparer.OrdinalIgnoreCase)
         .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
-        .Select(x => (x, FilteredModlists.Count(y => y.tags.Contains(x, StringComparer.OrdinalIgnoreCase))))
+        .Select(x => (x, FilteredModlists.Count(y => y.Tags.Contains(x, StringComparer.OrdinalIgnoreCase))))
         .ToDictionary(x => x.x, x => x.Item2, StringComparer.OrdinalIgnoreCase);
 
     private bool _errorLoadingModlists;
@@ -164,7 +164,7 @@
 
                 <div class="flex flex-wrap gap-1">
                     <p class="font-medium text-md">Tags:</p>
-                    @foreach (var tag in modlist.tags)
+                    @foreach (var tag in modlist.Tags)
                     {
                         <p @key="tag" class="text-white bg-wabbajack-purple rounded-md px-2">@tag</p>
                     }

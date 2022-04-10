@@ -138,24 +138,24 @@
         return false;
     }
 
-    private void OpenArchiveLink(DetailedStatusItem archive)
-    {
-        var state = archive.Archive.State;
-        var url = state switch
-        {
-            Nexus nexusState => $"https://nexusmods.com/{nexusState.Game.MetaData().NexusName}/mods/{nexusState.ModID.ToString()}",
-            IMetaState metaState => metaState.URL.ToString(),
-            Http httpState => httpState.Url.ToString(),
-            Mega megaState => megaState.Url.ToString(),
-            GoogleDrive googleDriveState => $"https://drive.google.com/file/d/{googleDriveState.Id}",
-            _ => null
-        };
-
-        if (string.IsNullOrWhiteSpace(url)) return;
-
-        // TODO: open in new tab
-        _navigationManager.NavigateTo(url);
-    }
+    // private void OpenArchiveLink(DetailedStatusItem archive)
+    // {
+    //     var state = archive.Archive.State;
+    //     var url = state switch
+    //     {
+    //         Nexus nexusState => $"https://nexusmods.com/{nexusState.Game.MetaData().NexusName}/mods/{nexusState.ModID.ToString()}",
+    //         IMetaState metaState => metaState.URL.ToString(),
+    //         Http httpState => httpState.Url.ToString(),
+    //         Mega megaState => megaState.Url.ToString(),
+    //         GoogleDrive googleDriveState => $"https://drive.google.com/file/d/{googleDriveState.Id}",
+    //         _ => null
+    //     };
+    //
+    //     if (string.IsNullOrWhiteSpace(url)) return;
+    //
+    //     // TODO: open in new tab
+    //     _navigationManager.NavigateTo(url);
+    // }
 
     public static string CreateRedirect(string machineUrl) => $"/search/{machineUrl}";
 }
