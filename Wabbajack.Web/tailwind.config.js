@@ -1,15 +1,11 @@
 ﻿const colors = require('tailwindcss/colors')
 
 module.exports = {
-    purge: {
-        //enabled: true,
-        content: [
-            "./**/*.razor",
-            "./**/*.cshtml",
-            "./**/*.html"
-        ]
-    },
-    darkMode: false, // or 'media' or 'class'
+    content: [
+        "./**/*.razor",
+        "./**/*.cshtml",
+        "./**/*.html"
+    ],
     theme: {
         fontFamily: {
             "title": ["Montserrat"],
@@ -43,11 +39,8 @@ module.exports = {
             current: 'currentColor',
             white: colors.white,
             black: colors.black,
-            gray: colors.coolGray,
+            gray: colors.gray,
         }
-    },
-    variants: {
-        extend: {},
     },
     plugins: [],
 }
