@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        
+
         <!-- Remove Collaction Support. -->
         <BlazorWebAssemblyPreserveCollationData>false</BlazorWebAssemblyPreserveCollationData>
 
@@ -23,14 +23,8 @@
         <PackageReference Include="Wabbajack.DTOs" Version="3.0.0-beta8" />
     </ItemGroup>
 
-    <ItemGroup>
-        <!--<ProjectReference Include="..\Wabbajack.Web.Generator\Wabbajack.Web.Generator.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
-        <AdditionalFiles Include="..\posts\*.md" />
-        <AdditionalFiles Include="..\docs\*.md" />-->
-    </ItemGroup>
-    
     <Target Name="RunPostcss" BeforeTargets="Build">
         <Exec Command="npm run build" />
     </Target>
-    
+
 </Project>

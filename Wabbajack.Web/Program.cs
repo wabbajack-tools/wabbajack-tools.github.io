@@ -34,10 +34,6 @@ namespace Wabbajack.Web
             // states of pages
             builder.Services.AddSingleton<GalleryState>();
 
-            // generated with Wabbajack.Web.Generator
-            //builder.Services.AddSingleton<IPostManager>(new PostManager());
-            //builder.Services.AddSingleton<IDocsManager>(new DocsManager());
-
             // Wabbajack.DTO
             builder.Services.AddDTOConverters();
             builder.Services.AddDTOSerializer();
