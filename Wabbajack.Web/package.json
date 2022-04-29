@@ -4,16 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "postcss postcss-import.css -o wwwroot/compiled.css",
-    "watch": "nodemon --watch tailwind.config.js --exec \"npm run build\""
+    "build": "tailwindcss -i tailwind.input.css -o wwwroot/compiled.css",
+    "watch": "tailwindcss -i tailwind.input.css -o wwwroot/compiled.css --watch"
   },
   "author": "erri120",
   "license": "GPLv3.0",
   "devDependencies": {
-    "autoprefixer": "^10.4.4",
-    "nodemon": "^2.0.14",
-    "postcss": "^8.4.12",
-    "postcss-cli": "^9.1.0",
-    "tailwindcss": "^3.0.23"
+    "tailwindcss": "^3.0.24"
   }
 }
