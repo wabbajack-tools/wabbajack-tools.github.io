@@ -24,7 +24,8 @@
     </ItemGroup>
 
     <Target Name="RunPostcss" BeforeTargets="Build">
-        <Exec Command="npm run build" />
+        <Exec Command="npm run build" Condition="'$(Configuration)' == 'Debug'"/>
+        <Exec Command="npm run production" Condition="'$(Configuration)' == 'Release'"/>
     </Target>
 
 </Project>

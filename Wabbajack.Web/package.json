@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "npx tailwindcss -i tailwind.input.css -o wwwroot/compiled.css",
-    "watch": "npx tailwindcss -i tailwind.input.css -o wwwroot/compiled.css --watch"
+    "watch": "npx tailwindcss -i tailwind.input.css -o wwwroot/compiled.css --watch",
+    "production": "npx tailwindcss -i tailwind.input.css -o wwwroot/compiled.css --minify"
   },
   "author": "erri120",
   "license": "GPLv3.0",
