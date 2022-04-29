@@ -18,10 +18,10 @@ namespace Wabbajack.Web.Services
 {
     public class StateContainer : IStateContainer
     {
+        // TODO: multiple repos
         private const string ModlistsJsonUrl = "https://raw.githubusercontent.com/wabbajack-tools/mod-lists/master/modlists.json";
-        private const string ModlistRepoBaseUrl = "https://raw.githubusercontent.com/wabbajack-tools/mod-lists/master/reports/";
-        private const string ModlistsSummaryUrl = ModlistRepoBaseUrl + "modListSummary.json";
-        private const string ModlistStatusFormatUrl = ModlistRepoBaseUrl + "{0}/status.json";
+        private const string ModlistsSummaryUrl = "https://raw.githubusercontent.com/wabbajack-tools/mod-lists/master/reports/modListSummary.json";
+        private const string ModlistStatusFormatUrl = "https://raw.githubusercontent.com/wabbajack-tools/mod-lists/master/reports/wj-featured/{0}/status.json";
 
         private readonly ILogger<StateContainer> _logger;
         private readonly HttpClient _client;

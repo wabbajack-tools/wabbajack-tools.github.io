@@ -82,5 +82,10 @@
         _shouldRender = true;
     }
 
-    public static string CreateRedirect(string machineUrl) => $"/status/{machineUrl}";
+    public static string CreateRedirect(string machineUrl)
+    {
+        // "{repo}/{modlist}"
+        var split = machineUrl.Split('/');
+        return $"/status/{split[1]}";
+    }
 }

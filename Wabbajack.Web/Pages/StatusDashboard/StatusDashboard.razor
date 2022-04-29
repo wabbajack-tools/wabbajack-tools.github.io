@@ -36,7 +36,9 @@
     private bool _shouldRender;
     protected override bool ShouldRender() => _shouldRender;
 
-    private IEnumerable<ModListSummary> ModlistSummaries => _stateContainer.ModlistSummaries;
+    // TODO: maybe add repo-support
+    private IEnumerable<ModListSummary> ModlistSummaries => _stateContainer.ModlistSummaries
+        .Where(x => x.MachineURL.StartsWith("wj-featured/", StringComparison.OrdinalIgnoreCase));
     private IEnumerable<ModListSummary> OrderedModlistSummaries => ModlistSummaries
         .OrderByDescending(x => x.HasFailures)
         .ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase);
