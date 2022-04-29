@@ -1,12 +1,10 @@
 ﻿@page "/search/{machineUrl}"
-@using Wabbajack.DTOs.ServerResponses
 @using Wabbajack.Web.Services
 @using Wabbajack.DTOs.DownloadStates
 @using Wabbajack.DTOs
 @using Wabbajack.DTOs.ModListValidation
 @using Wabbajack.Common
-@inject IStateContainer _stateContainer;
-@inject NavigationManager _navigationManager;
+@inject IStateContainer StateContainer;
 
 <PageTitle>Archive Search | Wabbajack</PageTitle>
 
@@ -26,21 +24,25 @@
     {
         <h1 class="font-semibold my-1 text-3xl text-center">Archive Search: @_modlistStatus.Name</h1>
 
-        <div class="mt-5 mb-2">
-            <label for="search-archive">Name:</label>
-            <input class="text-black-900 sm:text-sm p-1" @bind="_searchString" id="search-archive" type="search" maxlength="100"/>
-        </div>
-
         <div class="w-full overflow-hidden">
             <div class="p-4 min-w-full overflow-x-auto">
                 <table class="min-w-full divide-y divide-wabbajack-background">
-                    <caption>TODO: explain what this is</caption>
+                    <caption class="mb-3">Use Archive Search to look through all files a Modlist downloads.</caption>
                     <thead>
-                    <tr class="text-md font-semibold tracking-wide text-left bg-black-700">
-                        <th class="px-6 py-3">Archive Name</th>
-                        <th class="px-6 py-3">Name</th>
-                        <th class="px-6 py-3">Size</th>
+
+                    <tr class="bg-black-700">
+                        <th colspan="3" class="py-2 text-right px-3">
+                            <label for="search-archive">Search by Name:</label>
+                            <input class="appearance-none focus:outline-0 border-hidden text-black-900 sm:text-sm p-1" @bind="_searchString" id="search-archive" type="search" maxlength="100"/>
+                        </th>
                     </tr>
+
+                    <tr class="text-md font-semibold tracking-wide text-left bg-black-700">
+                        <th @onclick="() => SwitchSorting(SortBy.ArchiveName)" class="px-6 py-3 hover:underline hover:cursor-pointer">Archive Name</th>
+                        <th @onclick="() => SwitchSorting(SortBy.MetaName)" class="px-6 py-3 hover:underline hover:cursor-pointer">Name</th>
+                        <th @onclick="() => SwitchSorting(SortBy.Size)" class="px-6 py-3 hover:underline hover:cursor-pointer">Size</th>
+                    </tr>
+
                     </thead>
                     <tbody class="divide-y divide-wabbajack-background">
                     @foreach (var archive in Archives)
@@ -65,10 +67,20 @@
 
     private bool _errorFoundNoMatchingModlist;
 
+    private enum SortBy
+    {
+        ArchiveName,
+        MetaName,
+        Size
+    }
+
+    private SortBy _sortBy = SortBy.ArchiveName;
+    private bool _sortAscending = true;
+
     private ValidatedModList _modlistStatus;
-    private IEnumerable<Archive> Archives => _modlistStatus.Archives
+    private IEnumerable<Archive> Archives => SortArchives(_modlistStatus.Archives
         .Select(x => x.Original)
-        .Where(ShouldRenderArchive);
+        .Where(ShouldRenderArchive));
 
     private string _searchString;
 
@@ -76,9 +88,9 @@
     {
         if (MachineUrl == null) return;
 
-        if (!_stateContainer.TryGetModlistStatus(MachineUrl, out _modlistStatus))
+        if (!StateContainer.TryGetModlistStatus(MachineUrl, out _modlistStatus))
         {
-            var res = await _stateContainer.LoadModlistStatus(MachineUrl);
+            var res = await StateContainer.LoadModlistStatus(MachineUrl);
 
             if (res == null)
             {
@@ -114,17 +126,17 @@
         <td class="px-6 py-4 font-light whitespace-nowrap">@archive.Size.ToFileSizeString()</td>
     };
 
-    private static string GetMetaName(Archive archive)
+    private static string GetMetaName(Archive archive, bool returnEmpty = false)
     {
         var state = archive.State;
         var name = state switch
         {
             Nexus nexusState => nexusState.Name ?? string.Empty,
             IMetaState metaState => metaState.Name ?? string.Empty,
-            _ => archive.Name
+            _ => returnEmpty ? string.Empty : archive.Name
         };
 
-        return string.IsNullOrEmpty(name) ? archive.Name : name;
+        return string.IsNullOrEmpty(name) ? returnEmpty ? string.Empty : archive.Name : name;
     }
 
     private bool ShouldRenderArchive(Archive archive)
@@ -138,24 +150,29 @@
         return false;
     }
 
-    // private void OpenArchiveLink(DetailedStatusItem archive)
-    // {
-    //     var state = archive.Archive.State;
-    //     var url = state switch
-    //     {
-    //         Nexus nexusState => $"https://nexusmods.com/{nexusState.Game.MetaData().NexusName}/mods/{nexusState.ModID.ToString()}",
-    //         IMetaState metaState => metaState.URL.ToString(),
-    //         Http httpState => httpState.Url.ToString(),
-    //         Mega megaState => megaState.Url.ToString(),
-    //         GoogleDrive googleDriveState => $"https://drive.google.com/file/d/{googleDriveState.Id}",
-    //         _ => null
-    //     };
-    //
-    //     if (string.IsNullOrWhiteSpace(url)) return;
-    //
-    //     // TODO: open in new tab
-    //     _navigationManager.NavigateTo(url);
-    // }
+    private void SwitchSorting(SortBy newSortBy)
+    {
+        if (_sortBy == newSortBy)
+        {
+            _sortAscending = !_sortAscending;
+        }
+        else
+        {
+            _sortBy = newSortBy;
+            _sortAscending = true;
+        }
+    }
+
+    private IEnumerable<Archive> SortArchives(IEnumerable<Archive> enumerable)
+    {
+        return _sortBy switch
+        {
+            SortBy.ArchiveName => _sortAscending ? enumerable.OrderBy(x => x.Name) : enumerable.OrderByDescending(x => x.Name),
+            SortBy.MetaName => _sortAscending ? enumerable.OrderBy(x => GetMetaName(x, true)) : enumerable.OrderByDescending(x => GetMetaName(x, true)),
+            SortBy.Size => _sortAscending ? enumerable.OrderBy(x => x.Size) : enumerable.OrderByDescending(x => x.Size),
+            _ => throw new NotImplementedException()
+        };
+    }
 
     public static string CreateRedirect(string machineUrl) => $"/search/{machineUrl}";
 }
