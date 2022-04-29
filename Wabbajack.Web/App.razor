@@ -5,7 +5,7 @@
     <NotFound>
         <PageTitle>Not found</PageTitle>
         <LayoutView Layout="@typeof(MainLayout)">
-            <!-- TODO: error text: "Invalid Url" -->
+            @ErrorComponent.RenderError("Page not found!")
         </LayoutView>
     </NotFound>
 </Router>
