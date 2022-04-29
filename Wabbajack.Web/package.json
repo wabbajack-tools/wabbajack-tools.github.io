@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tailwindcss -i tailwind.input.css -o wwwroot/compiled.css",
-    "watch": "tailwindcss -i tailwind.input.css -o wwwroot/compiled.css --watch"
+    "build": "npx tailwindcss -i tailwind.input.css -o wwwroot/compiled.css",
+    "watch": "npx tailwindcss -i tailwind.input.css -o wwwroot/compiled.css --watch"
   },
   "author": "erri120",
   "license": "GPLv3.0",
