@@ -2,22 +2,15 @@
 @using Wabbajack.Web.Pages.ModlistInfo
 @using Wabbajack.Web.Services
 @using Wabbajack.Web.Utils
-@inject IStateContainer _stateContainer;
+@inject IStateContainer StateContainer;
 
 <div class="max-w-6xl mx-auto bg-black-900">
 
     <div class="overflow-hidden max-w-full relative">
-        <!--
-        Very hacky solution for dealing with images that are not 16:9.
-        The div has "position: relative" and "padding-top: 56.25%" (9 / 16 = 0.5625).
-        The child element is absolute positioned and fills the div completely however the div
-        has height 0, the height comes from the padding. This makes more sense if you open the
-        inspector in the browser and look at the layout.
-        -->
-        <div class="w-full relative bg-gray-900" style="padding-top: 56.25%">
+        <div class="w-full bg-gray-900 relative">
             @if (_currentModlist != null)
             {
-                <img class="absolute top-0 left-0 bottom-0 right-0 h-full w-full"
+                <img class="w-full aspect-video"
                      loading="eager"
                      src="@_currentModlist.Links.ImageUri"
                      alt="Image of Modlist @_currentModlist.Title"/>
@@ -56,9 +49,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (!_stateContainer.Modlists.Any())
+        if (!StateContainer.Modlists.Any())
         {
-            var res = await _stateContainer.LoadModlistMetadata();
+            var res = await StateContainer.LoadModlistMetadata();
 
             if (!res)
             {
@@ -68,9 +61,9 @@
             }
         }
 
-        if (_stateContainer.Modlists.Any())
+        if (StateContainer.Modlists.Any())
         {
-            var filteredModlists = _stateContainer.Modlists
+            var filteredModlists = StateContainer.Modlists
                 .Where(x => !x.NSFW)
                 .OrderBy(_ => Guid.NewGuid())
                 .ToList();
