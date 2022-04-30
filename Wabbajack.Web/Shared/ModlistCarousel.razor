@@ -49,54 +49,55 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (!StateContainer.Modlists.Any())
+        try
         {
-            var res = await StateContainer.LoadModlistMetadata();
-
+            var res = await StateContainer.LoadOfficialModlists();
             if (!res)
             {
                 _errorLoadingModlists = true;
-                _shouldRender = true;
                 return;
             }
-        }
 
-        if (StateContainer.Modlists.Any())
-        {
-            var filteredModlists = StateContainer.Modlists
+            var filteredModlists = StateContainer.GetOfficialModlists()
                 .Where(x => !x.NSFW)
                 .OrderBy(_ => Guid.NewGuid())
                 .ToList();
 
-            //EnumerableUtils.ShuffleList(filteredModlists);
             _filteredModlists = filteredModlists;
-            _currentModlist = _filteredModlists.First();
+            _currentModlist = filteredModlists.First();
         }
-
-        _shouldRender = true;
+        finally
+        {
+            _shouldRender = true;
+        }
     }
 
     private void UpdateModlistPosition(bool isNext)
     {
         _shouldRender = false;
 
-        if (isNext)
+        try
         {
-            if (_currentModlistIndex == _filteredModlists.Count - 1)
-                _currentModlistIndex = 0;
+            if (isNext)
+            {
+                if (_currentModlistIndex == _filteredModlists.Count - 1)
+                    _currentModlistIndex = 0;
+                else
+                    _currentModlistIndex++;
+                _currentModlist = _filteredModlists[_currentModlistIndex];
+            }
             else
-                _currentModlistIndex++;
-            _currentModlist = _filteredModlists[_currentModlistIndex];
+            {
+                if (_currentModlistIndex == 0)
+                    _currentModlistIndex = _filteredModlists.Count - 1;
+                else
+                    _currentModlistIndex--;
+                _currentModlist = _filteredModlists[_currentModlistIndex];
+            }
         }
-        else
+        finally
         {
-            if (_currentModlistIndex == 0)
-                _currentModlistIndex = _filteredModlists.Count - 1;
-            else
-                _currentModlistIndex--;
-            _currentModlist = _filteredModlists[_currentModlistIndex];
+            _shouldRender = true;
         }
-
-        _shouldRender = true;
     }
 }

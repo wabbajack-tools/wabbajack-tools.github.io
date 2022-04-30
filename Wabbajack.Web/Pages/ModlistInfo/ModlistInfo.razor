@@ -1,27 +1,23 @@
-﻿@page "/modlist/{machineUrl}"
+﻿@page "/modlist/{repositoryName}/{modlistName}"
 @using Wabbajack.Web.Services
 @using Wabbajack.DTOs
 @using Wabbajack.Web.Utils
-@inject IStateContainer _stateContainer;
-@inject NavigationManager _navigationManager;
-@inject HttpClient _client;
+@inject IStateContainer StateContainer;
+@inject NavigationManager NavigationManager;
+@inject HttpClient Client;
 
 <div>
     <!-- TODO: back button -->
 
     @if (_modlist == null)
     {
-        @if (ErrorMachineUrlNull)
-        {
-            @ErrorComponent.RenderError("machineUrl is null!")
-        }
-        else if (_errorLoadingModlists)
+        if (_errorLoadingModlists)
         {
             @ErrorComponent.RenderError("Unable to load Modlists from GitHub!")
         }
-        else if (_errorNoMatchingModlist)
+        else if (_errorFindingModlist)
         {
-            @ErrorComponent.RenderError($"Found no matching Modlist for machineUrl {MachineUrl}")
+            @ErrorComponent.RenderError($"Found no matching Modlist \"{RepositoryName}/{ModlistName}\"")
         }
         else
         {
@@ -46,7 +42,10 @@
 
 @code {
     [Parameter]
-    public string MachineUrl { get; set; }
+    public string RepositoryName { get; set; }
+
+    [Parameter]
+    public string ModlistName { get; set; }
 
     private bool _shouldRender;
     protected override bool ShouldRender() => _shouldRender;
@@ -54,44 +53,50 @@
     private ModlistMetadata _modlist;
     private string _readme;
 
-    private bool ErrorMachineUrlNull => MachineUrl == null;
     private bool _errorLoadingModlists;
-    private bool _errorNoMatchingModlist;
+    private bool _errorFindingModlist;
 
     protected override async Task OnInitializedAsync()
     {
-        if (MachineUrl == null) return;
-
-        if (!_stateContainer.Modlists.Any())
+        try
         {
-            var res = await _stateContainer.LoadModlistMetadata();
+            if (RepositoryName is null || ModlistName is null) return;
 
+            var res = await StateContainer.LoadRepository(RepositoryName);
             if (!res)
             {
                 _errorLoadingModlists = true;
-                _shouldRender = true;
                 return;
             }
-        }
 
-        if (!_stateContainer.TryGetModlistMetadata(MachineUrl, out var modlist))
+            if (!StateContainer.TryGetRepository(RepositoryName, out var modlists))
+            {
+                _errorLoadingModlists = true;
+                return;
+            }
+
+            var modlist = modlists.FirstOrDefault(x => x.Links.MachineURL.Equals(ModlistName, StringComparison.OrdinalIgnoreCase));
+            if (modlist is null)
+            {
+                _errorFindingModlist = true;
+                return;
+            }
+
+            _modlist = modlist;
+
+            if (!LinkUtils.CanRenderReadme(_modlist.Links.Readme))
+            {
+                NavigationManager.NavigateTo(modlist.Links.Readme);
+                return;
+            }
+
+            _readme = await Client.GetStringAsync(_modlist.Links.Readme);
+        }
+        finally
         {
-            _errorNoMatchingModlist = true;
             _shouldRender = true;
-            return;
         }
-
-        _modlist = modlist;
-
-        if (!LinkUtils.CanRenderReadme(_modlist.Links.Readme))
-        {
-            _navigationManager.NavigateTo(modlist.Links.Readme);
-            return;
-        }
-
-        _readme = await _client.GetStringAsync(_modlist.Links.Readme);
-        _shouldRender = true;
     }
 
-    public static string CreateRedirect(string machineUrl) => $"/modlist/{machineUrl}";
+    public static string CreateRedirect(string namespacedName) => $"/modlist/{namespacedName}";
 }

@@ -39,7 +39,7 @@ namespace Wabbajack.Web
             builder.Services.AddDTOSerializer();
 
             builder.Logging.SetMinimumLevel(builder.HostEnvironment.IsDevelopment()
-                ? LogLevel.Debug
+                ? LogLevel.Trace
                 : LogLevel.Information);
 
             await builder.Build().RunAsync();

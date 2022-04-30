@@ -1,20 +1,23 @@
-﻿@page "/status/{machineUrl}"
+﻿@page "/status/{repositoryName}/{modlistName}"
 @using Wabbajack.Web.Services
 @using Wabbajack.DTOs.ServerResponses
 @using Wabbajack.DTOs.ModListValidation
 @using Wabbajack.DTOs
-@inject IStateContainer _stateContainer;
+@inject IStateContainer StateContainer;
 
 <div class="px-1 md:p-16 md:pb-6">
-    @if (_modlistStatus == null)
+    @if (_modlistStatus is null)
     {
-        @if (_errorFoundNoMatchingModlist)
+        @if (_errorLoadingStatusReport)
         {
-            @ErrorComponent.RenderError($"Found no Modlist with machineUrl {MachineUrl}")
+            @ErrorComponent.RenderError($"Error loading status report for {MachineUrl}")
+        } else if (_errorFindingStatusReport)
+        {
+            @ErrorComponent.RenderError($"Error finding status report for {MachineUrl}")
         }
         else
         {
-            @LoadingComponent.RenderLoadingThing("Loading Modlist...")
+            @LoadingComponent.RenderLoadingThing("Loading status report...")
         }
     }
     else
@@ -43,7 +46,12 @@
 
 @code {
     [Parameter]
-    public string MachineUrl { get; set; }
+    public string RepositoryName { get; set; }
+
+    [Parameter]
+    public string ModlistName { get; set; }
+
+    private string MachineUrl => $"{RepositoryName}/{ModlistName}";
 
     private const int ItemSize = 24;
     private const int MaxItemListSize = 400;
@@ -59,33 +67,35 @@
     private string FailingArchivesHeight => $"{(Math.Min(FailingArchives.Count, MaxItems) * ItemSize).ToString()}px";
     private string SucceedingArchivesHeight => $"{(Math.Min(SucceedingArchives.Count, MaxItems) * ItemSize).ToString()}px";
 
-    private bool _errorFoundNoMatchingModlist;
+    private bool _errorLoadingStatusReport;
+    private bool _errorFindingStatusReport;
 
     protected override async Task OnInitializedAsync()
     {
-        if (MachineUrl == null) return;
-
-        if (!_stateContainer.TryGetModlistStatus(MachineUrl, out _modlistStatus))
+        try
         {
-            var res = await _stateContainer.LoadModlistStatus(MachineUrl);
+            if (RepositoryName is null || ModlistName is null) return;
 
-            if (res == null)
+            var res = await StateContainer.LoadModlistStatusReport(MachineUrl);
+            if (!res)
             {
-                _errorFoundNoMatchingModlist = true;
-                _shouldRender = true;
+                _errorLoadingStatusReport = true;
                 return;
             }
 
-            _modlistStatus = res;
+            if (!StateContainer.TryGetModlistStatusReport(MachineUrl, out var statusReport))
+            {
+                _errorFindingStatusReport = true;
+                return;
+            }
+
+            _modlistStatus = statusReport;
         }
-
-        _shouldRender = true;
+        finally
+        {
+            _shouldRender = true;
+        }
     }
 
-    public static string CreateRedirect(string machineUrl)
-    {
-        // "{repo}/{modlist}"
-        var split = machineUrl.Split('/');
-        return $"/status/{split[1]}";
-    }
+    public static string CreateRedirect(string namespacedName) => $"/status/{namespacedName}";
 }

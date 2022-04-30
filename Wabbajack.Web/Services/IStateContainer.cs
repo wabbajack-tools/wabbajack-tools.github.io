@@ -1,29 +1,47 @@
 #nullable enable
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Wabbajack.DTOs;
 using Wabbajack.DTOs.ModListValidation;
-using Wabbajack.DTOs.ServerResponses;
 
 namespace Wabbajack.Web.Services
 {
     /// <summary>
     /// Manages the State of the Application.
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public interface IStateContainer
     {
-        IEnumerable<ModlistMetadata> Modlists { get; }
+        bool HasLoadedRepositoryUrls();
+        IDictionary<string, string> RepositoryUrls { get; }
+        Task<bool> LoadRepositoryUrls(CancellationToken cancellationToken = default);
 
-        Task<bool> LoadModlistMetadata();
-        bool TryGetModlistMetadata(string machineUrl, [MaybeNullWhen(false)] out ModlistMetadata modlistMetadata);
+        bool TryGetRepository(string repositoryName, [MaybeNullWhen(false)] out List<ModlistMetadata> repository);
+        IDictionary<string, List<ModlistMetadata>> Repositories { get; }
+        Task<bool> LoadRepository(string repositoryName, CancellationToken cancellationToken = default);
 
-        IEnumerable<ModListSummary> ModlistSummaries { get; }
-        Task<bool> LoadModlistSummaries();
+        bool HasLoadedFeaturedModlistNames();
+        IDictionary<string, List<string>> FeaturedModlistNamesByRepository { get; }
+        Task<bool> LoadFeaturedModlistNames(CancellationToken cancellationToken = default);
 
-        IReadOnlyDictionary<string, ValidatedModList> ModlistStatusDictionary { get; }
-        bool HasModlistStatus(string machineUrl);
-        Task<ValidatedModList?> LoadModlistStatus(string machineUrl);
-        bool TryGetModlistStatus(string machineUrl, [MaybeNullWhen(false)] out ValidatedModList modlistStatus);
+        IEnumerable<ModlistMetadata> GetOfficialModlists();
+        Task<bool> LoadOfficialModlists(CancellationToken cancellationToken = default);
+
+        IEnumerable<ModlistMetadata> GetFeaturedModlists();
+        Task<bool> LoadFeaturedModlists(CancellationToken cancellationToken = default);
+
+        IEnumerable<ModlistMetadata> GetAllModlists();
+        Task<bool> LoadAllModlists(CancellationToken cancellationToken = default);
+
+        bool HasLoadedModlistSummaries();
+        IDictionary<string, ModListSummary> ModlistSummaries { get; }
+        Task<bool> LoadModlistSummaries(CancellationToken cancellationToken = default);
+
+        bool TryGetModlistStatusReport(string machineUrl, [MaybeNullWhen(false)] out ValidatedModList statusReport);
+        IDictionary<string, ValidatedModList> ModlistStatusReports { get; }
+        Task<bool> LoadModlistStatusReport(string machineUrl, CancellationToken cancellationToken = default);
     }
 }

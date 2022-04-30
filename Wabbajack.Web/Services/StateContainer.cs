@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -12,16 +13,22 @@ using Wabbajack.DTOs;
 using Wabbajack.DTOs.JsonConverters;
 using Wabbajack.DTOs.ModListValidation;
 
-#nullable enable
-
 namespace Wabbajack.Web.Services
 {
     public class StateContainer : IStateContainer
     {
-        // TODO: multiple repos
-        private const string ModlistsJsonUrl = "https://raw.githubusercontent.com/wabbajack-tools/mod-lists/master/modlists.json";
+        // name of the repository that contain the "official" modlists
+        private const string OfficialRepositoryName = "wj-featured";
+        // url to the repository manifest for the "official" modlists
+        private const string OfficialRepositoryUrl = "https://raw.githubusercontent.com/wabbajack-tools/mod-lists/master/modlists.json";
+        // url to the list containing every repository
+        private const string RepositoriesUrl = "https://raw.githubusercontent.com/wabbajack-tools/mod-lists/master/repositories.json";
+        // url to the list of featured modlists outside the "official" repository
+        private const string FeaturedModlistNamesUrl = "https://raw.githubusercontent.com/wabbajack-tools/mod-lists/master/featured_lists.json";
+        // url to the summary of all modlists from all repositories containing links to the status reports and other status info
         private const string ModlistsSummaryUrl = "https://raw.githubusercontent.com/wabbajack-tools/mod-lists/master/reports/modListSummary.json";
-        private const string ModlistStatusFormatUrl = "https://raw.githubusercontent.com/wabbajack-tools/mod-lists/master/reports/wj-featured/{0}/status.json";
+        // base url for all status reports
+        private const string ModlistStatusBaseUrl = "https://raw.githubusercontent.com/wabbajack-tools/mod-lists/master/";
 
         private readonly ILogger<StateContainer> _logger;
         private readonly HttpClient _client;
@@ -37,97 +44,253 @@ namespace Wabbajack.Web.Services
             _jsonSerializerOptions.AllowTrailingCommas = true;
         }
 
-        private List<ModlistMetadata> _modlists = new();
-        public IEnumerable<ModlistMetadata> Modlists => _modlists;
+        private Dictionary<string, string> _repositoryUrls = new();
+        public IDictionary<string, string> RepositoryUrls => _repositoryUrls;
 
-        public async Task<bool> LoadModlistMetadata()
+        private readonly Dictionary<string, List<ModlistMetadata>> _repositories = new();
+        public IDictionary<string, List<ModlistMetadata>> Repositories => _repositories;
+
+        private Dictionary<string, List<string>> _featuredModlistNamesByRepository = new();
+        public IDictionary<string, List<string>> FeaturedModlistNamesByRepository => _featuredModlistNamesByRepository;
+
+        private Dictionary<string, ModListSummary> _modlistSummaries = new();
+        public IDictionary<string, ModListSummary> ModlistSummaries => _modlistSummaries;
+
+        private readonly Dictionary<string, ValidatedModList> _modlistStatusReports = new();
+        public IDictionary<string, ValidatedModList> ModlistStatusReports => _modlistStatusReports;
+
+        // we manually add "wj-featured" to the dictionary so here we want to check for > 1
+        public bool HasLoadedRepositoryUrls() => _repositoryUrls.Count > 1;
+        public bool TryGetRepository(string repositoryName, [MaybeNullWhen(false)] out List<ModlistMetadata> repository) => _repositories.TryGetValue(repositoryName, out repository) && repository.Count != 0;
+        public bool HasLoadedFeaturedModlistNames() => _featuredModlistNamesByRepository.Count != 0;
+        public bool HasLoadedModlistSummaries() => _modlistSummaries.Count != 0;
+        public bool TryGetModlistStatusReport(string machineUrl, [MaybeNullWhen(false)] out ValidatedModList statusReport) => _modlistStatusReports.TryGetValue(machineUrl, out statusReport);
+
+        public IEnumerable<ModlistMetadata> GetOfficialModlists()
         {
+            if (TryGetRepository(OfficialRepositoryName, out var modlists)) return modlists;
+            return Array.Empty<ModlistMetadata>();
+        }
+
+        public IEnumerable<ModlistMetadata> GetFeaturedModlists()
+        {
+            if (!HasLoadedFeaturedModlistNames()) yield break;
+
+            foreach (var repositoryName in _featuredModlistNamesByRepository.Keys)
+            {
+                if (!TryGetRepository(repositoryName, out var modlists)) yield break;
+
+                var featured = _featuredModlistNamesByRepository[repositoryName];
+                foreach (var modlistName in featured)
+                {
+                    var featuredModlist = modlists.FirstOrDefault(x => x.Links.MachineURL.Equals(modlistName));
+                    if (featuredModlist is null) yield break;
+                    yield return featuredModlist;
+                }
+            }
+        }
+
+        public IEnumerable<ModlistMetadata> GetAllModlists()
+        {
+            return _repositories.SelectMany(x => x.Value);
+        }
+
+        public async Task<bool> LoadRepositoryUrls(CancellationToken cancellationToken = default)
+        {
+            if (HasLoadedRepositoryUrls()) return true;
+
             try
             {
-                var res = await _client.GetFromJsonAsync<List<ModlistMetadata>>(
-                    ModlistsJsonUrl,
-                    _jsonSerializerOptions,
-                    CancellationToken.None);
+                var res = await _client.GetFromJsonAsync<Dictionary<string, string>>(RepositoriesUrl, _jsonSerializerOptions, cancellationToken);
+                if (res is null || res.Count == 0)
+                {
+                    _logger.LogWarning("Loaded 0 Repositories from {Url}", RepositoriesUrl);
+                    return false;
+                }
 
-                if (res == null) return false;
-
-                _modlists = res;
+                _repositoryUrls = res;
+                return true;
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Exception loading Modlists from {Url}", ModlistsJsonUrl);
+                _logger.LogError(e, "Exception while loading Repositories from {Url}", RepositoriesUrl);
                 return false;
+            }
+        }
+
+        public async Task<bool> LoadRepository(string repositoryName, CancellationToken cancellationToken = default)
+        {
+            if (TryGetRepository(repositoryName, out _)) return true;
+
+            if (!HasLoadedRepositoryUrls())
+            {
+                var res = await LoadRepositoryUrls(cancellationToken);
+                if (!res) return false;
+            }
+
+            if (!RepositoryUrls.TryGetValue(repositoryName, out var repositoryUrl))
+            {
+                _logger.LogError("Unknown Repository: \"{RepositoryName}\"", repositoryName);
+                return false;
+            }
+
+            try
+            {
+                var res = await _client.GetFromJsonAsync<List<ModlistMetadata>>(repositoryUrl, _jsonSerializerOptions, cancellationToken);
+                if (res is null || res.Count == 0)
+                {
+                    _logger.LogWarning("Loaded 0 Modlists from Repository \"{RepositoryName}\" at {Url}", repositoryName, repositoryUrl);
+                    return false;
+                }
+
+                foreach (var modlist in res)
+                {
+                    // need to manually set the repository name as it's not saved in JSON
+                    modlist.RepositoryName = repositoryName;
+                }
+
+                _repositories.Add(repositoryName, res);
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Exception while loading Modlists from Repository \"{RepositoryName}\" at {Url}", repositoryName, repositoryUrl);
+                return false;
+            }
+        }
+
+        public async Task<bool> LoadFeaturedModlistNames(CancellationToken cancellationToken = default)
+        {
+            if (HasLoadedFeaturedModlistNames()) return true;
+
+            try
+            {
+                var res = await _client.GetFromJsonAsync<List<string>>(FeaturedModlistNamesUrl, _jsonSerializerOptions, cancellationToken);
+                if (res is null || res.Count == 0)
+                {
+                    _logger.LogWarning("Loaded 0 featured Modlists from {Url}", FeaturedModlistNamesUrl);
+                    return false;
+                }
+
+                // "{repo}/{modlistName}"
+                _featuredModlistNamesByRepository = res
+                    .Select(x => x.Split('/'))
+                    .Select(x => (repositoryName: x[0], modlistName: x[1]))
+                    .GroupBy(x => x.repositoryName, x => x.modlistName)
+                    .ToDictionary(x => x.Key, x => x.ToList(), StringComparer.OrdinalIgnoreCase);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Exception while loading featured Modlists from {Url}", FeaturedModlistNamesUrl);
+                return false;
+            }
+        }
+
+        public async Task<bool> LoadOfficialModlists(CancellationToken cancellationToken = default)
+        {
+            if (TryGetRepository(OfficialRepositoryName, out _)) return true;
+            if (!_repositories.ContainsKey(OfficialRepositoryName))
+            {
+                _repositoryUrls.Add(OfficialRepositoryName, OfficialRepositoryUrl);
+            }
+
+            return await LoadRepository(OfficialRepositoryName, cancellationToken);
+        }
+
+        public async Task<bool> LoadFeaturedModlists(CancellationToken cancellationToken = default)
+        {
+            if (!HasLoadedFeaturedModlistNames())
+            {
+                var res = await LoadFeaturedModlistNames(cancellationToken);
+                if (!res) return false;
+            }
+
+            foreach (var repositoryName in _featuredModlistNamesByRepository.Keys)
+            {
+                var res = await LoadRepository(repositoryName, cancellationToken);
+                if (!res) return false;
             }
 
             return true;
         }
 
-        public bool TryGetModlistMetadata(string machineUrl, [MaybeNullWhen(false)] out ModlistMetadata modlistMetadata)
+        public async Task<bool> LoadAllModlists(CancellationToken cancellationToken = default)
         {
-            modlistMetadata = _modlists.FirstOrDefault(x => x.Links.MachineURL.Equals(machineUrl, StringComparison.OrdinalIgnoreCase));
-            return modlistMetadata != null;
-        }
-
-        private List<ModListSummary> _modlistSummaries = new();
-        public IEnumerable<ModListSummary> ModlistSummaries => _modlistSummaries;
-
-        public async Task<bool> LoadModlistSummaries()
-        {
-            try
+            if (!HasLoadedRepositoryUrls())
             {
-                var res = await _client.GetFromJsonAsync<List<ModListSummary>>(
-                    ModlistsSummaryUrl,
-                    _jsonSerializerOptions,
-                    CancellationToken.None);
-
-                if (res == null) return false;
-
-                _modlistSummaries = res;
+                var res = await LoadRepositoryUrls(cancellationToken);
+                if (!res) return false;
             }
-            catch (Exception e)
+
+            foreach (var repositoryName in _repositoryUrls.Keys)
             {
-                _logger.LogError(e, "Exception loading Modlist Summaries from {Url}", ModlistsSummaryUrl);
-                return false;
+                var res = await LoadRepository(repositoryName, cancellationToken);
+                if (!res) return false;
             }
 
             return true;
         }
 
-        private readonly Dictionary<string, ValidatedModList> _modlistStatusDictionary = new (StringComparer.OrdinalIgnoreCase);
-        public IReadOnlyDictionary<string, ValidatedModList> ModlistStatusDictionary => _modlistStatusDictionary;
-        public bool HasModlistStatus(string machineUrl)
+        public async Task<bool> LoadModlistSummaries(CancellationToken cancellationToken = default)
         {
-            return _modlistStatusDictionary.ContainsKey(machineUrl);
-        }
-
-        public async Task<ValidatedModList?> LoadModlistStatus(string machineUrl)
-        {
-            if (TryGetModlistStatus(machineUrl, out var tmp)) return tmp;
-
-            var url = string.Format(ModlistStatusFormatUrl, machineUrl);
+            if (HasLoadedModlistSummaries()) return true;
 
             try
             {
-                var res = await _client.GetFromJsonAsync<ValidatedModList>(
-                    url,
-                    _jsonSerializerOptions,
-                    CancellationToken.None);
+                var res = await _client.GetFromJsonAsync<List<ModListSummary>>(ModlistsSummaryUrl, _jsonSerializerOptions, cancellationToken);
+                if (res is null || res.Count == 0)
+                {
+                    _logger.LogWarning("Loaded 0 Modlist summaries from {Url}", ModlistsSummaryUrl);
+                    return false;
+                }
 
-                if (res == null) return null;
-
-                _modlistStatusDictionary.Add(machineUrl, res);
-                return res;
+                _modlistSummaries = res.ToDictionary(x => x.MachineURL, x => x, StringComparer.OrdinalIgnoreCase);
+                return true;
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Exception loading Modlist Status of {MachineUrl} from {Url}", machineUrl, url);
-                return null;
+                _logger.LogError(e, "Exception while loading Modlist summaries from {Url}", ModlistsSummaryUrl);
+                return false;
             }
         }
 
-        public bool TryGetModlistStatus(string machineUrl, [MaybeNullWhen(false)] out ValidatedModList modlistStatus)
+        public async Task<bool> LoadModlistStatusReport(string machineUrl, CancellationToken cancellationToken = default)
         {
-            return _modlistStatusDictionary.TryGetValue(machineUrl, out modlistStatus);
+            if (TryGetModlistStatusReport(machineUrl, out _)) return true;
+
+            if (!HasLoadedModlistSummaries())
+            {
+                var res = await LoadModlistSummaries(cancellationToken);
+                if (!res) return false;
+            }
+
+            if (!_modlistSummaries.TryGetValue(machineUrl, out var modListSummary))
+            {
+                _logger.LogError("Unable to find summary of Modlist \"{MachineUrl}\"", machineUrl);
+                return false;
+            }
+
+            var statusReportUrl = ModlistStatusBaseUrl + modListSummary.Link;
+
+            try
+            {
+                var res = await _client.GetFromJsonAsync<ValidatedModList>(statusReportUrl, _jsonSerializerOptions, cancellationToken);
+                if (res is null)
+                {
+                    _logger.LogWarning("Loaded null status report for Modlist \"{MachineUrl}\" at {Url}", machineUrl, statusReportUrl);
+                    return false;
+                }
+
+                _modlistStatusReports.Add(machineUrl, res);
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Exception while loading status report for Modlist \"{MachineUrl}\" at {Url}", machineUrl, statusReportUrl);
+                return false;
+            }
         }
     }
 }

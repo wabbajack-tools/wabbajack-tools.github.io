@@ -2,7 +2,7 @@
 @using Wabbajack.Web.Services
 @using Wabbajack.DTOs
 @using Wabbajack.Web.Pages.DetailedStatus
-@inject IStateContainer _stateContainer;
+@inject IStateContainer StateContainer;
 
 <PageTitle>Status Dashboard | Wabbajack</PageTitle>
 
@@ -36,9 +36,8 @@
     private bool _shouldRender;
     protected override bool ShouldRender() => _shouldRender;
 
-    // TODO: maybe add repo-support
-    private IEnumerable<ModListSummary> ModlistSummaries => _stateContainer.ModlistSummaries
-        .Where(x => x.MachineURL.StartsWith("wj-featured/", StringComparison.OrdinalIgnoreCase));
+    private IEnumerable<ModListSummary> ModlistSummaries => StateContainer.ModlistSummaries
+        .Select(x => x.Value);
     private IEnumerable<ModListSummary> OrderedModlistSummaries => ModlistSummaries
         .OrderByDescending(x => x.HasFailures)
         .ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase);
@@ -50,19 +49,18 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (!_stateContainer.ModlistSummaries.Any())
+        try
         {
-            var res = await _stateContainer.LoadModlistSummaries();
-
+            var res = await StateContainer.LoadModlistSummaries();
             if (!res)
             {
                 _errorLoadingModlists = true;
-                _shouldRender = true;
-                return;
             }
         }
-
-        _shouldRender = true;
+        finally
+        {
+            _shouldRender = true;
+        }
     }
 
     // DO NOT CHANGE "__builder"
@@ -82,5 +80,4 @@
             </div>
         </div>
     };
-
 }

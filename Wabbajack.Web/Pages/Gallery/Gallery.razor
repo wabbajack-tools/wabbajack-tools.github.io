@@ -4,8 +4,8 @@
 @using Wabbajack.Web.Pages.ModlistArchiveSearch
 @using Wabbajack.Web.Pages.ModlistInfo
 @using Wabbajack.Web.Utils
-@inject IStateContainer _stateContainer;
-@inject GalleryState _galleryState;
+@inject IStateContainer StateContainer;
+@inject GalleryState GalleryState;
 
 <PageTitle>Gallery | Wabbajack</PageTitle>
 
@@ -15,12 +15,12 @@
     <div class="mb-3 flex flex-wrap items-end justify-end md:gap-4">
         <label for="show-nsfw" class="w-full md:w-auto font-semibold text-lg inline-flex items-center mt-1">
             Show NSFW:
-            <input @bind="_galleryState.ShowNsfw" id="show-nsfw" type="checkbox" class="ml-2 h-5 w-5"/>
+            <input @bind="GalleryState.ShowNsfw" id="show-nsfw" type="checkbox" class="ml-2 h-5 w-5"/>
         </label>
 
         <div class="w-full md:w-auto">
             <label for="select-game" class="font-semibold text-lg">Select Game:</label>
-            <select @bind="_galleryState.SelectedGame" id="select-game" class="w-full p-2 text-black-900 bg-white rounded-md">
+            <select @bind="GalleryState.SelectedGame" id="select-game" class="w-full p-2 text-black-900 bg-white rounded-md">
                 <option value="@GalleryState.All">@GalleryState.All</option>
 
                 @foreach (var game in AllGames)
@@ -34,7 +34,7 @@
     <div class="mb-5 flex flex-wrap gap-3">
         @foreach (var (tagName, modlistCount) in AllTags)
         {
-			var tagSelected = _galleryState.SelectedTags.Contains(tagName, StringComparer.OrdinalIgnoreCase);
+			var tagSelected = GalleryState.SelectedTags.Contains(tagName, StringComparer.OrdinalIgnoreCase);
 			var selectedStyles = tagSelected ? "bg-wabbajack-purple text-white" : "";
 			<div @key="tagName" class="flex items-center justify-center rounded-2xl px-2 py-1 border-2 border-gray-200 @(selectedStyles)">
                 <button @onclick="@(() => SelectTag(tagName))">
@@ -70,18 +70,18 @@
     private bool _shouldRender;
     protected override bool ShouldRender() => _shouldRender;
 
-    private List<ModlistMetadata> _modlists;
+    private List<ModlistMetadata> _modlists = new();
     private IEnumerable<ModlistMetadata> FilteredModlists => _modlists
-        .Where(x => _galleryState.ShowNsfw || !x.NSFW)
+        .Where(x => GalleryState.ShowNsfw || !x.NSFW)
         .Where(x =>
         {
-            if (_galleryState.SelectedGame == GalleryState.All) return true;
-            return x.Game == _gamesByName[_galleryState.SelectedGame];
+            if (GalleryState.SelectedGame == GalleryState.All) return true;
+            return x.Game == _gamesByName[GalleryState.SelectedGame];
         })
         .Where(x =>
         {
-            if (_galleryState.SelectedTags.Count == 0) return true;
-            return _galleryState.SelectedTags.All(tag => x.Tags.Contains(tag, StringComparer.OrdinalIgnoreCase));
+            if (GalleryState.SelectedTags.Count == 0) return true;
+            return GalleryState.SelectedTags.All(tag => x.Tags.Contains(tag, StringComparer.OrdinalIgnoreCase));
         });
 
     private Dictionary<string, Game> _gamesByName = new();
@@ -89,7 +89,9 @@
         .Select(x => x.Key)
         .OrderBy(x => x, StringComparer.OrdinalIgnoreCase);
 
+    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
     private Dictionary<string, int> AllTags => _modlists
+        .Where(x => x.Tags is not null)
         .SelectMany(x => x.Tags)
         .Distinct(StringComparer.OrdinalIgnoreCase)
         .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
@@ -100,44 +102,53 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _galleryState.GetValuesFromQueryString();
-        _galleryState.UpdateQueryString();
-
-        if (!_stateContainer.Modlists.Any())
+        try
         {
-            var res = await _stateContainer.LoadModlistMetadata();
+            GalleryState.GetValuesFromQueryString();
+            GalleryState.UpdateQueryString();
 
+            var res = await StateContainer.LoadOfficialModlists();
             if (!res)
             {
                 _errorLoadingModlists = true;
-                _shouldRender = true;
                 return;
             }
+
+            res = await StateContainer.LoadFeaturedModlists();
+            if (!res)
+            {
+                _errorLoadingModlists = true;
+                return;
+            }
+
+            var modlists = StateContainer.GetOfficialModlists().ToList();
+            modlists.AddRange(StateContainer.GetFeaturedModlists());
+            _modlists = modlists.OrderBy(_ => Guid.NewGuid()).ToList();
+
+            _gamesByName = _modlists
+                .Select(x => x.Game)
+                .Distinct()
+                .ToDictionary(x => x.GetDescription(), x => x, StringComparer.OrdinalIgnoreCase);
+
+            if (GalleryState.SelectedGame != GalleryState.All && !_gamesByName.ContainsKey(GalleryState.SelectedGame))
+                GalleryState.SelectedGame = GalleryState.All;
         }
-
-        _modlists = _stateContainer.Modlists.OrderBy(_ => Guid.NewGuid()).ToList();
-
-        _gamesByName = _modlists
-            .Select(x => x.Game)
-            .Distinct()
-            .ToDictionary(x => x.GetDescription(), x => x, StringComparer.OrdinalIgnoreCase);
-
-        if (_galleryState.SelectedGame != GalleryState.All && !_gamesByName.ContainsKey(_galleryState.SelectedGame))
-            _galleryState.SelectedGame = GalleryState.All;
-
-        _shouldRender = true;
+        finally
+        {
+            _shouldRender = true;
+        }
     }
 
     private void SelectTag(string tag)
     {
         if (tag == string.Empty) return;
 
-        if (_galleryState.SelectedTags.Contains(tag))
-            _galleryState.SelectedTags.Remove(tag);
+        if (GalleryState.SelectedTags.Contains(tag))
+            GalleryState.SelectedTags.Remove(tag);
         else
-            _galleryState.SelectedTags.Add(tag);
+            GalleryState.SelectedTags.Add(tag);
 
-        _galleryState.UpdateQueryString();
+        GalleryState.UpdateQueryString();
     }
 
     // DO NOT CHANGE "__builder"
@@ -145,11 +156,13 @@
     // ReSharper disable once UnusedParameter.Local
     private readonly RenderFragment<ModlistMetadata> _renderModlistInfo = modlist => __builder =>
     {
+        var namespacedName = $"{modlist.RepositoryName}/{modlist.Links.MachineURL}";
+
         var readme = modlist.Links.Readme;
         var viewLink = LinkUtils.CanRenderReadme(readme)
-            ? ModlistInfo.CreateRedirect(modlist.Links.MachineURL)
+            ? ModlistInfo.CreateRedirect(namespacedName)
             : readme;
-        var archiveSearchLink = ModlistArchiveSearch.CreateRedirect(modlist.Links.MachineURL);
+        var archiveSearchLink = ModlistArchiveSearch.CreateRedirect(namespacedName);
 
         <img src="@modlist.Links.ImageUri"
                 alt="Image of the Modlist @modlist.Title"

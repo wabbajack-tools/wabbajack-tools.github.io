@@ -1,4 +1,4 @@
-﻿@page "/search/{machineUrl}"
+﻿@page "/search/{repositoryName}/{modlistName}"
 @using Wabbajack.Web.Services
 @using Wabbajack.DTOs.DownloadStates
 @using Wabbajack.DTOs
@@ -11,13 +11,16 @@
 <div class="m-8">
     @if (_modlistStatus == null)
     {
-        @if (_errorFoundNoMatchingModlist)
+        @if (_errorLoadingStatusReport)
         {
-            @ErrorComponent.RenderError($"Found no Modlist with machineUrl {MachineUrl}")
+            @ErrorComponent.RenderError($"Error loading status report for {MachineUrl}")
+        } else if (_errorFindingStatusReport)
+        {
+            @ErrorComponent.RenderError($"Error finding status report for {MachineUrl}")
         }
         else
         {
-            @LoadingComponent.RenderLoadingThing("Loading Modlist...")
+            @LoadingComponent.RenderLoadingThing("Loading status report...")
         }
     }
     else
@@ -60,12 +63,18 @@
 
 @code {
     [Parameter]
-    public string MachineUrl { get; set; }
+    public string RepositoryName { get; set; }
+
+    [Parameter]
+    public string ModlistName { get; set; }
+
+    private string MachineUrl => $"{RepositoryName}/{ModlistName}";
 
     private bool _shouldRender;
     protected override bool ShouldRender() => _shouldRender;
 
-    private bool _errorFoundNoMatchingModlist;
+    private bool _errorLoadingStatusReport;
+    private bool _errorFindingStatusReport;
 
     private enum SortBy
     {
@@ -86,23 +95,29 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (MachineUrl == null) return;
-
-        if (!StateContainer.TryGetModlistStatus(MachineUrl, out _modlistStatus))
+        try
         {
-            var res = await StateContainer.LoadModlistStatus(MachineUrl);
+            if (RepositoryName is null || ModlistName is null) return;
 
-            if (res == null)
+            var res = await StateContainer.LoadModlistStatusReport(MachineUrl);
+            if (!res)
             {
-                _errorFoundNoMatchingModlist = true;
-                _shouldRender = true;
+                _errorLoadingStatusReport = true;
                 return;
             }
 
-            _modlistStatus = res;
-        }
+            if (!StateContainer.TryGetModlistStatusReport(MachineUrl, out var statusReport))
+            {
+                _errorFindingStatusReport = true;
+                return;
+            }
 
-        _shouldRender = true;
+            _modlistStatus = statusReport;
+        }
+        finally
+        {
+            _shouldRender = true;
+        }
     }
 
     // DO NOT CHANGE "__builder"
@@ -174,5 +189,5 @@
         };
     }
 
-    public static string CreateRedirect(string machineUrl) => $"/search/{machineUrl}";
+    public static string CreateRedirect(string namespacedName) => $"/search/{namespacedName}";
 }
