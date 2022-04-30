@@ -56,7 +56,7 @@
         <div class="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 items-start">
             @foreach (var modlist in FilteredModlists)
             {
-                <section @key="modlist.Title" class="bg-black-700 rounded-md shadow-md h-full flex flex-col">
+                <section @key="modlist.NamespacedName" class="bg-black-700 rounded-md shadow-md h-full flex flex-col">
                     @_renderModlistInfo(modlist)
                 </section>
             }
@@ -177,7 +177,7 @@
 
                 <div class="flex flex-wrap gap-1">
                     <p class="font-medium text-md">Tags:</p>
-                    @foreach (var tag in modlist.Tags)
+                    @foreach (var tag in modlist.Tags.Distinct())
                     {
                         <p @key="tag" class="text-white bg-wabbajack-purple rounded-md px-2">@tag</p>
                     }
