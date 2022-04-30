@@ -29,6 +29,18 @@
                 }
             </select>
         </div>
+
+        <div class="w-full md:w-auto">
+            <label for="select-repository" class="font-semibold text-lg">Select Repository:</label>
+            <select @onchange="ChangeRepository" id="select-repository" class="w-full p-2 text-black-900 bg-white rounded-md">
+                <option value="@GalleryState.OfficialRepository">@GalleryState.OfficialRepository</option>
+
+                @foreach (var repositoryName in FilteredRepositories)
+                {
+                    <option value="@repositoryName">@repositoryName</option>
+                }
+            </select>
+        </div>
     </div>
 
     <div class="mb-5 flex flex-wrap gap-3">
@@ -98,6 +110,17 @@
         .Select(x => (x, FilteredModlists.Count(y => y.Tags.Contains(x, StringComparer.OrdinalIgnoreCase))))
         .ToDictionary(x => x.x, x => x.Item2, StringComparer.OrdinalIgnoreCase);
 
+    private List<string> _allRepositories = new();
+    private IEnumerable<string> FilteredRepositories => _allRepositories
+        .Where(x => !IgnoredRepositories.Contains(x, StringComparer.OrdinalIgnoreCase));
+
+    private static readonly List<string> IgnoredRepositories = new()
+    {
+        "wj-featured",
+        "wj-utility",
+        "wj-unlisted"
+    };
+
     private bool _errorLoadingModlists;
 
     protected override async Task OnInitializedAsync()
@@ -107,7 +130,18 @@
             GalleryState.GetValuesFromQueryString();
             GalleryState.UpdateQueryString();
 
-            var res = await StateContainer.LoadOfficialModlists();
+            var res = await StateContainer.LoadRepositoryUrls();
+            if (!res)
+            {
+                _errorLoadingModlists = true;
+                return;
+            }
+
+            _allRepositories = StateContainer.RepositoryUrls.Keys
+                .OrderBy(x => x)
+                .ToList();
+
+            res = await StateContainer.LoadOfficialModlists();
             if (!res)
             {
                 _errorLoadingModlists = true;
@@ -149,6 +183,37 @@
             GalleryState.SelectedTags.Add(tag);
 
         GalleryState.UpdateQueryString();
+    }
+
+    private async Task ChangeRepository(ChangeEventArgs eventArgs)
+    {
+        if (eventArgs.Value is not string newRepository) return;
+        GalleryState.SelectedRepository = newRepository;
+
+        if (newRepository == GalleryState.OfficialRepository)
+        {
+            var modlists = StateContainer.GetOfficialModlists().ToList();
+            modlists.AddRange(StateContainer.GetFeaturedModlists());
+            _modlists = modlists.OrderBy(_ => Guid.NewGuid()).ToList();
+            return;
+        }
+
+        var res = await StateContainer.LoadRepository(newRepository);
+        if (!res)
+        {
+            _errorLoadingModlists = true;
+            return;
+        }
+
+        {
+            if (!StateContainer.TryGetRepository(newRepository, out var modlists))
+            {
+                _errorLoadingModlists = true;
+                return;
+            }
+
+            _modlists = modlists.OrderBy(_ => Guid.NewGuid()).ToList();
+        }
     }
 
     // DO NOT CHANGE "__builder"
@@ -194,5 +259,4 @@
             </div>
         </div>
     };
-
 }

@@ -149,7 +149,7 @@ namespace Wabbajack.Web.Services
                     modlist.RepositoryName = repositoryName;
                 }
 
-                _repositories.Add(repositoryName, res);
+                _repositories.TryAdd(repositoryName, res);
                 return true;
             }
             catch (Exception e)
@@ -191,11 +191,7 @@ namespace Wabbajack.Web.Services
         public async Task<bool> LoadOfficialModlists(CancellationToken cancellationToken = default)
         {
             if (TryGetRepository(OfficialRepositoryName, out _)) return true;
-            if (!_repositories.ContainsKey(OfficialRepositoryName))
-            {
-                _repositoryUrls.Add(OfficialRepositoryName, OfficialRepositoryUrl);
-            }
-
+            _repositoryUrls.TryAdd(OfficialRepositoryName, OfficialRepositoryUrl);
             return await LoadRepository(OfficialRepositoryName, cancellationToken);
         }
 
@@ -226,8 +222,7 @@ namespace Wabbajack.Web.Services
 
             foreach (var repositoryName in _repositoryUrls.Keys)
             {
-                var res = await LoadRepository(repositoryName, cancellationToken);
-                if (!res) return false;
+                await LoadRepository(repositoryName, cancellationToken);
             }
 
             return true;
@@ -283,7 +278,7 @@ namespace Wabbajack.Web.Services
                     return false;
                 }
 
-                _modlistStatusReports.Add(machineUrl, res);
+                _modlistStatusReports.TryAdd(machineUrl, res);
                 return true;
             }
             catch (Exception e)
