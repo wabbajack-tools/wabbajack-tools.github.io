@@ -102,7 +102,7 @@
         .OrderBy(x => x, StringComparer.OrdinalIgnoreCase);
 
     // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-    private Dictionary<string, int> AllTags => _modlists
+    private Dictionary<string, int> AllTags => FilteredModlists
         .Where(x => x.Tags is not null)
         .SelectMany(x => x.Tags)
         .Distinct(StringComparer.OrdinalIgnoreCase)

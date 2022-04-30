@@ -27,6 +27,10 @@ namespace Wabbajack.Web.Pages.Gallery
             {
                 if (value == _showNsfw) return;
                 _showNsfw = value;
+
+                // need to reset the tags because some tags only appear on NSFW modlists
+                // don't want to create more complex logic for this...
+                SelectedTags.Clear();
                 UpdateQueryString();
             }
         }
