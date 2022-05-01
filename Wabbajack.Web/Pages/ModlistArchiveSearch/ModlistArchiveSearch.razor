@@ -4,7 +4,9 @@
 @using Wabbajack.DTOs
 @using Wabbajack.DTOs.ModListValidation
 @using Wabbajack.Common
+@using System.Threading
 @inject IStateContainer StateContainer;
+@implements IDisposable
 
 <PageTitle>Archive Search | Wabbajack</PageTitle>
 
@@ -62,6 +64,8 @@
 </div>
 
 @code {
+    private readonly CancellationTokenSource _cts = new();
+
     [Parameter]
     public string RepositoryName { get; set; }
 
@@ -99,7 +103,7 @@
         {
             if (RepositoryName is null || ModlistName is null) return;
 
-            var res = await StateContainer.LoadModlistStatusReport(MachineUrl);
+            var res = await StateContainer.LoadModlistStatusReport(MachineUrl, _cts.Token);
             if (!res)
             {
                 _errorLoadingStatusReport = true;
@@ -190,4 +194,11 @@
     }
 
     public static string CreateRedirect(string namespacedName) => $"/search/{namespacedName}";
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
+    }
 }
+

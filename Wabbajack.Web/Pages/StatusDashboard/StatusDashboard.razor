@@ -2,7 +2,9 @@
 @using Wabbajack.Web.Services
 @using Wabbajack.DTOs
 @using Wabbajack.Web.Pages.DetailedStatus
+@using System.Threading
 @inject IStateContainer StateContainer;
+@implements IDisposable
 
 <PageTitle>Status Dashboard | Wabbajack</PageTitle>
 
@@ -33,6 +35,8 @@
 @code {
     public const string Route = "/status";
 
+    private readonly CancellationTokenSource _cts = new();
+
     private bool _shouldRender;
     protected override bool ShouldRender() => _shouldRender;
 
@@ -51,7 +55,7 @@
     {
         try
         {
-            var res = await StateContainer.LoadModlistSummaries();
+            var res = await StateContainer.LoadModlistSummaries(_cts.Token);
             if (!res)
             {
                 _errorLoadingModlists = true;
@@ -80,4 +84,11 @@
             </div>
         </div>
     };
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
+    }
+
 }

@@ -2,7 +2,9 @@
 @using Wabbajack.Web.Pages.ModlistInfo
 @using Wabbajack.Web.Services
 @using Wabbajack.Web.Utils
+@using System.Threading
 @inject IStateContainer StateContainer;
+@implements IDisposable
 
 <div class="max-w-6xl mx-auto bg-black-900">
 
@@ -37,6 +39,8 @@
 </div>
 
 @code {
+    private readonly CancellationTokenSource _cts = new();
+
     private bool _shouldRender;
     protected override bool ShouldRender() => _shouldRender;
 
@@ -51,7 +55,7 @@
     {
         try
         {
-            var res = await StateContainer.LoadFeaturedModlists();
+            var res = await StateContainer.LoadFeaturedModlists(_cts.Token);
             if (!res)
             {
                 _errorLoadingModlists = true;
@@ -100,4 +104,11 @@
             _shouldRender = true;
         }
     }
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
+    }
+
 }

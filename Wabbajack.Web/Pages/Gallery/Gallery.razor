@@ -4,8 +4,10 @@
 @using Wabbajack.Web.Pages.ModlistArchiveSearch
 @using Wabbajack.Web.Pages.ModlistInfo
 @using Wabbajack.Web.Utils
+@using System.Threading
 @inject IStateContainer StateContainer;
 @inject GalleryState GalleryState;
+@implements IDisposable
 
 <PageTitle>Gallery | Wabbajack</PageTitle>
 
@@ -79,6 +81,8 @@
 @code {
     public const string Route = "/gallery";
 
+    private readonly CancellationTokenSource _cts = new();
+
     private bool _shouldRender;
     protected override bool ShouldRender() => _shouldRender;
 
@@ -130,7 +134,7 @@
             GalleryState.GetValuesFromQueryString();
             GalleryState.UpdateQueryString();
 
-            var res = await StateContainer.LoadRepositoryUrls();
+            var res = await StateContainer.LoadRepositoryUrls(_cts.Token);
             if (!res)
             {
                 _errorLoadingModlists = true;
@@ -141,7 +145,7 @@
                 .OrderBy(x => x)
                 .ToList();
 
-            res = await StateContainer.LoadFeaturedModlists();
+            res = await StateContainer.LoadFeaturedModlists(_cts.Token);
             if (!res)
             {
                 _errorLoadingModlists = true;
@@ -187,7 +191,7 @@
             return;
         }
 
-        var res = await StateContainer.LoadRepository(newRepository);
+        var res = await StateContainer.LoadRepository(newRepository, _cts.Token);
         if (!res)
         {
             _errorLoadingModlists = true;
@@ -248,4 +252,10 @@
             </div>
         </div>
     };
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
+    }
 }

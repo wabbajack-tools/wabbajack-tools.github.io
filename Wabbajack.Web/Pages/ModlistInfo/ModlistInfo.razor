@@ -2,9 +2,11 @@
 @using Wabbajack.Web.Services
 @using Wabbajack.DTOs
 @using Wabbajack.Web.Utils
+@using System.Threading
 @inject IStateContainer StateContainer;
 @inject NavigationManager NavigationManager;
 @inject HttpClient Client;
+@implements IDisposable
 
 <div>
     <!-- TODO: back button -->
@@ -41,6 +43,8 @@
 </div>
 
 @code {
+    private readonly CancellationTokenSource _cts = new();
+
     [Parameter]
     public string RepositoryName { get; set; }
 
@@ -62,7 +66,7 @@
         {
             if (RepositoryName is null || ModlistName is null) return;
 
-            var res = await StateContainer.LoadRepository(RepositoryName);
+            var res = await StateContainer.LoadRepository(RepositoryName, _cts.Token);
             if (!res)
             {
                 _errorLoadingModlists = true;
@@ -90,7 +94,7 @@
                 return;
             }
 
-            _readme = await Client.GetStringAsync(_modlist.Links.Readme);
+            _readme = await Client.GetStringAsync(_modlist.Links.Readme, _cts.Token);
         }
         finally
         {
@@ -99,4 +103,11 @@
     }
 
     public static string CreateRedirect(string namespacedName) => $"/modlist/{namespacedName}";
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
+    }
+
 }
