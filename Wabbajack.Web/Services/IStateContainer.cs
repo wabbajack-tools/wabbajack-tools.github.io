@@ -27,9 +27,6 @@ namespace Wabbajack.Web.Services
         IDictionary<string, List<string>> FeaturedModlistNamesByRepository { get; }
         Task<bool> LoadFeaturedModlistNames(CancellationToken cancellationToken = default);
 
-        IEnumerable<ModlistMetadata> GetOfficialModlists();
-        Task<bool> LoadOfficialModlists(CancellationToken cancellationToken = default);
-
         IEnumerable<ModlistMetadata> GetFeaturedModlists();
         Task<bool> LoadFeaturedModlists(CancellationToken cancellationToken = default);
 

@@ -66,15 +66,15 @@ namespace Wabbajack.Web.Services
         public bool HasLoadedModlistSummaries() => _modlistSummaries.Count != 0;
         public bool TryGetModlistStatusReport(string machineUrl, [MaybeNullWhen(false)] out ValidatedModList statusReport) => _modlistStatusReports.TryGetValue(machineUrl, out statusReport);
 
-        public IEnumerable<ModlistMetadata> GetOfficialModlists()
-        {
-            if (TryGetRepository(OfficialRepositoryName, out var modlists)) return modlists;
-            return Array.Empty<ModlistMetadata>();
-        }
-
         public IEnumerable<ModlistMetadata> GetFeaturedModlists()
         {
             if (!HasLoadedFeaturedModlistNames()) yield break;
+            if (!TryGetRepository(OfficialRepositoryName, out var officialModlists)) yield break;
+
+            foreach (var officialModlist in officialModlists)
+            {
+                yield return officialModlist;
+            }
 
             foreach (var repositoryName in _featuredModlistNamesByRepository.Keys)
             {
@@ -188,18 +188,18 @@ namespace Wabbajack.Web.Services
             }
         }
 
-        public async Task<bool> LoadOfficialModlists(CancellationToken cancellationToken = default)
-        {
-            if (TryGetRepository(OfficialRepositoryName, out _)) return true;
-            _repositoryUrls.TryAdd(OfficialRepositoryName, OfficialRepositoryUrl);
-            return await LoadRepository(OfficialRepositoryName, cancellationToken);
-        }
-
         public async Task<bool> LoadFeaturedModlists(CancellationToken cancellationToken = default)
         {
             if (!HasLoadedFeaturedModlistNames())
             {
                 var res = await LoadFeaturedModlistNames(cancellationToken);
+                if (!res) return false;
+            }
+
+            if (!TryGetRepository(OfficialRepositoryName, out _))
+            {
+                _repositoryUrls.TryAdd(OfficialRepositoryName, OfficialRepositoryUrl);
+                var res = await LoadRepository(OfficialRepositoryName, cancellationToken);
                 if (!res) return false;
             }
 

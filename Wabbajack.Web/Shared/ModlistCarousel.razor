@@ -51,14 +51,14 @@
     {
         try
         {
-            var res = await StateContainer.LoadOfficialModlists();
+            var res = await StateContainer.LoadFeaturedModlists();
             if (!res)
             {
                 _errorLoadingModlists = true;
                 return;
             }
 
-            var filteredModlists = StateContainer.GetOfficialModlists()
+            var filteredModlists = StateContainer.GetFeaturedModlists()
                 .Where(x => !x.NSFW)
                 .OrderBy(_ => Guid.NewGuid())
                 .ToList();

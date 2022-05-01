@@ -33,7 +33,7 @@
         <div class="w-full md:w-auto">
             <label for="select-repository" class="font-semibold text-lg">Select Repository:</label>
             <select @onchange="ChangeRepository" id="select-repository" class="w-full p-2 text-black-900 bg-white rounded-md">
-                <option value="@GalleryState.OfficialRepository">@GalleryState.OfficialRepository</option>
+                <option value="@GalleryState.FeaturedRepository">@GalleryState.FeaturedRepository</option>
 
                 @foreach (var repositoryName in FilteredRepositories)
                 {
@@ -141,13 +141,6 @@
                 .OrderBy(x => x)
                 .ToList();
 
-            res = await StateContainer.LoadOfficialModlists();
-            if (!res)
-            {
-                _errorLoadingModlists = true;
-                return;
-            }
-
             res = await StateContainer.LoadFeaturedModlists();
             if (!res)
             {
@@ -155,9 +148,7 @@
                 return;
             }
 
-            var modlists = StateContainer.GetOfficialModlists().ToList();
-            modlists.AddRange(StateContainer.GetFeaturedModlists());
-            _modlists = modlists.OrderBy(_ => Guid.NewGuid()).ToList();
+            _modlists = StateContainer.GetFeaturedModlists().OrderBy(_ => Guid.NewGuid()).ToList();
 
             _gamesByName = _modlists
                 .Select(x => x.Game)
@@ -190,11 +181,9 @@
         if (eventArgs.Value is not string newRepository) return;
         GalleryState.SelectedRepository = newRepository;
 
-        if (newRepository == GalleryState.OfficialRepository)
+        if (newRepository == GalleryState.FeaturedRepository)
         {
-            var modlists = StateContainer.GetOfficialModlists().ToList();
-            modlists.AddRange(StateContainer.GetFeaturedModlists());
-            _modlists = modlists.OrderBy(_ => Guid.NewGuid()).ToList();
+            _modlists = StateContainer.GetFeaturedModlists().OrderBy(_ => Guid.NewGuid()).ToList();
             return;
         }
 

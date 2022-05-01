@@ -17,7 +17,7 @@ namespace Wabbajack.Web.Pages.Gallery
         }
 
         public const string All = "All";
-        public const string OfficialRepository = "Official";
+        public const string FeaturedRepository = "Featured";
 
         private bool _showNsfw;
         public bool ShowNsfw
@@ -47,7 +47,7 @@ namespace Wabbajack.Web.Pages.Gallery
             }
         }
 
-        private string _selectedRepository = OfficialRepository;
+        private string _selectedRepository = FeaturedRepository;
         public string SelectedRepository
         {
             get => _selectedRepository;
@@ -68,7 +68,7 @@ namespace Wabbajack.Web.Pages.Gallery
                 { "selectedGame", _selectedGame == All ? null : _selectedGame },
                 { "showNSFW", _showNsfw ? "true" : null },
                 { "selectedTags", SelectedTags.Count == 0 ? null : SelectedTags.Aggregate((x,y) => $"{x},{y}") },
-                { "selectedRepository", _selectedRepository == OfficialRepository ? null : _selectedRepository }
+                { "selectedRepository", _selectedRepository == FeaturedRepository ? null : _selectedRepository }
             };
 
             var newUri = _navigationManager.GetUriWithQueryParameters(queryParams);
@@ -81,8 +81,8 @@ namespace Wabbajack.Web.Pages.Gallery
 
             if (_selectedGame == All)
                 _selectedGame = query.Get("selectedGame") ?? All;
-            if (_selectedRepository == OfficialRepository)
-                _selectedRepository = query.Get("selectedRepository") ?? OfficialRepository;
+            if (_selectedRepository == FeaturedRepository)
+                _selectedRepository = query.Get("selectedRepository") ?? FeaturedRepository;
 
             if (!_showNsfw)
                 _showNsfw = query.Get("showNSFW") == "true";
