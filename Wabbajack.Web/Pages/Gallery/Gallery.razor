@@ -17,7 +17,7 @@
     <div class="mb-3 flex flex-wrap items-end justify-end md:gap-4">
         <label for="show-nsfw" class="w-full md:w-auto font-semibold text-lg inline-flex items-center mt-1">
             Show NSFW:
-            <input @bind="GalleryState.ShowNsfw" id="show-nsfw" type="checkbox" class="ml-2 h-5 w-5"/>
+            <TriCheckboxComponent @bind-State="GalleryState.NSFWState" id="show-nsfw" class="ml-2 h-5 w-5"/>
         </label>
 
         <div class="w-full md:w-auto">
@@ -88,7 +88,18 @@
 
     private List<ModlistMetadata> _modlists = new();
     private IEnumerable<ModlistMetadata> FilteredModlists => _modlists
-        .Where(x => GalleryState.ShowNsfw || !x.NSFW)
+        .Where(x =>
+        {
+            return GalleryState.NSFWState switch
+            {
+                // exclude NSFW modlists
+                TriCheckboxComponent.TriCheckboxState.False => !x.NSFW,
+                // include NSFW modlists
+                TriCheckboxComponent.TriCheckboxState.True => true,
+                // only NSFW modlists
+                TriCheckboxComponent.TriCheckboxState.Indeterminate => x.NSFW,
+                _ => throw new ArgumentOutOfRangeException()};
+        })
         .Where(x =>
         {
             if (GalleryState.SelectedGame == GalleryState.All) return true;

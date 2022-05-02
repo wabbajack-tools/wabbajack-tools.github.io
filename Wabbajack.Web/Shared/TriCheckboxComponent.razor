@@ -1,0 +1,83 @@
+﻿@using Microsoft.Extensions.Logging
+@inject IJSRuntime JSRuntime
+@inject ILogger<TriCheckboxComponent> Logger
+
+<input @ref="_inputElement" @onchange="OnChangeCallback" type="checkbox" id="@Id" class="@Class"/>
+
+@code {
+    public enum TriCheckboxState
+    {
+        True,
+        False,
+        Indeterminate
+    }
+
+    [Parameter]
+    public string Id { get; set; }
+
+    [Parameter]
+    public string Class { get; set; }
+
+    [Parameter]
+    public TriCheckboxState State { get; set; }
+
+    [Parameter]
+    public EventCallback<TriCheckboxState> StateChanged { get; set; }
+
+    private ElementReference _inputElement;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        // in case we got a state from the query parameters we need to update
+        // the element here, if we don't do this the state is not reflected
+        // correctly in the UI
+        await UpdateInputElement();
+    }
+
+    private async Task OnChangeCallback(ChangeEventArgs args)
+    {
+        if (args.Value is not bool newValue) return;
+
+        var newState = newValue switch {
+            true => TriCheckboxState.True,
+            false => TriCheckboxState.False
+        };
+
+        if (State == newState) return;
+
+        // rotation is as follows:
+        // -> false -> true -> indeterminate ->
+        newState = State switch
+        {
+            TriCheckboxState.True when newState == TriCheckboxState.False => TriCheckboxState.Indeterminate,
+            TriCheckboxState.Indeterminate => TriCheckboxState.False,
+            _ => newState
+        };
+
+        State = newState;
+        await UpdateInputElement();
+        await StateChanged.InvokeAsync(State);
+    }
+
+    private async Task UpdateInputElement()
+    {
+        switch (State)
+        {
+            case TriCheckboxState.True:
+                await JSRuntime.InvokeVoidAsync("changePropertyOfElement", _inputElement, "checked", true);
+                await JSRuntime.InvokeVoidAsync("changePropertyOfElement", _inputElement, "indeterminate", false);
+                break;
+            case TriCheckboxState.False:
+                await JSRuntime.InvokeVoidAsync("changePropertyOfElement", _inputElement, "checked", false);
+                await JSRuntime.InvokeVoidAsync("changePropertyOfElement", _inputElement, "indeterminate", false);
+                break;
+            case TriCheckboxState.Indeterminate:
+                await JSRuntime.InvokeVoidAsync("changePropertyOfElement", _inputElement, "checked", false);
+                await JSRuntime.InvokeVoidAsync("changePropertyOfElement", _inputElement, "indeterminate", true);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+}

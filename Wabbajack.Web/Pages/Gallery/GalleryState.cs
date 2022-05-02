@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
+
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Microsoft.AspNetCore.Components;
-
-#nullable enable
+using Wabbajack.Web.Shared;
 
 namespace Wabbajack.Web.Pages.Gallery
 {
@@ -19,18 +21,14 @@ namespace Wabbajack.Web.Pages.Gallery
         public const string All = "All";
         public const string FeaturedRepository = "Featured";
 
-        private bool _showNsfw;
-        public bool ShowNsfw
+        private TriCheckboxComponent.TriCheckboxState _nsfwState = TriCheckboxComponent.TriCheckboxState.False;
+        public TriCheckboxComponent.TriCheckboxState NSFWState
         {
-            get => _showNsfw;
+            get => _nsfwState;
             set
             {
-                if (value == _showNsfw) return;
-                _showNsfw = value;
-
-                // need to reset the tags because some tags only appear on NSFW modlists
-                // don't want to create more complex logic for this...
-                SelectedTags.Clear();
+                if (value == _nsfwState) return;
+                _nsfwState = value;
                 UpdateQueryString();
             }
         }
@@ -66,7 +64,13 @@ namespace Wabbajack.Web.Pages.Gallery
             var queryParams = new Dictionary<string, object?>
             {
                 { "selectedGame", _selectedGame == All ? null : _selectedGame },
-                { "showNSFW", _showNsfw ? "true" : null },
+                { "nsfw", _nsfwState switch
+                {
+                    TriCheckboxComponent.TriCheckboxState.False => null,
+                    TriCheckboxComponent.TriCheckboxState.True => "true",
+                    TriCheckboxComponent.TriCheckboxState.Indeterminate => "indeterminate",
+                    _ => throw new ArgumentOutOfRangeException()
+                } },
                 { "selectedTags", SelectedTags.Count == 0 ? null : SelectedTags.Aggregate((x,y) => $"{x},{y}") },
                 { "selectedRepository", _selectedRepository == FeaturedRepository ? null : _selectedRepository }
             };
@@ -84,8 +88,18 @@ namespace Wabbajack.Web.Pages.Gallery
             if (_selectedRepository == FeaturedRepository)
                 _selectedRepository = query.Get("selectedRepository") ?? FeaturedRepository;
 
-            if (!_showNsfw)
-                _showNsfw = query.Get("showNSFW") == "true";
+            if (_nsfwState == TriCheckboxComponent.TriCheckboxState.False)
+            {
+                var sState = query.Get("nsfw");
+                var newState = sState switch
+                {
+                    "true" => TriCheckboxComponent.TriCheckboxState.True,
+                    "indeterminate" => TriCheckboxComponent.TriCheckboxState.Indeterminate,
+                    _ => TriCheckboxComponent.TriCheckboxState.False
+                };
+
+                _nsfwState = newState;
+            }
 
             var selectedTags = query.Get("selectedTags");
             if (selectedTags != null)
