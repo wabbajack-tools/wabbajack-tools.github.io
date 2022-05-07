@@ -88,8 +88,10 @@
 
     private List<ModlistMetadata> _modlists = new();
     private IEnumerable<ModlistMetadata> FilteredModlists => _modlists
+        .Where(x => !x.ForceDown)
         .Where(x =>
         {
+            // filter NSFW
             return GalleryState.NSFWState switch
             {
                 // exclude NSFW modlists
@@ -102,11 +104,13 @@
         })
         .Where(x =>
         {
+            // filter by game
             if (GalleryState.SelectedGame == GalleryState.All) return true;
             return x.Game == _gamesByName[GalleryState.SelectedGame];
         })
         .Where(x =>
         {
+            // filter by tag
             if (GalleryState.SelectedTags.Count == 0) return true;
             return GalleryState.SelectedTags.All(tag => x.Tags.Contains(tag, StringComparer.OrdinalIgnoreCase));
         });
