@@ -83,7 +83,7 @@ namespace Wabbajack.Web.Services
                 var featured = _featuredModlistNamesByRepository[repositoryName];
                 foreach (var modlistName in featured)
                 {
-                    var featuredModlist = modlists.FirstOrDefault(x => x.Links.MachineURL.Equals(modlistName));
+                    var featuredModlist = modlists.FirstOrDefault(x => x.Links.MachineURL.Equals(modlistName, StringComparison.OrdinalIgnoreCase));
                     if (featuredModlist is null) yield break;
                     yield return featuredModlist;
                 }
