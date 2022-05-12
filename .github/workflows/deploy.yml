@@ -33,6 +33,9 @@ jobs:
         run: npm install
         working-directory: Wabbajack.Web
 
+      - name: Copy index.html to 404.html
+        run: cp Wabbajack.Web/wwwroot/index.html Wabbajack.Web/wwwroot/404.html
+
       - name: Publish
         run: dotnet publish -c Release Wabbajack.Web/Wabbajack.Web.csproj
 
