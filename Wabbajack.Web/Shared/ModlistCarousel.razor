@@ -18,7 +18,7 @@
                      alt="Image of Modlist @_currentModlist.Title"/>
 
                 <div class="absolute w-full bottom-0 bg-gray-900 bg-opacity-80 h-12 flex justify-center pt-1">
-                    <a class="hover:underline flex gap-2" href="@ModlistInfo.CreateRedirect(_currentModlist.Links.MachineURL)">
+                    <a class="hover:underline flex gap-2" href="@ModlistInfo.CreateRedirect(_currentModlist.RepositoryName, _currentModlist.Links.MachineURL)">
                         <h3 class="text-md sm:text-2xl text-center font-semibold">@_currentModlist.Title</h3>
                         <p class="text-md sm:text-2xl text-center font-light">(@_currentModlist.Game.GetDescription())</p>
                     </a>

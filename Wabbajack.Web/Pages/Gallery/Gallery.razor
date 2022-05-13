@@ -229,13 +229,11 @@
     // ReSharper disable once UnusedParameter.Local
     private readonly RenderFragment<ModlistMetadata> _renderModlistInfo = modlist => __builder =>
     {
-        var namespacedName = $"{modlist.RepositoryName}/{modlist.Links.MachineURL}";
-
         var readme = modlist.Links.Readme;
         var viewLink = LinkUtils.CanRenderReadme(readme)
-            ? ModlistInfo.CreateRedirect(namespacedName)
+            ? ModlistInfo.CreateRedirect(modlist.RepositoryName, modlist.Links.MachineURL)
             : readme;
-        var archiveSearchLink = ModlistArchiveSearch.CreateRedirect(namespacedName);
+        var archiveSearchLink = ModlistArchiveSearch.CreateRedirect(modlist.RepositoryName, modlist.Links.MachineURL);
 
         <img src="@modlist.Links.ImageUri"
                 alt="Image of the Modlist @modlist.Title"

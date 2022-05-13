@@ -193,7 +193,7 @@
         };
     }
 
-    public static string CreateRedirect(string namespacedName) => $"/search/{namespacedName}";
+    public static string CreateRedirect(string repo, string machineUrl) => $"/search/{repo}/{machineUrl}";
 
     public void Dispose()
     {

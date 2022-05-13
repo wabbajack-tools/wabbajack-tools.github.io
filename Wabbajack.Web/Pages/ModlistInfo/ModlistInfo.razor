@@ -102,7 +102,7 @@
         }
     }
 
-    public static string CreateRedirect(string namespacedName) => $"/modlist/{namespacedName}";
+    public static string CreateRedirect(string repo, string machineUrl) => $"/modlist/{repo}/{machineUrl}";
 
     public void Dispose()
     {
