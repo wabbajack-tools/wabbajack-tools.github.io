@@ -12,10 +12,12 @@
         <div class="w-full bg-gray-900 relative">
             @if (_currentModlist != null)
             {
-                <img class="w-full aspect-video"
-                     loading="eager"
-                     src="@_currentModlist.Links.ImageUri"
-                     alt="Image of Modlist @_currentModlist.Title"/>
+                <a href="@ModlistInfo.CreateRedirect(_currentModlist.RepositoryName, _currentModlist.Links.MachineURL)">
+                    <img class="w-full aspect-video"
+                         loading="eager"
+                         src="@_currentModlist.Links.ImageUri"
+                         alt="Image of Modlist @_currentModlist.Title"/>
+                </a>
 
                 <div class="absolute w-full bottom-0 bg-gray-900 bg-opacity-80 h-12 flex justify-center pt-1">
                     <a class="hover:underline flex gap-2" href="@ModlistInfo.CreateRedirect(_currentModlist.RepositoryName, _currentModlist.Links.MachineURL)">
