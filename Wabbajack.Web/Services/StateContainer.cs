@@ -44,19 +44,19 @@ namespace Wabbajack.Web.Services
             _jsonSerializerOptions.AllowTrailingCommas = true;
         }
 
-        private Dictionary<string, string> _repositoryUrls = new();
+        private readonly Dictionary<string, string> _repositoryUrls = new(StringComparer.OrdinalIgnoreCase);
         public IDictionary<string, string> RepositoryUrls => _repositoryUrls;
 
-        private readonly Dictionary<string, List<ModlistMetadata>> _repositories = new();
+        private readonly Dictionary<string, List<ModlistMetadata>> _repositories = new(StringComparer.OrdinalIgnoreCase);
         public IDictionary<string, List<ModlistMetadata>> Repositories => _repositories;
 
-        private Dictionary<string, List<string>> _featuredModlistNamesByRepository = new();
+        private Dictionary<string, List<string>> _featuredModlistNamesByRepository = new(StringComparer.OrdinalIgnoreCase);
         public IDictionary<string, List<string>> FeaturedModlistNamesByRepository => _featuredModlistNamesByRepository;
 
-        private Dictionary<string, ModListSummary> _modlistSummaries = new();
+        private Dictionary<string, ModListSummary> _modlistSummaries = new(StringComparer.OrdinalIgnoreCase);
         public IDictionary<string, ModListSummary> ModlistSummaries => _modlistSummaries;
 
-        private readonly Dictionary<string, ValidatedModList> _modlistStatusReports = new();
+        private readonly Dictionary<string, ValidatedModList> _modlistStatusReports = new(StringComparer.OrdinalIgnoreCase);
         public IDictionary<string, ValidatedModList> ModlistStatusReports => _modlistStatusReports;
 
         // we manually add "wj-featured" to the dictionary so here we want to check for > 1
@@ -108,7 +108,11 @@ namespace Wabbajack.Web.Services
                     return false;
                 }
 
-                _repositoryUrls = res;
+                foreach (var (key, value) in res)
+                {
+                    _repositoryUrls.TryAdd(key, value);
+                }
+
                 return true;
             }
             catch (Exception e)
