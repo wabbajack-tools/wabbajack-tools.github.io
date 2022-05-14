@@ -19,6 +19,9 @@
         } else if (_errorFindingStatusReport)
         {
             @ErrorComponent.RenderError($"Error finding status report for {MachineUrl}")
+        } else if (_isForcedDown)
+        {
+            @ErrorComponent.RenderError("Modlist has been forced down. Status report is not available.")
         }
         else
         {
@@ -79,6 +82,7 @@
 
     private bool _errorLoadingStatusReport;
     private bool _errorFindingStatusReport;
+    private bool _isForcedDown;
 
     private enum SortBy
     {
@@ -116,7 +120,14 @@
                 return;
             }
 
-            _modlistStatus = statusReport;
+            if (statusReport.Status == ListStatus.ForcedDown)
+            {
+                _isForcedDown = true;
+            }
+            else
+            {
+                _modlistStatus = statusReport;
+            }
         }
         finally
         {
