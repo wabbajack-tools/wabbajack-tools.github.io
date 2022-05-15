@@ -107,7 +107,7 @@
         {
             if (RepositoryName is null || ModlistName is null) return;
 
-            var res = await StateContainer.LoadModlistStatusReport(MachineUrl, _cts.Token);
+            var res = await StateContainer.LoadStatusReport(MachineUrl, _cts.Token);
             if (!res)
             {
                 _errorLoadingStatusReport = true;
