@@ -15,7 +15,7 @@
                 <a href="@ModlistInfo.CreateRedirect(_currentModlist.RepositoryName, _currentModlist.Links.MachineURL)">
                     <img class="w-full aspect-video"
                          loading="eager"
-                         src="@_currentModlist.Links.ImageUri"
+                         src="@_currentModlist.ValidationSummary.LargeImage"
                          alt="Image of Modlist @_currentModlist.Title"/>
                 </a>
 
@@ -57,7 +57,7 @@
     {
         try
         {
-            var res = await StateContainer.LoadFeaturedModlists(_cts.Token);
+            var res = await StateContainer.LoadData(_cts.Token);
             if (!res)
             {
                 _errorLoadingModlists = true;

@@ -55,7 +55,7 @@
     {
         try
         {
-            var res = await StateContainer.LoadModlistSummaries(_cts.Token);
+            var res = await StateContainer.LoadData(_cts.Token);
             if (!res)
             {
                 _errorLoadingModlists = true;

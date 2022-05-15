@@ -1,11 +1,18 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Wabbajack.DTOs;
 using Wabbajack.DTOs.JsonConverters;
+using Wabbajack.DTOs.Logins;
+using Wabbajack.Networking.Http.Interfaces;
+using Wabbajack.Networking.WabbajackClientApi;
+using Wabbajack.RateLimiter;
+using Wabbajack.VFS;
 using Wabbajack.Web.Pages.Gallery;
 using Wabbajack.Web.Services;
 
@@ -18,25 +25,33 @@ namespace Wabbajack.Web
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
+            var services = builder.Services;
 
             // Singleton instead of default Scoped so we can use it in other Singletons
-            builder.Services.AddSingleton(_ => new HttpClient
+            services.AddSingleton(_ => new HttpClient
             {
                 BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
             });
 
-            builder.Services.AddSingleton<IStateContainer>(provider => new StateContainer(
-                provider.GetRequiredService<ILogger<StateContainer>>(),
-                provider.GetRequiredService<HttpClient>(),
-                provider.GetRequiredService<DTOSerializer>())
-            );
+            services.AddBlazoredLocalStorageAsSingleton(s =>
+            {
+
+            });
+
+            services.AddAllSingleton<IResource, IResource<HttpClient>>(s => new Resource<HttpClient>("HTTP", 4));
+            services.AddAllSingleton<IResource, IResource<FileHashCache>>(s => new Resource<FileHashCache>("File Hash", 4));
+
+            services.AddSingleton<ITokenProvider<WabbajackApiState>, WabbajackApiStateProvider>();
+
+            services.AddWabbajackClient();
+            services.AddSingleton<IStateContainer, StateContainer>();
 
             // states of pages
-            builder.Services.AddSingleton<GalleryState>();
+            services.AddSingleton<GalleryState>();
 
             // Wabbajack.DTO
-            builder.Services.AddDTOConverters();
-            builder.Services.AddDTOSerializer();
+            services.AddDTOConverters();
+            services.AddDTOSerializer();
 
             builder.Logging.SetMinimumLevel(builder.HostEnvironment.IsDevelopment()
                 ? LogLevel.Trace

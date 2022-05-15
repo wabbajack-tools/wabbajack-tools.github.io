@@ -19,7 +19,6 @@ namespace Wabbajack.Web.Pages.Gallery
         }
 
         public const string All = "All";
-        public const string FeaturedRepository = "Featured";
 
         private TriCheckboxComponent.TriCheckboxState _nsfwState = TriCheckboxComponent.TriCheckboxState.False;
         public TriCheckboxComponent.TriCheckboxState NSFWState
@@ -29,6 +28,18 @@ namespace Wabbajack.Web.Pages.Gallery
             {
                 if (value == _nsfwState) return;
                 _nsfwState = value;
+                UpdateQueryString();
+            }
+        }
+
+        private TriCheckboxComponent.TriCheckboxState _showUnofficial = TriCheckboxComponent.TriCheckboxState.False;
+        public TriCheckboxComponent.TriCheckboxState ShowUnofficial
+        {
+            get => _showUnofficial;
+            set
+            {
+                if (value == _showUnofficial) return;
+                _showUnofficial = value;
                 UpdateQueryString();
             }
         }
@@ -44,19 +55,6 @@ namespace Wabbajack.Web.Pages.Gallery
                 UpdateQueryString();
             }
         }
-
-        private string _selectedRepository = FeaturedRepository;
-        public string SelectedRepository
-        {
-            get => _selectedRepository;
-            set
-            {
-                if (value == _selectedRepository) return;
-                _selectedRepository = value;
-                UpdateQueryString();
-            }
-        }
-
         public List<string> SelectedTags { get; set; } = new();
 
         public void UpdateQueryString()
@@ -71,8 +69,14 @@ namespace Wabbajack.Web.Pages.Gallery
                     TriCheckboxComponent.TriCheckboxState.Indeterminate => "indeterminate",
                     _ => throw new ArgumentOutOfRangeException()
                 } },
+                { "showUnofficial", _nsfwState switch
+                {
+                    TriCheckboxComponent.TriCheckboxState.False => null,
+                    TriCheckboxComponent.TriCheckboxState.True => "true",
+                    TriCheckboxComponent.TriCheckboxState.Indeterminate => "indeterminate",
+                    _ => throw new ArgumentOutOfRangeException()
+                } },
                 { "selectedTags", SelectedTags.Count == 0 ? null : SelectedTags.Aggregate((x,y) => $"{x},{y}") },
-                { "selectedRepository", _selectedRepository == FeaturedRepository ? null : _selectedRepository }
             };
 
             var newUri = _navigationManager.GetUriWithQueryParameters(queryParams);
@@ -85,8 +89,6 @@ namespace Wabbajack.Web.Pages.Gallery
 
             if (_selectedGame == All)
                 _selectedGame = query.Get("selectedGame") ?? All;
-            if (_selectedRepository == FeaturedRepository)
-                _selectedRepository = query.Get("selectedRepository") ?? FeaturedRepository;
 
             if (_nsfwState == TriCheckboxComponent.TriCheckboxState.False)
             {
