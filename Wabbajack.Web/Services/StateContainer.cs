@@ -47,7 +47,8 @@ namespace Wabbajack.Web.Services
         // we manually add "wj-featured" to the dictionary so here we want to check for > 1
         public bool HasLoadedRepositoryUrls() => _repositoryUrls.Count > 0;
         public bool HasLoadedModlistSummaries() => _modlistSummaries.Count != 0;
-        public bool TryGetModlistStatusReport(string machineUrl, [MaybeNullWhen(false)] out ValidatedModList statusReport) => _modlistStatusReports.TryGetValue(machineUrl, out statusReport);
+        public bool TryGetModlistStatusReport(string machineUrl, [MaybeNullWhen(false)] out ValidatedModList statusReport) =>
+            _modlistStatusReports.TryGetValue(machineUrl, out statusReport);
 
         public IEnumerable<ModlistMetadata> GetFeaturedModlists()
         {
@@ -66,7 +67,9 @@ namespace Wabbajack.Web.Services
             {
                 var modlists = _wjClient.LoadLists();
                 var repositories = _wjClient.LoadRepositories();
-                var summaries = (await _wjClient.GetListStatuses()).ToDictionary(m => m.MachineURL);
+                var summaries = (await _wjClient.GetListStatuses()).ToDictionary(m => m.MachineURL, v => v, StringComparer.InvariantCultureIgnoreCase);
+
+                _modlistSummaries = summaries;
 
                 _modlists = (await modlists).Select(l =>
                 {
