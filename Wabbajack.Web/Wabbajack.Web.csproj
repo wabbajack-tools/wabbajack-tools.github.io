@@ -25,10 +25,6 @@
         <PackageReference Include="Wabbajack.Networking.WabbajackClientApi" Version="3.0.0.3" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="DTOs" />
-    </ItemGroup>
-
     <Target Name="RunPostcss" BeforeTargets="Build">
         <Exec Command="npm run build" Condition="'$(Configuration)' == 'Debug'" />
         <Exec Command="npm run production" Condition="'$(Configuration)' == 'Release'" />
