@@ -67,7 +67,8 @@ namespace Wabbajack.Web.Services
             {
                 var modlists = _wjClient.LoadLists();
                 var repositories = _wjClient.LoadRepositories();
-                var summaries = (await _wjClient.GetListStatuses()).ToDictionary(m => m.MachineURL, v => v, StringComparer.InvariantCultureIgnoreCase);
+                var summaries = (await _wjClient.GetListStatuses())
+                    .ToDictionary(m => m.MachineURL, v => v, StringComparer.OrdinalIgnoreCase);
 
                 _modlistSummaries = summaries;
 
