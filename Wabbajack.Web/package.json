@@ -11,6 +11,6 @@
   "author": "erri120",
   "license": "GPLv3.0",
   "dependencies": {
-    "tailwindcss": "^3.0.24"
+    "tailwindcss": "^3.1.8"
   }
 }
