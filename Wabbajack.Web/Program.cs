@@ -39,7 +39,8 @@ namespace Wabbajack.Web
             });
 
             services.AddAllSingleton<IResource, IResource<HttpClient>>(s => new Resource<HttpClient>("HTTP", 4));
-            services.AddAllSingleton<IResource, IResource<FileHashCache>>(s => new Resource<FileHashCache>("File Hash", 4));
+            services.AddAllSingleton<IResource, IResource<Client>>(s => new Resource<Client>("Wabbajack Client", 4));
+            //services.AddAllSingleton<IResource, IResource<FileHashCache>>(s => new Resource<FileHashCache>("File Hash", 4));
 
             services.AddSingleton<ITokenProvider<WabbajackApiState>, WabbajackApiStateProvider>();
 
