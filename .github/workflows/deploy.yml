@@ -1,6 +1,6 @@
 name: Blazor WASM Deployment
 env:
-  PUBLISH_DIR: Wabbajack.Web/bin/Release/net6.0/publish/wwwroot
+  PUBLISH_DIR: Wabbajack.Web/bin/Release/net7.0/publish/wwwroot
   NODE_ENV: production
 
 on:
