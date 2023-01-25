@@ -52,6 +52,7 @@ namespace Wabbajack.Web.Pages.Gallery
             {
                 if (value == _selectedGame) return;
                 _selectedGame = value;
+                SelectedTags.Clear();
                 UpdateQueryString();
             }
         }
@@ -76,7 +77,9 @@ namespace Wabbajack.Web.Pages.Gallery
                     TriCheckboxComponent.TriCheckboxState.Indeterminate => "indeterminate",
                     _ => throw new ArgumentOutOfRangeException()
                 } },
-                { "selectedTags", SelectedTags.Count == 0 ? null : SelectedTags.Aggregate((x,y) => $"{x},{y}") },
+                {
+                    "selectedTags", SelectedTags.Count == 0 ? null : SelectedTags.Aggregate((x,y) => $"{x},{y}")
+                },
             };
 
             var newUri = _navigationManager.GetUriWithQueryParameters(queryParams);
