@@ -15,6 +15,7 @@ using Wabbajack.RateLimiter;
 using Wabbajack.VFS;
 using Wabbajack.Web.Pages.Gallery;
 using Wabbajack.Web.Services;
+using Microsoft.AspNetCore.Components.WebAssembly;
 
 namespace Wabbajack.Web
 {
