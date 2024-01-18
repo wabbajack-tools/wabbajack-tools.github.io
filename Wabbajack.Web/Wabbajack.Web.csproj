@@ -19,10 +19,10 @@
     <ItemGroup>
         <PackageReference Include="Blazored.LocalStorage" Version="4.4.0" />
         <PackageReference Include="Markdig" Version="0.34.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0" PrivateAssets="all" />
-        <PackageReference Include="Wabbajack.DTOs" Version="3.4.1" />
-        <PackageReference Include="Wabbajack.Networking.WabbajackClientApi" Version="3.4.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.1" PrivateAssets="all" />
+        <PackageReference Include="Wabbajack.DTOs" Version="3.5.0.1" />
+        <PackageReference Include="Wabbajack.Networking.WabbajackClientApi" Version="3.5.0.1" />
     </ItemGroup>
 
     <Target Name="RunPostcss" BeforeTargets="Build">
