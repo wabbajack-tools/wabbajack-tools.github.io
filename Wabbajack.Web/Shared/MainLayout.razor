@@ -2,11 +2,12 @@
 @using Wabbajack.Web.Pages.StatusDashboard
 @inherits LayoutComponentBase
 
-<div>
-    <nav class="px-6 py-3 bg-wabbajack-green">
+
+<header class="sticky top-0 z-10">
+    <nav class="sticky px-6 py-3 bg-wabbajack-background-darker">
         <div class="flex flex-wrap gap-3 items-center justify-end">
             <div class="flex-grow">
-                <a class="font-medium text-xl hover:underline" href="/">Wabbajack</a>
+                <a class="font-medium text-wabbajack-purple-light text-xl hover:underline" href="/">Wabbajack</a>
             </div>
 
             <a class="font-light text-lg hover:underline" href="/">Home</a>
@@ -24,13 +25,14 @@
             -->
         </div>
     </nav>
-    @Body
-    <footer class="mt-16 px-4 sm:px-6 py-2 bg-wabbajack-green">
-        <div class="flex flex-wrap gap-3 justify-center items-center text-center">
-            <a class="font-medium hover:underline" href="https://github.com/wabbajack-tools/wabbajack">GitHub</a>
-            <a class="font-medium hover:underline" href="https://discord.gg/wabbajack">Discord</a>
-            <a class="font-medium hover:underline" href="https://www.patreon.com/user?u=11907933">Patreon</a>
-            <a class="font-medium hover:underline" href="https://reddit.com/r/wabbajack">Reddit</a>
-        </div>
-    </footer>
-</div>
+</header>
+@Body
+<footer class="sticky bottom-0 sm:px-6 py-2 bg-wabbajack-background-darker">
+    <div class="flex flex-wrap gap-3 justify-center items-center text-center">
+        <a class="font-medium hover:underline" href="https://github.com/wabbajack-tools/wabbajack">GitHub</a>
+        <a class="font-medium hover:underline" href="https://discord.gg/wabbajack">Discord</a>
+        <a class="font-medium hover:underline" href="https://wiki.wabbajack.org">Wiki</a>
+        <a class="font-medium hover:underline" href="https://www.patreon.com/user?u=11907933">Patreon</a>
+        <a class="font-medium hover:underline" href="https://reddit.com/r/wabbajack">Reddit</a>
+    </div>
+</footer>

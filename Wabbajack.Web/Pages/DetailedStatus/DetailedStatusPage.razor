@@ -7,13 +7,14 @@
 @inject IStateContainer StateContainer;
 @implements IDisposable
 
-<div class="px-1 md:p-16 md:pb-6">
+<div class="px-1 md:p-16 md:pb-6 flex-grow">
     @if (_modlistStatus is null)
     {
         @if (_errorLoadingStatusReport)
         {
             @ErrorComponent.RenderError($"Error loading status report for {MachineUrl}")
-        } else if (_errorFindingStatusReport)
+        }
+        else if (_errorFindingStatusReport)
         {
             @ErrorComponent.RenderError($"Error finding status report for {MachineUrl}")
         }
@@ -28,19 +29,21 @@
 
         <div class="max-w-6xl mx-auto">
             <p class="mb-1 font-bold text-xl">@_modlistStatus.Name</p>
-
-            <p class="mb-2 font-medium text-lg">Failing Archives (@FailingArchives.Count.ToString())</p>
-            <div class="overflow-y-auto" style="height: @FailingArchivesHeight;">
-                <Virtualize Items="FailingArchives" Context="archive" TItem="Archive">
-                    <p @key="archive.Name" class="font-light">@archive.Name</p>
-                </Virtualize>
+            <div class="flex-grow">
+                <p class="mb-2 font-medium text-lg">Failing Archives (@FailingArchives.Count.ToString())</p>
+                <div class="overflow-y-auto" style="height: @FailingArchivesHeight;">
+                    <Virtualize Items="FailingArchives" Context="archive" TItem="Archive">
+                        <p @key="archive.Name" class="font-light">@archive.Name</p>
+                    </Virtualize>
+                </div>
             </div>
-
-            <p class="mt-3 mb-2 font-medium text-lg">Succeeding Archives (@SucceedingArchives.Count.ToString())</p>
-            <div class="overflow-y-auto" style="height: @SucceedingArchivesHeight;">
-                <Virtualize Items="SucceedingArchives" Context="archive" TItem="Archive">
-                    <p @key="archive.Name" class="font-light">@archive.Name</p>
-                </Virtualize>
+            <div class="flex-grow">
+                <p class="mt-3 mb-2 font-medium text-lg">Succeeding Archives (@SucceedingArchives.Count.ToString())</p>
+                <div class="overflow-y-auto" style="height: @SucceedingArchivesHeight;">
+                    <Virtualize Items="SucceedingArchives" Context="archive" TItem="Archive">
+                        <p @key="archive.Name" class="font-light">@archive.Name</p>
+                    </Virtualize>
+                </div>
             </div>
         </div>
     }
@@ -49,11 +52,9 @@
 @code {
     private readonly CancellationTokenSource _cts = new();
 
-    [Parameter]
-    public string RepositoryName { get; set; }
+    [Parameter] public string RepositoryName { get; set; }
 
-    [Parameter]
-    public string ModlistName { get; set; }
+    [Parameter] public string ModlistName { get; set; }
 
     private string MachineUrl => $"{RepositoryName}/{ModlistName}";
 

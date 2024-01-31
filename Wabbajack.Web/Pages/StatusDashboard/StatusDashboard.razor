@@ -8,9 +8,10 @@
 
 <PageTitle>Status Dashboard | Wabbajack</PageTitle>
 
-<div class="px-1 md:p-16">
+<div class="px-1 md:p-16 flex-grow">
     <p class="font-bold text-xl">Failing Modlists: @Failing.ToString()</p>
     <p class="font-bold text-xl">Succeeding Modlists: @Succeeding.ToString()</p>
+    <p class="font-bold text-xl">Skipped Modlists: @ForcedDown.ToString()</p>
 
     @if (_errorLoadingModlists)
     {
@@ -44,9 +45,11 @@
         .Select(x => x.Value);
     private IEnumerable<ModListSummary> OrderedModlistSummaries => ModlistSummaries
         .OrderByDescending(x => x.HasFailures)
+        .ThenBy(isForceDown)
         .ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase);
 
     private int Failing => ModlistSummaries.Count(x => x.HasFailures);
+    private int ForcedDown => ModlistSummaries.Count(isForceDown);
     private int Succeeding => ModlistSummaries.Count(x => !x.HasFailures);
 
     private bool _errorLoadingModlists;
@@ -75,15 +78,30 @@
         var detailedStatusLink = DetailedStatusPage.CreateRedirect(modlistSummary.MachineURL);
         //var time = modlistSummary.Checked.ToLocalTime();
 
-        var bgClass = modlistSummary.HasFailures ? "bg-wabbajack-red" : "bg-black-700";
+
+        var bgClass = modlistSummary.HasFailures ? "bg-wabbajack-red" : (isForceDown(modlistSummary) ? "bg-wabbajack-cards-background-base" : "bg-wabbajack-cards-background-hover");
         <div class="@bgClass text-white rounded-md shadow-md">
             <div class="p-2">
                 <a href="@detailedStatusLink" class="font-semibold text-lg hover:underline">@modlistSummary.Name</a>
-                <p>Passed: @modlistSummary.Passed.ToString()</p>
-                <p>Failed: @modlistSummary.Failed.ToString()</p>
+                @if (isForceDown(modlistSummary))
+                {
+                    <p>List Validation skipped.</p>
+                    <p>This can be set intentionally!</p>
+                }
+                else
+                {
+                    <p>Passed: @modlistSummary.Passed.ToString()</p>
+                    <p>Failed: @modlistSummary.Failed.ToString()</p>
+                }
+
             </div>
         </div>
     };
+    private static bool isForceDown(ModListSummary modListSummary)
+    {
+        return modListSummary.Passed.Equals(0) && modListSummary.Failed.Equals(0);
+    }
+
 
     public void Dispose()
     {
