@@ -10,7 +10,7 @@
 
 <PageTitle>Archive Search | Wabbajack</PageTitle>
 
-<div class="m-8">
+<div class="m-8 flex-grow">
     @if (_modlistStatus == null)
     {
         @if (_errorLoadingStatusReport)
@@ -38,14 +38,14 @@
                     <caption class="mb-3">Use Archive Search to look through all files a Modlist downloads.</caption>
                     <thead>
 
-                    <tr class="bg-black-700">
+                    <tr class="bg-wabbajack-cards-background-base">
                         <th colspan="3" class="py-2 text-right px-3">
                             <label for="search-archive">Search by Name:</label>
                             <input class="appearance-none focus:outline-0 border-hidden text-black-900 sm:text-sm p-1" @bind="_searchString" id="search-archive" type="search" maxlength="100"/>
                         </th>
                     </tr>
 
-                    <tr class="text-md font-semibold tracking-wide text-left bg-black-700">
+                    <tr class="text-md font-semibold tracking-wide text-left bg-wabbajack-cards-background-base">
                         <th @onclick="() => SwitchSorting(SortBy.ArchiveName)" class="px-6 py-3 hover:underline hover:cursor-pointer">Archive Name</th>
                         <th @onclick="() => SwitchSorting(SortBy.MetaName)" class="px-6 py-3 hover:underline hover:cursor-pointer">Name</th>
                         <th @onclick="() => SwitchSorting(SortBy.Size)" class="px-6 py-3 hover:underline hover:cursor-pointer">Size</th>

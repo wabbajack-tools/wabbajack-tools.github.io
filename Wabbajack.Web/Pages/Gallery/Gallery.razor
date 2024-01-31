@@ -11,7 +11,7 @@
 
 <PageTitle>Gallery | Wabbajack</PageTitle>
 
-<div class="px-1 md:p-8">
+<div class="px-1 md:p-8 flex-grow">
     <h1 class="font-semibold my-1 text-4xl text-center">Gallery</h1>
 
     <div class="mb-3 flex flex-wrap items-end justify-end md:gap-4">
@@ -41,12 +41,12 @@
     <div class="mb-5 flex flex-wrap gap-3">
         @foreach (var (tagName, modlistCount) in AllTags)
         {
-			var tagSelected = GalleryState.SelectedTags.Contains(tagName, StringComparer.OrdinalIgnoreCase);
-			var selectedStyles = tagSelected ? "bg-wabbajack-purple text-white" : "";
-			<div @key="tagName" class="flex items-center justify-center rounded-2xl px-2 py-1 border-2 border-gray-200 @(selectedStyles)">
+            var tagSelected = GalleryState.SelectedTags.Contains(tagName, StringComparer.OrdinalIgnoreCase);
+            var selectedStyles = tagSelected ? "bg-wabbajack-purple-dark text-white" : "";
+            <div @key="tagName" class="flex items-center justify-center rounded-2xl px-2 py-1 border-2 border-gray-200 @(selectedStyles)">
                 <button @onclick="@(() => SelectTag(tagName))">
-					@tagName (@modlistCount.ToString())
-				</button>
+                    @tagName (@modlistCount.ToString())
+                </button>
             </div>
         }
     </div>
@@ -54,7 +54,8 @@
     @if (_errorLoadingModlists)
     {
         @ErrorComponent.RenderError("Unable to load Modlists from Github!")
-    } else if (!_modlists.Any())
+    }
+    else if (!_modlists.Any())
     {
         @LoadingComponent.RenderLoadingThing("Loading Modlists...")
     }
@@ -63,7 +64,7 @@
         <div class="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 items-start">
             @foreach (var modlist in FilteredModlists)
             {
-                <section @key="modlist.NamespacedName" class="bg-black-700 rounded-md shadow-md h-full flex flex-col">
+                <section @key="modlist.NamespacedName" class="bg-wabbajack-cards-background-base rounded-md shadow-md h-full flex flex-col">
                     @_renderModlistInfo(modlist)
                 </section>
             }
@@ -80,33 +81,36 @@
     protected override bool ShouldRender() => _shouldRender;
 
     private List<ModlistMetadata> _modlists = new();
+
     private IEnumerable<ModlistMetadata> FilteredModlists => _modlists
         .Where(x => !x.ForceDown)
         .Where(x =>
         {
-        // filter NSFW
-                return GalleryState.NSFWState switch
-                {
-        // exclude NSFW modlists
-                    TriCheckboxComponent.TriCheckboxState.False => !x.NSFW,
-        // include NSFW modlists
-                    TriCheckboxComponent.TriCheckboxState.True => true,
-        // only NSFW modlists
-                    TriCheckboxComponent.TriCheckboxState.Indeterminate => x.NSFW,
-                    _ => throw new ArgumentOutOfRangeException()};
+            // filter NSFW
+            return GalleryState.NSFWState switch
+            {
+                // exclude NSFW modlists
+                TriCheckboxComponent.TriCheckboxState.False => !x.NSFW,
+                // include NSFW modlists
+                TriCheckboxComponent.TriCheckboxState.True => true,
+                // only NSFW modlists
+                TriCheckboxComponent.TriCheckboxState.Indeterminate => x.NSFW,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         })
         .Where(x =>
         {
-        // filter Unofficial
-                return GalleryState.ShowUnofficial switch
-                {
-        // show official modlists
-                    TriCheckboxComponent.TriCheckboxState.False => x.Official,
-        // include unofficial modlists
-                    TriCheckboxComponent.TriCheckboxState.True => true,
-        // only unofficial modlists
-                    TriCheckboxComponent.TriCheckboxState.Indeterminate => !x.Official,
-                    _ => throw new ArgumentOutOfRangeException()};
+            // filter Unofficial
+            return GalleryState.ShowUnofficial switch
+            {
+                // show official modlists
+                TriCheckboxComponent.TriCheckboxState.False => x.Official,
+                // include unofficial modlists
+                TriCheckboxComponent.TriCheckboxState.True => true,
+                // only unofficial modlists
+                TriCheckboxComponent.TriCheckboxState.Indeterminate => !x.Official,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         })
         .Where(x =>
         {
@@ -122,6 +126,7 @@
         });
 
     private Dictionary<string, Game> _gamesByName = new();
+
     private IEnumerable<string> AllGames => _gamesByName
         .Select(x => x.Key)
         .OrderBy(x => x, StringComparer.OrdinalIgnoreCase);
@@ -197,10 +202,21 @@
             : readme;
         var archiveSearchLink = ModlistArchiveSearch.CreateRedirect(modlist.RepositoryName, modlist.Links.MachineURL);
 
-        <img src="@modlist.ValidationSummary.SmallImage"
-                alt="Image of the Modlist @modlist.Title"
-                loading="lazy"
-                crossorigin="anonymous"/>
+        @if (modlist.ValidationSummary.SmallImage != null)
+        {
+            <img src="@modlist.ValidationSummary.SmallImage"
+                 alt="Image of the Modlist @modlist.Title"
+                 loading="lazy"
+                 crossorigin="anonymous"/>
+        }
+        else
+        {
+            <img src="https://raw.githubusercontent.com/wabbajack-tools/wabbajack/main/Wabbajack.Launcher/Assets/Wabba_Mouth_Small.png"
+                 alt="Image of the Modlist @modlist.Title"
+                 loading="lazy"
+                 crossorigin="anonymous"/>
+        }
+
         <div class="p-4 flex-grow flex flex-col">
             <h2 class="font-title font-semibold text-2xl">@modlist.Title</h2>
             <h3 class="font-subtitle font-light text-lg">Created by @modlist.Author</h3>
@@ -212,15 +228,15 @@
                     <p class="font-medium text-md">Tags:</p>
                     @foreach (var tag in modlist.Tags.Distinct())
                     {
-                        <p @key="tag" class="text-white bg-wabbajack-purple rounded-md px-2">@tag</p>
+                        <p @key="tag" class="text-white bg-wabbajack-purple-dark rounded-md px-2">@tag</p>
                     }
                 </div>
 
                 <div class="mt-4 flex flex-nowrap justify-between">
-                    <a href="@archiveSearchLink" class="py-1 px-5 font-semibold rounded-lg shadow-md text-white bg-wabbajack-green">
+                    <a href="@archiveSearchLink" class="py-1 px-5 font-semibold rounded-lg shadow-md text-white hover:bg-wabbajack-purple-dark bg-wabbajack-cards-background-hover">
                         Archive Search
                     </a>
-                    <a href="@viewLink" class="py-1 px-5 font-semibold rounded-lg shadow-md text-white bg-wabbajack-green">
+                    <a href="@viewLink" class="py-1 px-5 font-semibold rounded-lg shadow-md text-white hover:bg-wabbajack-purple-dark bg-wabbajack-cards-background-hover">
                         View
                     </a>
                 </div>
@@ -233,4 +249,5 @@
         _cts.Cancel();
         _cts.Dispose();
     }
+
 }

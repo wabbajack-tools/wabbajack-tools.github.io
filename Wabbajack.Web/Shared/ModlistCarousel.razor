@@ -13,10 +13,21 @@
             @if (_currentModlist != null)
             {
                 <a href="@ModlistInfo.CreateRedirect(_currentModlist.RepositoryName, _currentModlist.Links.MachineURL)">
-                    <img class="w-full aspect-video"
-                         loading="eager"
-                         src="@_currentModlist.ValidationSummary.LargeImage"
-                         alt="Image of Modlist @_currentModlist.Title"/>
+                    @if (_currentModlist.ValidationSummary.LargeImage != null) // Rider says this will will always be true but this is not the case!
+                    {
+                        <img class="w-full aspect-video"
+                             loading="eager"
+                             src="@_currentModlist.ValidationSummary.LargeImage"
+                             alt="Image of Modlist @_currentModlist.Title"/>
+                    }
+                    else
+                    {
+                        <img class="w-full aspect-video"
+                             loading="eager"
+                             src="https://raw.githubusercontent.com/wabbajack-tools/wabbajack/main/Wabbajack.App.Wpf/Resources/Wabba_Mouth_No_Text.png"
+                             alt="Image of Modlist @_currentModlist.Title"/>
+                    }
+
                 </a>
 
                 <div class="absolute w-full bottom-0 bg-gray-900 bg-opacity-80 h-12 flex justify-center pt-1">
@@ -30,10 +41,10 @@
 
         <div class="flex justify-between absolute top-1/2 w-full" style="transform: translateY(-50%)">
             <button @onclick="@(() => UpdateModlistPosition(false))"
-                    class="rounded-full bg-wabbajack-green w-10 h-10 ml-3 text-lg font-semibold"
+                    class="rounded-full bg-wabbajack-background-darker w-10 h-10 ml-3 text-lg font-semibold"
                     aria-label="Previous Modlist">&lt;</button>
             <button @onclick="@(() => UpdateModlistPosition(true))"
-                    class="rounded-full bg-wabbajack-green w-10 h-10 mr-3 text-lg font-semibold"
+                    class="rounded-full bg-wabbajack-background-darker w-10 h-10 mr-3 text-lg font-semibold"
                     aria-label="Next Modlist">&gt;</button>
         </div>
     </div>
@@ -65,6 +76,7 @@
             }
 
             var filteredModlists = StateContainer.GetFeaturedModlists()
+                .Where(x => !x.ForceDown)
                 .Where(x => !x.NSFW)
                 .OrderBy(_ => Guid.NewGuid())
                 .ToList();

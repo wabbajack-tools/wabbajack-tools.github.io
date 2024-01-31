@@ -17,10 +17,21 @@ module.exports = {
             },
             colors: {
                 wabbajack: {
-                    green: colors.emerald["600"],
-                    red: '#df3e3e',
-                    purple: '#a43edf',
-                    background: '#1f1b24'
+                    red: '#992a2a',
+                    purple: {
+                        dark :'#8866ad',
+                        light: '#d8baf8'
+                    },
+                    background: {
+                        dark : '#2a2b41',
+                        darker : '#222531'
+                    },
+                    cards: {
+                        background: {
+                            base : '#3c3652',
+                            hover : '#4e4571'
+                        }
+                    }
                 },
                 black: {
                     900: '#000000',
@@ -30,7 +41,7 @@ module.exports = {
                     500: '#4a4a4a'
                 },
                 purple: {
-                    light: '#c76efb',
+                    light: '#8866ad',
                 }
             }
         },
