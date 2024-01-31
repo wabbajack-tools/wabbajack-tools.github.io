@@ -1,6 +1,9 @@
 @using Wabbajack.Web.Pages.Gallery
 @using Wabbajack.Web.Pages.StatusDashboard
+@using Wabbajack.Web.Utils
 @inherits LayoutComponentBase
+@inject NavigationManager NavigationManager;
+
 
 
 <header class="sticky top-0 z-10">
@@ -36,3 +39,21 @@
         <a class="font-medium hover:underline" href="https://reddit.com/r/wabbajack">Reddit</a>
     </div>
 </footer>
+
+@code {
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += HandleLocationChanged;
+    }
+
+    private void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        LinkUtils.previousURLs.Push(LinkUtils.currentURL);
+        LinkUtils.currentURL = e.Location;
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= HandleLocationChanged;
+    }
+}

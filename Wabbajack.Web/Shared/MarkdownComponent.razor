@@ -6,7 +6,7 @@
     // ReSharper disable once UnusedParameter.Local
     public static readonly RenderFragment<string> RenderMarkdown = markdown => __builder =>
     {
-        <div data-color-mode="dark" data-dark-theme="dark" class="markdown-body fixed-markdown-body">
+        <div class="markdown-body fixed-markdown-body px-3">
             @_insertMarkupString(markdown)
         </div>
     };
@@ -16,7 +16,7 @@
     // ReSharper disable once UnusedParameter.Local
     private static readonly RenderFragment<string> _insertMarkupString = markdown => __builder =>
     {
-        __builder.AddContent(0, MarkdownUtils.MarkdownToMarkupString(markdown));
+        __builder.AddContent(0, MarkdownUtils.MarkdownToMarkupString(markdown,LinkUtils.currentURL));
     };
 
 }
