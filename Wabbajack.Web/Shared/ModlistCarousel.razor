@@ -13,15 +13,18 @@
             @if (_currentModlist != null)
             {
                 <a href="@ModlistInfo.CreateRedirect(_currentModlist.RepositoryName, _currentModlist.Links.MachineURL)">
-                    @if (_currentModlist.ValidationSummary.LargeImage != null) // Rider says this will will always be true but this is not the case!
+                    @* ReSharper disable once ConditionIsAlwaysTrueOrFalse *@
+                    @if (_currentModlist.ValidationSummary.LargeImage != null)
                     {
                         <img class="w-full aspect-video"
                              loading="eager"
                              src="@_currentModlist.ValidationSummary.LargeImage"
+
                              alt="Image of Modlist @_currentModlist.Title"/>
                     }
                     else
                     {
+                        @* ReSharper disable once HeuristicUnreachableCode *@
                         <img class="w-full aspect-video"
                              loading="eager"
                              src="https://raw.githubusercontent.com/wabbajack-tools/wabbajack/main/Wabbajack.App.Wpf/Resources/Wabba_Mouth_No_Text.png"
