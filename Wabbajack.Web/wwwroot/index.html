@@ -32,15 +32,21 @@
 
     <!-- fixing markdown css issues -->
     <style>
+        /**Fixing Colors*/
         .fixed-markdown-body {
             background: #3c3652 !important;
             a {
                 color: #d8baf8; !important;
             }
         }
-
+        /*Fixing ol and ul rendering*/
         .fixed-markdown-body ol, .fixed-markdown-body ul {
             list-style: circle !important;
+        }
+        /*Fixing Anchors*/
+        h1, h2, h3, h4, h5 ,h6 {
+            scroll-snap-type: y mandatory !important;
+            scroll-margin-top: 3.5rem !important;
         }
     </style>
 

@@ -22,9 +22,9 @@ namespace Wabbajack.Web.Utils
         {
             _currentUrl = url;
             // TODO: fix links
-            // TODO: fix anchors
             if (markdown == null) return new MarkupString(string.Empty);
             var htmlString = Markdown.ToHtml(markdown, MarkdownPipeline);
+            // TODO: make anchor-fix more reliable even with page reloads
             htmlString = htmlString.Replace("href=\"#","href=\""+_currentUrl+"#");
             return new MarkupString(htmlString);
         }
