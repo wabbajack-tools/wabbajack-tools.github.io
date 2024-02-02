@@ -3,14 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Wabbajack.DTOs;
-using Wabbajack.DTOs.JsonConverters;
 using Wabbajack.DTOs.ModListValidation;
 using Wabbajack.Networking.WabbajackClientApi;
 

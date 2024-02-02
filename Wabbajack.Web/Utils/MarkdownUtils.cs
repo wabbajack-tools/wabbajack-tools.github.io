@@ -18,13 +18,14 @@ namespace Wabbajack.Web.Utils
             .UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
             .Build();
 
-        public static MarkupString MarkdownToMarkupString(string? markdown, string url)
+        public static MarkupString MarkdownToMarkupString(string? markdown)
         {
-            _currentUrl = url;
-            // TODO: fix links
             if (markdown == null) return new MarkupString(string.Empty);
-            var htmlString = Markdown.ToHtml(markdown, MarkdownPipeline);
-            // TODO: make anchor-fix more reliable even with page reloads
+            var urlMarkdown = markdown.Split(null, 2);
+            // TODO: fix relative urls
+            // TODO: Find a way to jump to anchors on page load
+            var htmlString = Markdown.ToHtml(urlMarkdown[1], MarkdownPipeline);
+            _currentUrl = urlMarkdown[0];
             htmlString = htmlString.Replace("href=\"#","href=\""+_currentUrl+"#");
             return new MarkupString(htmlString);
         }
