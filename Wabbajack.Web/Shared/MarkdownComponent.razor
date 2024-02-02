@@ -16,7 +16,7 @@
     // ReSharper disable once UnusedParameter.Local
     private static readonly RenderFragment<string> _insertMarkupString = markdown => __builder =>
     {
-        __builder.AddContent(0, MarkdownUtils.MarkdownToMarkupString(markdown,LinkUtils.currentURL));
+        __builder.AddContent(0, MarkdownUtils.MarkdownToMarkupString(markdown));
     };
 
 }

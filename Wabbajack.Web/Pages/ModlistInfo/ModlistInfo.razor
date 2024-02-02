@@ -90,6 +90,11 @@
             }
 
             _readme = await Client.GetStringAsync(_modlist.Links.Readme, _cts.Token);
+            var currentUrl = NavigationManager.Uri;
+            var noAnchorUrl = currentUrl.Contains("#") ? currentUrl.Substring(0,currentUrl.LastIndexOf("#", StringComparison.Ordinal)) : currentUrl;
+
+            _readme = noAnchorUrl + " " + _readme;
+
         }
         finally
         {
