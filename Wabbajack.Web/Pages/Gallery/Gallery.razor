@@ -22,7 +22,7 @@
         </label>
 
         <label for="show-unofficial" class="w-full md:w-auto font-semibold text-lg inline-flex items-center m-1">
-            Show Unofficial Lists:
+            Show non featured Lists:
             <TriCheckboxComponent @bind-State="GalleryState.ShowUnofficial" id="show-unofficial" class="ml-2 h-10 w-5"/>
         </label>
 
@@ -224,7 +224,14 @@
         }
 
         <div class="p-4 flex-grow flex flex-col">
-            <h2 class="font-title font-semibold text-2xl">@modlist.Title</h2>
+            <div class="flex flex-row content-center">
+                <h2 class="font-title font-semibold text-2xl">@modlist.Title</h2>
+                @if (@modlist.Official)
+                {
+                    <p class="text-white bg-wabbajack-purple-dark rounded-md px-1 h-6 ml-1">Featured List</p>
+                }
+            </div>
+
             <h3 class="font-subtitle font-light text-lg">Created by @modlist.Author</h3>
             <p class="mt-1 font-normal text-base">@modlist.Description</p>
             <div class="mt-auto">
