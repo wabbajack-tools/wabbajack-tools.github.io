@@ -33,19 +33,19 @@
         <h1 class="font-semibold my-1 text-3xl text-center">Archive Search: @_modlistStatus.Name</h1>
 
         <div class="w-full overflow-hidden">
-            <div class="p-4 min-w-full overflow-x-auto">
+            <div class="p-4 min-w-full overflow-x-auto  bg-wabbajack-cards-background-base rounded-md">
                 <table class="min-w-full divide-y divide-wabbajack-background">
                     <caption class="mb-3">Use Archive Search to look through all files a Modlist downloads.</caption>
-                    <thead>
+                    <thead class="rounded-md bg-wabbajack-cards-background-hover">
 
-                    <tr class="bg-wabbajack-cards-background-base">
+                    <tr class="bg-wabbajack-background-dark">
                         <th colspan="3" class="py-2 text-right px-3">
                             <label for="search-archive">Search by Name:</label>
                             <input class="appearance-none focus:outline-0 border-hidden text-black-900 sm:text-sm p-1" @bind="_searchString" id="search-archive" type="search" maxlength="100"/>
                         </th>
                     </tr>
 
-                    <tr class="text-md font-semibold tracking-wide text-left bg-wabbajack-cards-background-base">
+                    <tr class="text-md font-semibold tracking-wide text-left ">
                         <th @onclick="() => SwitchSorting(SortBy.ArchiveName)" class="px-6 py-3 hover:underline hover:cursor-pointer">Archive Name</th>
                         <th @onclick="() => SwitchSorting(SortBy.MetaName)" class="px-6 py-3 hover:underline hover:cursor-pointer">Name</th>
                         <th @onclick="() => SwitchSorting(SortBy.Size)" class="px-6 py-3 hover:underline hover:cursor-pointer">Size</th>
@@ -55,7 +55,7 @@
                     <tbody class="divide-y divide-wabbajack-background">
                     @foreach (var archive in Archives)
                     {
-                        <tr @key="archive.Name" class="bg-black-600">
+                        <tr @key="archive.Name" class="bg-wabbajack-background-dark">
                             @_renderRow(archive)
                         </tr>
                     }
