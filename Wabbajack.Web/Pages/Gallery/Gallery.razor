@@ -200,7 +200,7 @@
     {
         var readme = modlist.Links.Readme;
         var discordLink = modlist.Links.DiscordURL;
-        var discordRegex = @"(https?:\/\/)?(www\.)?(discord\.(gg|com|io|me|li)|discordapp\.com\/invite)\/.+[a-z]";
+        var discordRegex = @"(https?:\/\/)?(www\.)?(discord\.(gg|com|io|me|li)|discordapp\.com\/invite)\/.+";
         var viewLink = LinkUtils.CanRenderReadme(readme)
             ? ModlistInfo.CreateRedirect(modlist.RepositoryName, modlist.Links.MachineURL)
             : readme;
