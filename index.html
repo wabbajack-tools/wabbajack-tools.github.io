@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html class="min-h-screen" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <title>Wabbajack</title>
+    <meta name="author" content="The Wabbajack Team">
+    <meta name="description" content="Wabbajack is a Free and Open-Source automated Modlist Installer.">
+
+    <base href="/" />
+
+    <!-- Postcss compiled css -->
+    <link href="compiled.css" rel="stylesheet"/>
+
+    <!-- pre-connect -->
+    <link rel="preconnect" href="https://raw.githubusercontent.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Fonts -->
+    <!-- TODO: trim weights -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@100;200;300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Overpass:wght@100;200;300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- for https://github.com/sindresorhus/github-markdown-css -->
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css" integrity="sha512-Oy18vBnbSJkXTndr2n6lDMO5NN31UljR8e/ICzVPrGpSud4Gkckb8yUpqhKuUNoE+o9gAb4O/rAxxw1ojyUVzg==" crossorigin="anonymous" referrerpolicy="no-referrer" />-->
+    <!-- from https://github.com/hyrious/generate-github-markdown-css/tree/743d36d0fcd4a2594f707ec26fc1ec60a015ddda -->
+    <link href="github-markdown.min.css" rel="stylesheet">
+
+    <!-- fixing css issues -->
+    <style>
+        /**Fixing Colors*/
+        .fixed-markdown-body {
+            background: #3c3652 !important;
+            a {
+                color: #d8baf8; !important;
+            }
+        }
+        /*Fixing ol and ul rendering*/
+        .fixed-markdown-body ol, .fixed-markdown-body ul {
+            list-style: circle !important;
+        }
+        /*Fixing Anchors*/
+        h1, h2, h3, h4, h5 ,h6 {
+            scroll-snap-type: y mandatory !important;
+            scroll-margin-top: 3.5rem !important;
+        }
+        /*Fixing Featured-List tag*/
+        h2 p.text-xs {
+            font-size: 0.75rem !important;
+            line-height: 1rem !important;
+        }
+    </style>
+
+    <script type="text/javascript">
+        function changePropertyOfElement(element, propertyName, propertyValue) {
+            element[propertyName] = propertyValue;
+        }
+    </script>
+
+    <!-- Blazor CSS isolation -->
+    <!--<link href="Wabbajack.Web.styles.css" rel="stylesheet" >-->
+</head>
+
+<body class="min-h-screen bg-wabbajack-background-dark text-white z-0">
+    <div class="flex flex-col min-h-screen" id="app">
+
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-amber-500 p-4">
+            <div class="flex text-wabbajack-purple-light" role="status">
+                <svg class="animate-spin h-10 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="100" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="visually-hidden px-3 text-3xl">Loading...</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!--<div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>-->
+
+    <script src="decode.min.js"></script>
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+
+    <script>
+        Blazor.start({
+            loadBootResource: function (type, name, defaultUri, integrity) {
+                // For framework resources, use the precompressed .br files for faster downloads
+                // This is needed only because GitHub pages doesn't natively support Brotli (or even gzip for .dll files)
+                if (type !== 'dotnetjs' && location.hostname !== 'localhost') {
+                    return (async function () {
+                        const response = await fetch(defaultUri + '.br', { cache: 'no-cache' });
+                        if (!response.ok) {
+                            throw new Error(response.statusText);
+                        }
+                        const originalResponseBuffer = await response.arrayBuffer();
+                        const originalResponseArray = new Int8Array(originalResponseBuffer);
+                        const decompressedResponseArray = BrotliDecode(originalResponseArray);
+                        const contentType = type === 'dotnetwasm' ? 'application/wasm' : 'application/octet-stream';
+                        return new Response(decompressedResponseArray, { headers: { 'content-type': contentType } });
+                    })();
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
