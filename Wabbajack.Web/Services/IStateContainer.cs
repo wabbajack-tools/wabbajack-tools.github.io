@@ -26,6 +26,6 @@ namespace Wabbajack.Web.Services
         bool TryGetModlistStatusReport(string machineUrl, [MaybeNullWhen(false)] out ValidatedModList statusReport);
         IDictionary<string, ValidatedModList> ModlistStatusReports { get; }
         Task<bool> LoadData(CancellationToken ctsToken);
-        Task<bool> LoadStatusReport(string machineUrl, CancellationToken ctsToken);
+        Task<bool> LoadStatusReport(string repositoryName, string machineUrl, CancellationToken ctsToken);
     }
 }

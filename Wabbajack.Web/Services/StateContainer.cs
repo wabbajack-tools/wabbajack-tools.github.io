@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -84,14 +84,14 @@ namespace Wabbajack.Web.Services
             return true;
         }
 
-        public async Task<bool> LoadStatusReport(string machineUrl, CancellationToken ctsToken)
+        public async Task<bool> LoadStatusReport(string repositoryName, string machineUrl, CancellationToken ctsToken)
         {
             if (_modlistStatusReports.ContainsKey(machineUrl))
                 return true;
 
             try
             {
-                var report = await _wjClient.GetDetailedStatus(machineUrl);
+                var report = await _wjClient.GetDetailedStatus(repositoryName, machineUrl);
                 _modlistStatusReports[machineUrl] = report;
                 return true;
             }
