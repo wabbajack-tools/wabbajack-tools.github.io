@@ -84,15 +84,16 @@ namespace Wabbajack.Web.Services
             return true;
         }
 
-        public async Task<bool> LoadStatusReport(string machineUrl, CancellationToken ctsToken)
+        public async Task<bool> LoadStatusReport(string fullMachineUrl, CancellationToken ctsToken)
         {
-            if (_modlistStatusReports.ContainsKey(machineUrl))
+            if (_modlistStatusReports.ContainsKey(fullMachineUrl))
                 return true;
-
             try
             {
-                var report = await _wjClient.GetDetailedStatus(machineUrl);
-                _modlistStatusReports[machineUrl] = report;
+                var repository = fullMachineUrl.Substring(0, fullMachineUrl.IndexOf('/'));
+                var machineUrl = fullMachineUrl.Substring(fullMachineUrl.IndexOf('/') + 1);
+                var report = await _wjClient.GetDetailedStatus(repository, machineUrl);
+                _modlistStatusReports[fullMachineUrl] = report;
                 return true;
             }
             catch (Exception ex)
