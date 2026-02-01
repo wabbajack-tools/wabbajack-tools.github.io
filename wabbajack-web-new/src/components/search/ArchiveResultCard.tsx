@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { FileArchive, User, HardDrive } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -22,10 +23,13 @@ export function ArchiveResultCard({ result }: ArchiveResultCardProps) {
   const { archive, modlists } = result;
   const state = archive.State;
   const isNexus = isNexusArchive(state);
+  const [imageError, setImageError] = useState(false);
 
   const displayName = state?.Name || archive.Name;
   const author = isNexus ? state.Author : undefined;
   const description = isNexus ? state.Description : undefined;
+  const imageUrl = isNexus ? state.ImageURL : undefined;
+  const hasImage = imageUrl && !imageError;
 
   const visibleModlists = modlists.slice(0, MAX_VISIBLE_BADGES);
   const hiddenCount = modlists.length - MAX_VISIBLE_BADGES;
@@ -33,10 +37,22 @@ export function ArchiveResultCard({ result }: ArchiveResultCardProps) {
   return (
     <div className="group rounded-xl bg-surface/60 backdrop-blur-sm border border-neon-purple/10 p-4 transition-all duration-300 hover:border-neon-purple/30 hover:shadow-[0_0_20px_rgba(168,85,247,0.1)]">
       <div className="flex items-start gap-4">
-        {/* Icon */}
-        <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-neon-purple/10 border border-neon-purple/20 flex items-center justify-center">
-          <FileArchive className="h-6 w-6 text-neon-purple" />
-        </div>
+        {/* Thumbnail or Icon */}
+        {hasImage ? (
+          <div className="flex-shrink-0 w-24 aspect-video rounded-lg overflow-hidden border border-neon-purple/20 bg-void/50">
+            <img
+              src={imageUrl}
+              alt=""
+              className="w-full h-full object-cover"
+              loading="lazy"
+              onError={() => setImageError(true)}
+            />
+          </div>
+        ) : (
+          <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-neon-purple/10 border border-neon-purple/20 flex items-center justify-center">
+            <FileArchive className="h-6 w-6 text-neon-purple" />
+          </div>
+        )}
 
         {/* Content */}
         <div className="flex-grow min-w-0">

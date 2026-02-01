@@ -8,6 +8,9 @@ export interface NexusArchiveState extends ArchiveState {
   ModID?: number;
   FileID?: number;
   GameName?: string;
+  ImageURL?: string | null;
+  IsNSFW?: boolean;
+  Version?: string;
 }
 
 export function isNexusArchive(state: ArchiveState): state is NexusArchiveState {
