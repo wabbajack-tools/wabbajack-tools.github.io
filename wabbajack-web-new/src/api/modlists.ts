@@ -109,6 +109,7 @@ export async function fetchModlistSummariesWithLinks(): Promise<ModlistSummaryWi
       link: summary.link,
       passed: summary.passed,
       failed: summary.failed,
+      smallImage: summary.small_image || undefined,
     }));
   } catch (error) {
     console.warn('Failed to fetch modlist summaries with links:', error);

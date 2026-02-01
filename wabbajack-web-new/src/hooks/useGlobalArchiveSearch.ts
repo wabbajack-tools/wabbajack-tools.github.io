@@ -89,6 +89,7 @@ export function useGlobalArchiveSearch() {
           machineURL,
           repo,
           nsfw: summary.nsfw,
+          smallImage: summary.smallImage,
         };
 
         query.data.Archives.forEach((validatedArchive) => {

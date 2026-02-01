@@ -57,12 +57,15 @@ function ArchivePreview({ archive }: { archive: Archive }) {
 
 function ModlistResultCard({ result, searchTerms }: { result: ModlistWithMatchedArchives; searchTerms: string[] }) {
   const [expanded, setExpanded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const { modlist, matchedArchives } = result;
 
   const totalMatches = Array.from(matchedArchives.values()).reduce(
     (sum, arr) => sum + arr.length,
     0
   );
+
+  const hasImage = modlist.smallImage && !imageError;
 
   return (
     <div className="rounded-xl bg-surface/60 backdrop-blur-sm border border-neon-purple/10 overflow-hidden transition-all duration-300 hover:border-neon-purple/30">
@@ -74,6 +77,23 @@ function ModlistResultCard({ result, searchTerms }: { result: ModlistWithMatched
         <div className="flex-shrink-0 text-neon-purple">
           {expanded ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
         </div>
+
+        {/* Modlist thumbnail */}
+        {hasImage ? (
+          <div className="flex-shrink-0 w-16 aspect-video rounded-lg overflow-hidden border border-neon-purple/20 bg-void/50">
+            <img
+              src={modlist.smallImage}
+              alt=""
+              className="w-full h-full object-cover"
+              loading="lazy"
+              onError={() => setImageError(true)}
+            />
+          </div>
+        ) : (
+          <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-neon-purple/10 border border-neon-purple/20 flex items-center justify-center">
+            <Layers className="h-5 w-5 text-neon-purple" />
+          </div>
+        )}
 
         <div className="flex-grow min-w-0">
           <h3 className="font-semibold text-text-primary truncate">

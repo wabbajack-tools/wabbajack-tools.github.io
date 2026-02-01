@@ -22,6 +22,7 @@ export interface ModlistInfo {
   machineURL: string;
   repo: string;
   nsfw?: boolean;
+  smallImage?: string;
 }
 
 export interface GlobalArchiveResult {
@@ -43,4 +44,5 @@ export interface ModlistSummaryWithLink {
   passed: number;
   failed: number;
   nsfw?: boolean;
+  smallImage?: string;
 }
