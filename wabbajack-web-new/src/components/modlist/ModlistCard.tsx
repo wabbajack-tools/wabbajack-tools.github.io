@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
-import { ExternalLink, MessageCircle, Search } from 'lucide-react';
+import { ExternalLink, MessageCircle, Search, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { canRenderReadme, isValidDiscordUrl } from '@/lib/utils';
@@ -39,12 +39,11 @@ export function ModlistCard({ modlist }: ModlistCardProps) {
           {/* Overlay gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent opacity-60" />
 
-          {/* Featured badge */}
+          {/* Featured corner tag */}
           {modlist.official && (
-            <div className="absolute top-3 right-3">
-              <Badge variant="glow" className="text-xs">
-                Featured
-              </Badge>
+            <div className="absolute top-0 right-0 overflow-hidden w-8 h-8">
+              <div className="absolute top-0 right-0 w-12 h-12 -translate-y-1/2 translate-x-1/2 rotate-45 bg-gradient-to-br from-neon-purple to-neon-pink" />
+              <Star className="absolute top-1 right-1 h-3 w-3 text-white fill-white" />
             </div>
           )}
 
