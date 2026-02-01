@@ -4,22 +4,29 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wabbajack-purple-light disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple focus-visible:ring-offset-2 focus-visible:ring-offset-void disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
         default:
-          'bg-wabbajack-purple-dark text-white shadow hover:bg-wabbajack-purple-light',
+          'bg-gradient-to-r from-neon-purple to-neon-pink text-white shadow-lg hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:scale-[1.02] active:scale-[0.98]',
         secondary:
-          'bg-wabbajack-cards-background-hover text-white shadow-md hover:bg-wabbajack-purple-dark',
-        ghost: 'hover:bg-wabbajack-cards-background-hover hover:text-white',
-        link: 'text-wabbajack-purple-light underline-offset-4 hover:underline',
+          'bg-surface-light/80 text-text-primary border border-neon-purple/20 hover:border-neon-purple/50 hover:bg-surface-light hover:shadow-[0_0_20px_rgba(168,85,247,0.2)]',
+        ghost:
+          'text-text-secondary hover:text-neon-purple hover:bg-neon-purple/10',
+        outline:
+          'border border-neon-purple/50 text-neon-purple hover:bg-neon-purple/10 hover:border-neon-purple hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]',
+        link:
+          'text-neon-cyan underline-offset-4 hover:underline hover:text-neon-cyan/80',
+        glow:
+          'bg-transparent border-2 border-neon-purple text-neon-purple hover:bg-neon-purple hover:text-white hover:shadow-[0_0_30px_rgba(168,85,247,0.5),0_0_60px_rgba(168,85,247,0.3)]',
       },
       size: {
-        default: 'h-10 px-5 py-2',
-        sm: 'h-8 px-3 text-xs',
-        lg: 'h-12 px-8 text-lg',
-        icon: 'h-10 w-10',
+        default: 'h-11 px-6 py-2',
+        sm: 'h-9 px-4 text-xs',
+        lg: 'h-14 px-10 text-lg',
+        xl: 'h-16 px-12 text-xl',
+        icon: 'h-11 w-11',
       },
     },
     defaultVariants: {

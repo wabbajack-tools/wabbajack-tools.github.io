@@ -12,7 +12,12 @@ const Checkbox = React.forwardRef<
   <CheckboxPrimitive.Root
     ref={ref}
     className={cn(
-      'peer h-5 w-5 shrink-0 rounded border-2 border-gray-400 bg-wabbajack-background-darker focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wabbajack-purple-light disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-wabbajack-purple-dark data-[state=checked]:border-wabbajack-purple-dark data-[state=indeterminate]:bg-wabbajack-purple-dark data-[state=indeterminate]:border-wabbajack-purple-dark',
+      'peer h-5 w-5 shrink-0 rounded-md border-2 transition-all duration-200',
+      'border-neon-purple/50 bg-void/50',
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple/50',
+      'disabled:cursor-not-allowed disabled:opacity-50',
+      'data-[state=checked]:bg-gradient-to-br data-[state=checked]:from-neon-purple data-[state=checked]:to-neon-pink data-[state=checked]:border-transparent data-[state=checked]:shadow-[0_0_10px_rgba(168,85,247,0.4)]',
+      'data-[state=indeterminate]:bg-gradient-to-br data-[state=indeterminate]:from-neon-purple data-[state=indeterminate]:to-neon-pink data-[state=indeterminate]:border-transparent',
       className
     )}
     {...props}
@@ -21,9 +26,9 @@ const Checkbox = React.forwardRef<
       className={cn('flex items-center justify-center text-white')}
     >
       {props.checked === 'indeterminate' ? (
-        <Minus className="h-4 w-4" />
+        <Minus className="h-3.5 w-3.5" strokeWidth={3} />
       ) : (
-        <Check className="h-4 w-4" />
+        <Check className="h-3.5 w-3.5" strokeWidth={3} />
       )}
     </CheckboxPrimitive.Indicator>
   </CheckboxPrimitive.Root>

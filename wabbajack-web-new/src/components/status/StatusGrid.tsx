@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { StatusCard } from './StatusCard';
+import { staggerContainer } from '@/lib/animations';
 import type { ModlistMetadata } from '@/types';
 
 interface StatusGridProps {
@@ -27,13 +29,18 @@ export function StatusGrid({ modlists }: StatusGridProps) {
   }, [modlists]);
 
   return (
-    <div className="my-1 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <motion.div
+      className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="visible"
+    >
       {sortedModlists.map((modlist) => (
         <StatusCard
           key={modlist.namespacedName || `${modlist.repositoryName}/${modlist.links.machineURL}`}
           modlist={modlist}
         />
       ))}
-    </div>
+    </motion.div>
   );
 }

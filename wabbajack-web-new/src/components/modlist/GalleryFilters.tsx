@@ -1,4 +1,7 @@
+import { motion } from 'framer-motion';
+import { Filter, X } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
@@ -42,29 +45,44 @@ export function GalleryFilters({
   onTagToggle,
 }: GalleryFiltersProps) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       {/* Filter bar */}
-      <div className="flex flex-wrap items-end justify-end md:gap-4 bg-wabbajack-cards-background-base rounded-md p-2">
-        <label className="w-full md:w-auto font-semibold text-lg inline-flex items-center m-1 cursor-pointer">
-          Show NSFW:
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-wrap items-center gap-4 p-4 rounded-xl bg-surface/60 backdrop-blur-sm border border-neon-purple/20"
+      >
+        <div className="flex items-center gap-2 text-neon-purple">
+          <Filter className="h-5 w-5" />
+          <span className="font-medium text-text-primary">Filters</span>
+        </div>
+
+        <div className="h-6 w-px bg-neon-purple/20 hidden sm:block" />
+
+        <label className="flex items-center gap-2 cursor-pointer group">
           <Checkbox
             checked={nsfwChecked}
             onCheckedChange={() => onNsfwChange(cycleTriState(nsfwChecked))}
-            className="ml-2"
           />
+          <span className="text-sm text-text-secondary group-hover:text-text-primary transition-colors">
+            Show NSFW
+          </span>
         </label>
 
-        <label className="w-full md:w-auto font-semibold text-lg inline-flex items-center m-1 cursor-pointer">
-          Show non featured Lists:
+        <label className="flex items-center gap-2 cursor-pointer group">
           <Checkbox
             checked={featuredChecked}
             onCheckedChange={() => onFeaturedChange(cycleTriState(featuredChecked))}
-            className="ml-2"
           />
+          <span className="text-sm text-text-secondary group-hover:text-text-primary transition-colors">
+            Non-featured
+          </span>
         </label>
 
-        <label className="w-full md:w-auto font-semibold text-lg inline-flex items-center my-1 pr-1">
-          <span className="mr-2">Select Game:</span>
+        <div className="h-6 w-px bg-neon-purple/20 hidden sm:block" />
+
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-text-secondary">Game:</span>
           <Select value={selectedGame} onValueChange={onGameChange}>
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="All Games" />
@@ -78,12 +96,17 @@ export function GalleryFilters({
               ))}
             </SelectContent>
           </Select>
-        </label>
-      </div>
+        </div>
+      </motion.div>
 
       {/* Tag filter */}
       {availableTags.size > 0 && (
-        <div className="flex flex-wrap gap-2 bg-wabbajack-cards-background-base rounded-md p-2">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="flex flex-wrap gap-2 p-4 rounded-xl bg-surface/40 backdrop-blur-sm border border-neon-purple/10"
+        >
           {[...availableTags.entries()].map(([tag, count]) => {
             const isSelected = selectedTags.some(
               (t) => t.toLowerCase() === tag.toLowerCase()
@@ -93,14 +116,47 @@ export function GalleryFilters({
                 key={tag}
                 onClick={() => onTagToggle(tag)}
                 className={cn(
-                  'flex items-center justify-center rounded-2xl px-2 py-1 border-2 border-gray-200 transition-colors',
-                  isSelected && 'bg-wabbajack-purple-dark text-white border-wabbajack-purple-dark'
+                  'group relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200',
+                  isSelected
+                    ? 'bg-neon-purple text-white shadow-[0_0_15px_rgba(168,85,247,0.3)]'
+                    : 'bg-surface-light/50 text-text-secondary border border-neon-purple/20 hover:border-neon-purple/50 hover:text-text-primary'
                 )}
               >
-                {tag} ({count})
+                {tag}
+                <span
+                  className={cn(
+                    'text-xs',
+                    isSelected ? 'text-white/70' : 'text-text-muted'
+                  )}
+                >
+                  ({count})
+                </span>
+                {isSelected && (
+                  <X className="h-3 w-3 ml-1 opacity-70 group-hover:opacity-100" />
+                )}
               </button>
             );
           })}
+        </motion.div>
+      )}
+
+      {/* Active filters summary */}
+      {selectedTags.length > 0 && (
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-text-muted">Active filters:</span>
+          <div className="flex flex-wrap gap-1">
+            {selectedTags.map((tag) => (
+              <Badge
+                key={tag}
+                variant="glow"
+                className="cursor-pointer"
+                onClick={() => onTagToggle(tag)}
+              >
+                {tag}
+                <X className="h-3 w-3 ml-1" />
+              </Badge>
+            ))}
+          </div>
         </div>
       )}
     </div>

@@ -10,7 +10,7 @@ interface ModlistGridProps {
 export function ModlistGrid({ modlists }: ModlistGridProps) {
   return (
     <motion.div
-      className="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 items-start"
+      className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 items-start"
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
