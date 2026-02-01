@@ -58,7 +58,6 @@ export function Header() {
                         : 'text-text-secondary hover:text-text-primary'
                     )}
                   >
-                    {label}
                     {isActive && (
                       <motion.div
                         layoutId="activeNav"
