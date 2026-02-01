@@ -127,6 +127,22 @@ export function useGlobalArchiveSearch() {
 
 const RESULT_LIMIT = 500;
 
+function getSearchableText(archive: Archive): string {
+  return [
+    archive.Name || '',
+    archive.State?.Name || '',
+    (archive.State as { Author?: string })?.Author || '',
+    (archive.State as { Description?: string })?.Description || '',
+  ]
+    .join(' ')
+    .toLowerCase();
+}
+
+function archiveMatchesTerms(archive: Archive, terms: string[]): boolean {
+  const searchableText = getSearchableText(archive);
+  return terms.every((term) => searchableText.includes(term));
+}
+
 export function useFilteredArchives(
   allArchives: ArchiveWithModlist[],
   query: string,
@@ -134,42 +150,40 @@ export function useFilteredArchives(
 ) {
   return useMemo(() => {
     if (!query.trim()) {
-      return [];
+      return { results: [], isMultiSearch: false, searchTerms: [] as string[] };
     }
 
+    // Check for comma-separated multi-search
+    const commaTerms = query.split(',').map((t) => t.trim()).filter(Boolean);
+    const isMultiSearch = commaTerms.length > 1;
+
+    if (isMultiSearch) {
+      // Multi-archive search: find modlists containing archives matching ALL terms
+      return {
+        results: [],
+        isMultiSearch: true,
+        searchTerms: commaTerms,
+      };
+    }
+
+    // Single search: original behavior
     const searchTerms = query.toLowerCase().trim().split(/\s+/);
     const hashToResult = new Map<string, GlobalArchiveResult>();
     let matchCount = 0;
 
     for (const { archive, modlist } of allArchives) {
-      // Early exit once we have enough results
       if (matchCount >= RESULT_LIMIT) break;
-
-      // NSFW filter
       if (!showNsfw && modlist.nsfw) continue;
 
-      // Search across multiple fields
-      const searchableText = [
-        archive.Name || '',
-        archive.State?.Name || '',
-        (archive.State as { Author?: string })?.Author || '',
-        (archive.State as { Description?: string })?.Description || '',
-      ]
-        .join(' ')
-        .toLowerCase();
-
-      // Check if all search terms match
-      const matches = searchTerms.every((term) => searchableText.includes(term));
+      const matches = archiveMatchesTerms(archive, searchTerms);
 
       if (matches) {
         const existing = hashToResult.get(archive.Hash);
         if (existing) {
-          // Add this modlist to the existing result
           if (!existing.modlists.some((m) => m.machineURL === modlist.machineURL && m.repo === modlist.repo)) {
             existing.modlists.push(modlist);
           }
         } else {
-          // Create new result
           hashToResult.set(archive.Hash, {
             archive,
             modlists: [modlist],
@@ -179,9 +193,79 @@ export function useFilteredArchives(
       }
     }
 
-    // Convert to array and sort by number of modlists (most popular first)
-    return Array.from(hashToResult.values()).sort(
-      (a, b) => b.modlists.length - a.modlists.length
-    );
+    return {
+      results: Array.from(hashToResult.values()).sort(
+        (a, b) => b.modlists.length - a.modlists.length
+      ),
+      isMultiSearch: false,
+      searchTerms: [],
+    };
   }, [allArchives, query, showNsfw]);
+}
+
+export interface ModlistWithMatchedArchives {
+  modlist: ModlistInfo;
+  matchedArchives: Map<string, Archive[]>; // term -> matching archives
+}
+
+export function useMultiArchiveSearch(
+  allArchives: ArchiveWithModlist[],
+  searchTerms: string[],
+  showNsfw: boolean
+): ModlistWithMatchedArchives[] {
+  return useMemo(() => {
+    if (searchTerms.length < 2) return [];
+
+    // Build a map of modlist key -> { modlist info, archives by term }
+    const modlistMap = new Map<string, {
+      modlist: ModlistInfo;
+      archivesByTerm: Map<string, Archive[]>;
+    }>();
+
+    // For each archive, check which terms it matches
+    for (const { archive, modlist } of allArchives) {
+      if (!showNsfw && modlist.nsfw) continue;
+
+      const modlistKey = `${modlist.repo}/${modlist.machineURL}`;
+
+      for (const term of searchTerms) {
+        const termWords = term.toLowerCase().split(/\s+/);
+        if (archiveMatchesTerms(archive, termWords)) {
+          let entry = modlistMap.get(modlistKey);
+          if (!entry) {
+            entry = {
+              modlist,
+              archivesByTerm: new Map(),
+            };
+            modlistMap.set(modlistKey, entry);
+          }
+
+          const existing = entry.archivesByTerm.get(term) || [];
+          // Dedupe by hash within the term
+          if (!existing.some((a) => a.Hash === archive.Hash)) {
+            existing.push(archive);
+            entry.archivesByTerm.set(term, existing);
+          }
+        }
+      }
+    }
+
+    // Filter to modlists that have matches for ALL terms
+    const results: ModlistWithMatchedArchives[] = [];
+    for (const entry of modlistMap.values()) {
+      if (entry.archivesByTerm.size === searchTerms.length) {
+        results.push({
+          modlist: entry.modlist,
+          matchedArchives: entry.archivesByTerm,
+        });
+      }
+    }
+
+    // Sort by total matched archives descending
+    return results.sort((a, b) => {
+      const aTotal = Array.from(a.matchedArchives.values()).reduce((sum, arr) => sum + arr.length, 0);
+      const bTotal = Array.from(b.matchedArchives.values()).reduce((sum, arr) => sum + arr.length, 0);
+      return bTotal - aTotal;
+    });
+  }, [allArchives, searchTerms, showNsfw]);
 }

@@ -2,10 +2,11 @@ import { createFileRoute } from '@tanstack/react-router';
 import { motion } from 'framer-motion';
 import { Search, Database, Eye, EyeOff } from 'lucide-react';
 import { useState, useMemo, useEffect } from 'react';
-import { useGlobalArchiveSearch, useFilteredArchives } from '@/hooks/useGlobalArchiveSearch';
+import { useGlobalArchiveSearch, useFilteredArchives, useMultiArchiveSearch } from '@/hooks/useGlobalArchiveSearch';
 import { useArchiveSearchFilters } from '@/hooks/useArchiveSearchFilters';
 import { SearchLoadingProgress } from '@/components/search/SearchLoadingProgress';
 import { GlobalSearchResults } from '@/components/search/GlobalSearchResults';
+import { MultiArchiveResults } from '@/components/search/MultiArchiveResults';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
@@ -51,7 +52,10 @@ function GlobalSearchPage() {
   }, [inputValue, filters.q, setQuery]);
 
   // Filter archives based on search query
-  const searchResults = useFilteredArchives(allArchives, filters.q, filters.nsfw);
+  const { results: searchResults, isMultiSearch, searchTerms } = useFilteredArchives(allArchives, filters.q, filters.nsfw);
+
+  // Multi-archive search (when using commas)
+  const multiSearchResults = useMultiArchiveSearch(allArchives, searchTerms, filters.nsfw);
 
   // Determine if we're still searching (loading and have a query)
   const isSearching = useMemo(() => {
@@ -104,7 +108,7 @@ function GlobalSearchPage() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-text-muted" />
               <Input
                 type="text"
-                placeholder="Search archives (e.g., SKSE, ENB, SkyUI)..."
+                placeholder="Search archives (use commas for multi-search: SKSE, SkyUI)"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 className="pl-12 pr-4 h-14 text-lg"
@@ -160,11 +164,18 @@ function GlobalSearchPage() {
 
         {/* Search results */}
         {!isLoadingSummaries && !error && (
-          <GlobalSearchResults
-            results={searchResults}
-            query={filters.q}
-            isSearching={isSearching}
-          />
+          isMultiSearch ? (
+            <MultiArchiveResults
+              results={multiSearchResults}
+              searchTerms={searchTerms}
+            />
+          ) : (
+            <GlobalSearchResults
+              results={searchResults}
+              query={filters.q}
+              isSearching={isSearching}
+            />
+          )
         )}
       </section>
     </motion.div>

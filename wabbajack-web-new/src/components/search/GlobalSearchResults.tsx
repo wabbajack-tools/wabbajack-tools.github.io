@@ -24,7 +24,7 @@ export function GlobalSearchResults({ results, query, isSearching }: GlobalSearc
           Search for archives
         </h3>
         <p className="text-text-secondary max-w-md mx-auto">
-          Enter a search term to find archives across all modlists. Try searching for mod names, tools like &quot;SKSE&quot;, or author names.
+          Enter a search term to find archives across all modlists. Use commas to find modlists with multiple archives (e.g., &quot;SKSE, SkyUI&quot;).
         </p>
       </motion.div>
     );
