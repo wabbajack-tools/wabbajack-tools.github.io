@@ -13,6 +13,7 @@ import { Route as StatusRouteImport } from './routes/status'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as DiscordRouteImport } from './routes/discord'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SearchGlobalRouteImport } from './routes/search.global'
 import { Route as StatusRepoIdRouteImport } from './routes/status.$repo.$id'
 import { Route as SearchRepoIdRouteImport } from './routes/search.$repo.$id'
 import { Route as ModlistRepoIdRouteImport } from './routes/modlist.$repo.$id'
@@ -37,6 +38,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SearchGlobalRoute = SearchGlobalRouteImport.update({
+  id: '/search/global',
+  path: '/search/global',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StatusRepoIdRoute = StatusRepoIdRouteImport.update({
   id: '/$repo/$id',
   path: '/$repo/$id',
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/discord': typeof DiscordRoute
   '/gallery': typeof GalleryRoute
   '/status': typeof StatusRouteWithChildren
+  '/search/global': typeof SearchGlobalRoute
   '/modlist/$repo/$id': typeof ModlistRepoIdRoute
   '/search/$repo/$id': typeof SearchRepoIdRoute
   '/status/$repo/$id': typeof StatusRepoIdRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/discord': typeof DiscordRoute
   '/gallery': typeof GalleryRoute
   '/status': typeof StatusRouteWithChildren
+  '/search/global': typeof SearchGlobalRoute
   '/modlist/$repo/$id': typeof ModlistRepoIdRoute
   '/search/$repo/$id': typeof SearchRepoIdRoute
   '/status/$repo/$id': typeof StatusRepoIdRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/discord': typeof DiscordRoute
   '/gallery': typeof GalleryRoute
   '/status': typeof StatusRouteWithChildren
+  '/search/global': typeof SearchGlobalRoute
   '/modlist/$repo/$id': typeof ModlistRepoIdRoute
   '/search/$repo/$id': typeof SearchRepoIdRoute
   '/status/$repo/$id': typeof StatusRepoIdRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/discord'
     | '/gallery'
     | '/status'
+    | '/search/global'
     | '/modlist/$repo/$id'
     | '/search/$repo/$id'
     | '/status/$repo/$id'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/discord'
     | '/gallery'
     | '/status'
+    | '/search/global'
     | '/modlist/$repo/$id'
     | '/search/$repo/$id'
     | '/status/$repo/$id'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/discord'
     | '/gallery'
     | '/status'
+    | '/search/global'
     | '/modlist/$repo/$id'
     | '/search/$repo/$id'
     | '/status/$repo/$id'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   DiscordRoute: typeof DiscordRoute
   GalleryRoute: typeof GalleryRoute
   StatusRoute: typeof StatusRouteWithChildren
+  SearchGlobalRoute: typeof SearchGlobalRoute
   ModlistRepoIdRoute: typeof ModlistRepoIdRoute
   SearchRepoIdRoute: typeof SearchRepoIdRoute
 }
@@ -148,6 +161,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search/global': {
+      id: '/search/global'
+      path: '/search/global'
+      fullPath: '/search/global'
+      preLoaderRoute: typeof SearchGlobalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/status/$repo/$id': {
@@ -190,6 +210,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiscordRoute: DiscordRoute,
   GalleryRoute: GalleryRoute,
   StatusRoute: StatusRouteWithChildren,
+  SearchGlobalRoute: SearchGlobalRoute,
   ModlistRepoIdRoute: ModlistRepoIdRoute,
   SearchRepoIdRoute: SearchRepoIdRoute,
 }

@@ -6,4 +6,6 @@ export const queryKeys = {
   detailedStatus: (repo: string, machineUrl: string) =>
     ['detailedStatus', repo, machineUrl] as const,
   readme: (url: string) => ['readme', url] as const,
+  modlistSummariesWithLinks: ['modlistSummariesWithLinks'] as const,
+  modlistStatus: (link: string) => ['modlistStatus', link] as const,
 };

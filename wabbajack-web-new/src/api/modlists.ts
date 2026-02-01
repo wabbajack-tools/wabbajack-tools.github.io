@@ -1,5 +1,6 @@
 import { fetchJson, fetchText, buildApiUrl } from './client';
-import type { ModlistMetadata, ModlistSummary, Repositories } from '@/types';
+import type { ModlistMetadata, ModlistSummary, Repositories, ValidatedModlist } from '@/types';
+import type { ModlistSummaryWithLink } from '@/types/search';
 
 // Raw summary format from the API
 interface RawModlistSummary {
@@ -94,4 +95,28 @@ export async function fetchDetailedStatus(repo: string, machineUrl: string) {
 
 export async function fetchReadme(url: string): Promise<string> {
   return fetchText(url);
+}
+
+export async function fetchModlistSummariesWithLinks(): Promise<ModlistSummaryWithLink[]> {
+  try {
+    const summaries = await fetchJson<RawModlistSummary[]>(
+      buildApiUrl('/reports/modListSummary.json')
+    );
+
+    return summaries.map((summary) => ({
+      name: summary.name,
+      machineURL: summary.machineURL,
+      link: summary.link,
+      passed: summary.passed,
+      failed: summary.failed,
+    }));
+  } catch (error) {
+    console.warn('Failed to fetch modlist summaries with links:', error);
+    return [];
+  }
+}
+
+export async function fetchStatusFromLink(link: string): Promise<ValidatedModlist> {
+  const url = buildApiUrl(link);
+  return fetchJson<ValidatedModlist>(url);
 }
