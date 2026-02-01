@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+/* Wabbajack Color Theme */
+@theme {
+  --color-wabbajack-purple-dark: #8866ad;
+  --color-wabbajack-purple-light: #d8baf8;
+  --color-wabbajack-red: #992a2a;
+  --color-wabbajack-background-dark: #2a2b41;
+  --color-wabbajack-background-darker: #222531;
+  --color-wabbajack-cards-background-base: #3c3652;
+  --color-wabbajack-cards-background-hover: #4e4571;
+
+  --font-family-title: "Montserrat", sans-serif;
+  --font-family-subtitle: "Overpass", sans-serif;
+  --font-family-body: "Open Sans", sans-serif;
+
+  --breakpoint-3xl: 1930px;
+}
+
+/* Base Styles */
+body {
+  font-family: var(--font-family-body);
+  margin: 0;
+}
+
+/* Markdown Styles */
+.markdown-body {
+  background: var(--color-wabbajack-cards-background-base) !important;
+  color: white;
+}
+
+.markdown-body a {
+  color: var(--color-wabbajack-purple-light) !important;
+}
+
+.markdown-body ol,
+.markdown-body ul {
+  list-style: disc !important;
+  padding-left: 2em;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  color: white;
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.markdown-body code {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.markdown-body pre {
+  background: rgba(0, 0, 0, 0.3) !important;
+}
+
+.markdown-body blockquote {
+  border-left-color: var(--color-wabbajack-purple-dark);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.markdown-body table th,
+.markdown-body table td {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.markdown-body hr {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-wabbajack-background-darker);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-wabbajack-purple-dark);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-wabbajack-purple-light);
+}
