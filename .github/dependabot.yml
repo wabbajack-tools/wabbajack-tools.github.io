@@ -1,15 +1,7 @@
 version: 2
 updates:
-  - package-ecosystem: "nuget"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    labels:
-      - "nuget"
-      - "dependencies"
-
   - package-ecosystem: "npm"
-    directory: "/Wabbajack.Web"
+    directory: "/"
     schedule:
       interval: "weekly"
     labels:

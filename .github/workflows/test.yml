@@ -1,37 +1,28 @@
-name: Test Workflow
+name: CI
 
 on:
   push:
-    branches: [ redux ]
+    branches: [redux]
   pull_request:
-    branches: [ redux ]
+    branches: [redux]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      - uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          dotnet-version: |
-            9.0.x
+          node-version: '20'
+          cache: 'npm'
 
-      - name: Setup Node 16.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16.x
-      - name: npm install
-        run: npm install
-        working-directory: Wabbajack.Web
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
 
       - name: Build
-        run: dotnet build
+        run: npm run build

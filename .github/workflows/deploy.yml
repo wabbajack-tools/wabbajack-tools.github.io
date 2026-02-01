@@ -1,55 +1,32 @@
-name: Blazor WASM Deployment
-env:
-  PUBLISH_DIR: Wabbajack.Web/bin/Release/net9.0/publish/wwwroot
-  NODE_ENV: production
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ redux ]
+    branches: [redux]
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v4
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: '20'
+          cache: 'npm'
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: |
-            9.0.x
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Setup Node 16.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16.x
-      - name: npm install
-        run: npm install
-        working-directory: Wabbajack.Web
+      - name: Build
+        run: npm run build
 
-      - name: Copy index.html to 404.html
-        run: cp Wabbajack.Web/wwwroot/index.html Wabbajack.Web/wwwroot/404.html
-
-      - name: Publish
-        run: dotnet publish -c Release Wabbajack.Web/Wabbajack.Web.csproj
-
-      #- name: Rewrite base href
-      #  uses: SteveSandersonMS/ghaction-rewrite-base-href@v1
-      #  with:
-      #    html_path: ${{ env.PUBLISH_DIR }}/index.html
-      #    base_href: /BlazorOnGitHubPages/
-
-      - name: GitHub Pages
+      - name: Deploy to GitHub Pages
         if: success()
-        uses: crazy-max/ghaction-github-pages@v1.5.1
+        uses: crazy-max/ghaction-github-pages@v4
         with:
           target_branch: gh-pages
-          build_dir: ${{ env.PUBLISH_DIR }}
+          build_dir: dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
