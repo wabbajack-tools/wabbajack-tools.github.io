@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { motion } from 'framer-motion';
 import { Search, ArrowLeft, FileArchive, Database } from 'lucide-react';
 import { useDetailedStatus } from '@/hooks/useModlistStatus';
@@ -12,6 +13,20 @@ import { ErrorDisplay } from '@/components/common/ErrorDisplay';
 import { pageTransition } from '@/lib/animations';
 import type { Archive, ValidatedArchive } from '@/types';
 
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 export const Route = createFileRoute('/search/$repo/$id')({
   component: ArchiveSearchPage,
 });
@@ -22,14 +37,17 @@ function ArchiveSearchPage() {
   const { data: modlist } = useModlist(repo, id);
 
   const [searchString, setSearchString] = useState('');
+  const debouncedSearch = useDebounce(searchString, 200);
+
+  const parentRef = useRef<HTMLDivElement>(null);
 
   const archives = useMemo(() => {
     if (!status?.Archives) return [];
 
     return status.Archives.map((va: ValidatedArchive) => va.Original)
       .filter((archive: Archive) => {
-        if (!searchString.trim()) return true;
-        const search = searchString.toLowerCase();
+        if (!debouncedSearch.trim()) return true;
+        const search = debouncedSearch.toLowerCase();
         const stateName = archive.State?.Name || '';
         const author = (archive.State as { Author?: string })?.Author || '';
         const description = (archive.State as { Description?: string })?.Description || '';
@@ -41,7 +59,14 @@ function ArchiveSearchPage() {
         );
       })
       .sort((a: Archive, b: Archive) => a.Name.localeCompare(b.Name));
-  }, [status, searchString]);
+  }, [status, debouncedSearch]);
+
+  const virtualizer = useVirtualizer({
+    count: archives.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 100,
+    overscan: 10,
+  });
 
   const totalArchives = status?.Archives?.length || 0;
 
@@ -161,11 +186,11 @@ function ArchiveSearchPage() {
         {/* Results count */}
         <div className="flex items-center justify-between mb-6">
           <p className="text-sm text-text-secondary">
-            {searchString.trim() ? (
+            {debouncedSearch.trim() ? (
               <>
                 Found{' '}
                 <span className="font-semibold text-text-primary">
-                  {archives.length}
+                  {archives.length.toLocaleString()}
                 </span>{' '}
                 of {totalArchives.toLocaleString()} archives
               </>
@@ -199,30 +224,39 @@ function ArchiveSearchPage() {
             </p>
           </motion.div>
         ) : (
-          <motion.div
-            className="space-y-3"
-            initial="hidden"
-            animate="visible"
-            variants={{
-              visible: {
-                transition: {
-                  staggerChildren: 0.01,
-                },
-              },
-            }}
+          <div
+            ref={parentRef}
+            className="h-[600px] overflow-auto rounded-lg"
           >
-            {archives.map((archive: Archive) => (
-              <motion.div
-                key={archive.Hash || archive.Name}
-                variants={{
-                  hidden: { opacity: 0, y: 10 },
-                  visible: { opacity: 1, y: 0 },
-                }}
-              >
-                <ModlistArchiveCard archive={archive} />
-              </motion.div>
-            ))}
-          </motion.div>
+            <div
+              style={{
+                height: `${virtualizer.getTotalSize()}px`,
+                width: '100%',
+                position: 'relative',
+              }}
+            >
+              {virtualizer.getVirtualItems().map((virtualItem) => {
+                const archive = archives[virtualItem.index];
+                return (
+                  <div
+                    key={virtualItem.key}
+                    data-index={virtualItem.index}
+                    ref={virtualizer.measureElement}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      transform: `translateY(${virtualItem.start}px)`,
+                    }}
+                    className="pb-3"
+                  >
+                    <ModlistArchiveCard archive={archive} />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         )}
       </section>
     </motion.div>
