@@ -89,7 +89,7 @@ export async function fetchAllModlists(): Promise<ModlistMetadata[]> {
 }
 
 export async function fetchDetailedStatus(repo: string, machineUrl: string) {
-  const url = buildApiUrl(`/${repo}/status/${machineUrl}.json`);
+  const url = buildApiUrl(`/reports/${repo}/${machineUrl}/status.json`);
   return fetchJson(url);
 }
 
