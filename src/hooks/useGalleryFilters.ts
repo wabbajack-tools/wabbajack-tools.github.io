@@ -2,6 +2,7 @@ import { useMemo, useCallback } from 'react';
 import { useSearch, useNavigate } from '@tanstack/react-router';
 import type { ModlistMetadata } from '@/types';
 import type { CheckedState } from '@/components/ui/checkbox';
+import { getGameDisplayName } from '@/types/game';
 
 export type TriState = 'true' | 'false' | 'indeterminate';
 
@@ -165,6 +166,9 @@ export function useAvailableGames(modlists: ModlistMetadata[] | undefined) {
     if (!modlists) return [];
 
     const games = new Set(modlists.map((m) => m.game));
-    return [...games].sort();
+    // Sort alphabetically by display name
+    return [...games].sort((a, b) =>
+      getGameDisplayName(a).localeCompare(getGameDisplayName(b))
+    );
   }, [modlists]);
 }
