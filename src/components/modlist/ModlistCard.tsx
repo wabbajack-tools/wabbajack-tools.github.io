@@ -23,7 +23,7 @@ export function ModlistCard({ modlist }: ModlistCardProps) {
       transition={{ duration: 0.2 }}
       className="group h-full"
     >
-      <div className="h-full rounded-2xl bg-surface/60 backdrop-blur-sm border border-neon-purple/10 overflow-hidden transition-all duration-300 hover:border-neon-purple/30 hover:shadow-[0_0_40px_rgba(168,85,247,0.15)]">
+      <div className="h-full flex flex-col rounded-2xl bg-surface/60 backdrop-blur-sm border border-neon-purple/10 overflow-hidden transition-all duration-300 hover:border-neon-purple/30 hover:shadow-[0_0_40px_rgba(168,85,247,0.15)]">
         {/* Image container */}
         <div className="relative aspect-video overflow-hidden">
           <img
@@ -56,7 +56,7 @@ export function ModlistCard({ modlist }: ModlistCardProps) {
         </div>
 
         {/* Content */}
-        <div className="p-5 flex flex-col">
+        <div className="p-5 flex flex-col flex-1">
           <h3 className="font-display font-bold text-xl text-text-primary mb-1 line-clamp-1">
             {modlist.title}
           </h3>
@@ -65,7 +65,7 @@ export function ModlistCard({ modlist }: ModlistCardProps) {
             by <span className="text-text-secondary">{modlist.author}</span>
           </p>
 
-          <p className="text-sm text-text-secondary mb-4 line-clamp-2 flex-grow">
+          <p className="text-sm text-text-secondary mb-4 line-clamp-2">
             {modlist.description}
           </p>
 
