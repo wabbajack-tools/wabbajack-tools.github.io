@@ -11,6 +11,7 @@ interface GalleryFilters {
   featured: TriState;
   game: string;
   tags: string[];
+  search: string;
 }
 
 function triStateToChecked(state: TriState): CheckedState {
@@ -34,6 +35,7 @@ export function useGalleryFilters() {
     featured: (search.featured as TriState) || 'false',
     game: search.game || 'all',
     tags: search.tags ? (Array.isArray(search.tags) ? search.tags : [search.tags]) : [],
+    search: (search.search as string) || '',
   };
 
   const setFilters = useCallback(
@@ -76,6 +78,11 @@ export function useGalleryFilters() {
     [filters.tags, setFilters]
   );
 
+  const setSearch = useCallback(
+    (searchText: string) => setFilters({ search: searchText || undefined }),
+    [setFilters]
+  );
+
   return {
     filters,
     nsfwChecked: triStateToChecked(filters.nsfw),
@@ -84,14 +91,22 @@ export function useGalleryFilters() {
     setFeatured,
     setGame,
     toggleTag,
+    setSearch,
     setFilters,
   };
 }
 
+interface FilterOptions {
+  skipGameFilter?: boolean;
+}
+
 export function useFilteredModlists(
   modlists: ModlistMetadata[] | undefined,
-  filters: GalleryFilters
+  filters: GalleryFilters,
+  options: FilterOptions = {}
 ) {
+  const { skipGameFilter = false } = options;
+
   return useMemo(() => {
     if (!modlists) return [];
 
@@ -124,7 +139,8 @@ export function useFilteredModlists(
         }
       })
       .filter((m) => {
-        // Game filter
+        // Game filter (can be skipped for counting purposes)
+        if (skipGameFilter) return true;
         if (filters.game === 'all') return true;
         return m.game.toLowerCase() === filters.game.toLowerCase();
       })
@@ -134,8 +150,19 @@ export function useFilteredModlists(
         return filters.tags.every((tag) =>
           m.tags?.some((t) => t.toLowerCase() === tag.toLowerCase())
         );
+      })
+      .filter((m) => {
+        // Text search filter
+        if (!filters.search) return true;
+        const searchLower = filters.search.toLowerCase();
+        return (
+          m.title.toLowerCase().includes(searchLower) ||
+          m.description.toLowerCase().includes(searchLower) ||
+          m.author?.toLowerCase().includes(searchLower) ||
+          m.tags?.some((t) => t.toLowerCase().includes(searchLower))
+        );
       });
-  }, [modlists, filters]);
+  }, [modlists, filters, skipGameFilter]);
 }
 
 export function useAvailableTags(modlists: ModlistMetadata[] | undefined) {
@@ -161,14 +188,33 @@ export function useAvailableTags(modlists: ModlistMetadata[] | undefined) {
   }, [modlists]);
 }
 
-export function useAvailableGames(modlists: ModlistMetadata[] | undefined) {
-  return useMemo(() => {
-    if (!modlists) return [];
+export interface GameWithCount {
+  gameId: string;
+  count: number;
+}
 
-    const games = new Set(modlists.map((m) => m.game));
-    // Sort alphabetically by display name
-    return [...games].sort((a, b) =>
-      getGameDisplayName(a).localeCompare(getGameDisplayName(b))
-    );
+export function useAvailableGames(modlists: ModlistMetadata[]): GameWithCount[] {
+  return useMemo(() => {
+    if (!modlists || modlists.length === 0) return [];
+
+    // Use case-insensitive deduplication (list should already be filtered)
+    const gameMap = new Map<string, { canonicalId: string; count: number }>();
+
+    modlists.forEach((m) => {
+      const normalizedKey = m.game.toLowerCase();
+      const existing = gameMap.get(normalizedKey);
+
+      if (existing) {
+        existing.count += 1;
+      } else {
+        gameMap.set(normalizedKey, { canonicalId: m.game, count: 1 });
+      }
+    });
+
+    return [...gameMap.values()]
+      .map(({ canonicalId, count }) => ({ gameId: canonicalId, count }))
+      .sort((a, b) =>
+        getGameDisplayName(a.gameId).localeCompare(getGameDisplayName(b.gameId))
+      );
   }, [modlists]);
 }

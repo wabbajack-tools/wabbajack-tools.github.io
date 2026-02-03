@@ -19,6 +19,7 @@ interface GallerySearch {
   featured?: string;
   game?: string;
   tags?: string | string[];
+  search?: string;
 }
 
 export const Route = createFileRoute('/gallery')({
@@ -29,6 +30,7 @@ export const Route = createFileRoute('/gallery')({
       featured: search.featured as string | undefined,
       game: search.game as string | undefined,
       tags: search.tags as string | string[] | undefined,
+      search: search.search as string | undefined,
     };
   },
 });
@@ -43,11 +45,14 @@ function GalleryPage() {
     setFeatured,
     setGame,
     toggleTag,
+    setSearch,
   } = useGalleryFilters();
 
   const filteredModlists = useFilteredModlists(modlists, filters);
+  // Get modlists filtered by everything except game, so game counts reflect other active filters
+  const modlistsWithoutGameFilter = useFilteredModlists(modlists, filters, { skipGameFilter: true });
   const availableTags = useAvailableTags(filteredModlists);
-  const availableGames = useAvailableGames(modlists);
+  const availableGames = useAvailableGames(modlistsWithoutGameFilter);
 
   return (
     <motion.div
@@ -107,12 +112,14 @@ function GalleryPage() {
           featuredChecked={featuredChecked}
           selectedGame={filters.game}
           selectedTags={filters.tags}
+          searchText={filters.search}
           availableGames={availableGames}
           availableTags={availableTags}
           onNsfwChange={setNsfw}
           onFeaturedChange={setFeatured}
           onGameChange={setGame}
           onTagToggle={toggleTag}
+          onSearchChange={setSearch}
         />
 
         {error && (
