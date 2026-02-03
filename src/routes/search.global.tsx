@@ -35,10 +35,12 @@ function GlobalSearchPage() {
   // Local state for debounced input
   const [inputValue, setInputValue] = useState(filters.q);
 
-  // Sync input value with URL on mount
-  useEffect(() => {
+  // Sync input value with URL when filters.q changes (e.g. browser back/forward)
+  const [prevQ, setPrevQ] = useState(filters.q);
+  if (filters.q !== prevQ) {
+    setPrevQ(filters.q);
     setInputValue(filters.q);
-  }, [filters.q]);
+  }
 
   // Debounce search query updates
   useEffect(() => {
