@@ -115,12 +115,12 @@ export function useFilteredModlists(
       .filter((m) => {
         // NSFW filter
         switch (filters.nsfw) {
-          case 'false':
+          case 'false': // Hide NSFW
             return !m.nsfw;
-          case 'true':
-            return true;
-          case 'indeterminate':
+          case 'true': // Only NSFW
             return m.nsfw;
+          case 'indeterminate': // Include NSFW (Both)
+            return true;
           default:
             return !m.nsfw;
         }
@@ -128,14 +128,14 @@ export function useFilteredModlists(
       .filter((m) => {
         // Featured filter
         switch (filters.featured) {
-          case 'false':
-            return m.official;
-          case 'true':
+          case 'false': // All lists
             return true;
-          case 'indeterminate':
+          case 'true': // Featured only
+            return m.official;
+          case 'indeterminate': // Non-featured only
             return !m.official;
           default:
-            return m.official;
+            return true;
         }
       })
       .filter((m) => {

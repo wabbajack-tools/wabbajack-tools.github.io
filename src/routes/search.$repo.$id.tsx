@@ -61,6 +61,10 @@ function ArchiveSearchPage() {
       .sort((a: Archive, b: Archive) => a.Name.localeCompare(b.Name));
   }, [status, debouncedSearch]);
 
+  // TanStack Virtual's `useVirtualizer` returns functions that are not safely memoizable by the React Compiler.
+  // This is a known incompatibility where the compiler skips memoization for this component to prevent stale UIs.
+  // We ignore this warning as the virtualization logic remains functional and stable without compiler-driven memoization.
+  // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
     count: archives.length,
     getScrollElement: () => parentRef.current,

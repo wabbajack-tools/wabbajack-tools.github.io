@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -29,8 +30,13 @@ function ModlistInfoPage() {
   );
 
   // If we can't render the README, redirect to external
+  useEffect(() => {
+    if (modlist && !canRender && readmeUrl) {
+      window.location.href = readmeUrl;
+    }
+  }, [modlist, canRender, readmeUrl]);
+
   if (modlist && !canRender && readmeUrl) {
-    window.location.href = readmeUrl;
     return null;
   }
 

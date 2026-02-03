@@ -108,25 +108,27 @@ export function GalleryFilters({
 
         <div className="h-6 w-px bg-neon-purple/20 hidden sm:block" />
 
-        <label className="flex items-center gap-2 cursor-pointer group">
-          <Checkbox
-            checked={nsfwChecked}
-            onCheckedChange={() => onNsfwChange(cycleTriState(nsfwChecked))}
-          />
-          <span className="text-sm text-text-secondary group-hover:text-text-primary transition-colors">
-            Show NSFW
-          </span>
-        </label>
+        <div className="flex items-center gap-4">
+          <label className="flex items-center gap-2 cursor-pointer group">
+            <Checkbox
+              checked={nsfwChecked}
+              onCheckedChange={() => onNsfwChange(cycleTriState(nsfwChecked))}
+            />
+            <span className="text-sm text-text-secondary group-hover:text-text-primary transition-colors min-w-[80px]">
+              {nsfwChecked === true ? 'Only NSFW' : nsfwChecked === 'indeterminate' ? 'Include NSFW' : 'NSFW Hidden'}
+            </span>
+          </label>
 
-        <label className="flex items-center gap-2 cursor-pointer group">
-          <Checkbox
-            checked={featuredChecked}
-            onCheckedChange={() => onFeaturedChange(cycleTriState(featuredChecked))}
-          />
-          <span className="text-sm text-text-secondary group-hover:text-text-primary transition-colors">
-            Non-featured
-          </span>
-        </label>
+          <label className="flex items-center gap-2 cursor-pointer group">
+            <Checkbox
+              checked={featuredChecked}
+              onCheckedChange={() => onFeaturedChange(cycleTriState(featuredChecked))}
+            />
+            <span className="text-sm text-text-secondary group-hover:text-text-primary transition-colors min-w-[100px]">
+              {featuredChecked === true ? 'Featured Only' : featuredChecked === 'indeterminate' ? 'Unofficial Only' : 'All Lists'}
+            </span>
+          </label>
+        </div>
 
         <div className="h-6 w-px bg-neon-purple/20 hidden sm:block" />
 
