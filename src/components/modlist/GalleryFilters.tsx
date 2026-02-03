@@ -89,7 +89,7 @@ export function GalleryFilters({
               onCheckedChange={() => onNsfwChange(cycleTriState(nsfwChecked))}
             />
             <span className="text-sm text-text-secondary group-hover:text-text-primary transition-colors min-w-[80px]">
-              {nsfwChecked === true ? 'Only NSFW' : nsfwChecked === 'indeterminate' ? 'Include NSFW' : 'Hide NSFW'}
+              {nsfwChecked === true ? 'Only NSFW' : nsfwChecked === 'indeterminate' ? 'Include NSFW' : 'NSFW Hidden'}
             </span>
           </label>
 
