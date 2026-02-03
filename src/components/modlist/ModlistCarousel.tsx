@@ -10,14 +10,26 @@ import { FALLBACK_CAROUSEL_IMAGE } from '@/lib/constants';
 import { useFeaturedModlists } from '@/hooks/useModlists';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
+function stableHash(input: string): number {
+  let hash = 5381;
+  for (let i = 0; i < input.length; i++) {
+    hash = (hash * 33) ^ input.charCodeAt(i);
+  }
+  // Ensure positive 32-bit integer
+  return hash >>> 0;
+}
+
 export function ModlistCarousel() {
   const { data: modlists, isLoading } = useFeaturedModlists();
   const [[currentIndex, direction], setPage] = useState([0, 0]);
 
-  // Shuffle modlists on mount
-  const shuffledModlists = useMemo(() => {
-    if (!modlists) return [];
-    return [...modlists].sort(() => Math.random() - 0.5);
+  const finalModlists = useMemo(() => {
+    if (!modlists || modlists.length === 0) return [];
+    // Deterministic pseudo-random order based on id fields
+    return [...modlists]
+      .map((m) => ({ m, k: stableHash(`${m.repositoryName}|${m.links?.machineURL || ''}`) }))
+      .sort((a, b) => a.k - b.k)
+      .map((x) => x.m);
   }, [modlists]);
 
   if (isLoading) {
@@ -28,17 +40,17 @@ export function ModlistCarousel() {
     );
   }
 
-  if (!shuffledModlists.length) {
+  if (!finalModlists.length) {
     return null;
   }
 
-  const currentModlist = shuffledModlists[currentIndex];
+  const currentModlist = finalModlists[currentIndex];
   const imageUrl = currentModlist.validationSummary?.LargeImage || currentModlist.links.image || FALLBACK_CAROUSEL_IMAGE;
 
   const paginate = (newDirection: number) => {
     let newIndex = currentIndex + newDirection;
-    if (newIndex < 0) newIndex = shuffledModlists.length - 1;
-    if (newIndex >= shuffledModlists.length) newIndex = 0;
+    if (newIndex < 0) newIndex = finalModlists.length - 1;
+    if (newIndex >= finalModlists.length) newIndex = 0;
     setPage([newIndex, newDirection]);
   };
 
@@ -137,7 +149,7 @@ export function ModlistCarousel() {
 
         {/* Pagination dots */}
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
-          {shuffledModlists.slice(0, 10).map((_, index) => (
+          {finalModlists.slice(0, 10).map((_, index) => (
             <button
               key={index}
               onClick={() => setPage([index, index > currentIndex ? 1 : -1])}
@@ -149,8 +161,8 @@ export function ModlistCarousel() {
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
-          {shuffledModlists.length > 10 && (
-            <span className="text-xs text-text-muted">+{shuffledModlists.length - 10}</span>
+          {finalModlists.length > 10 && (
+            <span className="text-xs text-text-muted">+{finalModlists.length - 10}</span>
           )}
         </div>
       </div>
