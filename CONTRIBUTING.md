@@ -3,21 +3,39 @@
 ## Requirements
 
 - [Git](https://git-scm.com/)
-- [.NET 7 SDK](https://dotnet.microsoft.com/download/dotnet/7.0)
-- IDE: [Visual Studio](https://visualstudio.microsoft.com/) or [JetBrains Rider](https://www.jetbrains.com/rider/)
-- [Node.js](https://nodejs.org/en/) (for Tailwind CSS)
+- [Node.js](https://nodejs.org/en/) (v18 or newer recommended)
+- IDE: [VS Code](https://code.visualstudio.com/), [WebStorm](https://www.jetbrains.com/webstorm/), or any other editor of your choice.
 
-### Getting Started
+## Getting Started
 
-- Create a new fork
-- Clone the fork using `git clone`
-- open the terminal in the `Wabbajack.Web` folder and run `npm install`
+1. Create a new fork of the repository.
+2. Clone your fork using `git clone`.
+3. Open a terminal in the project root folder.
+4. Run `npm install` to install dependencies.
 
-### Watch for changes
+## Local Development
 
-For the full experience open two terminal windows and run these commands:
+To start the development server with hot-reload:
 
-1) `dotnet watch --project Wabbajack.Web/Wabbajack.Web.csproj` in the root folder
-2) `npm run watch` in the `Wabbajack.Web` folder
+```bash
+npm run dev
+```
 
-I suggest using a Chromium based browser like Chrome or Edge, I've had issues with Firefox and Chromium browsers have better development tools.
+The website will be available at `http://localhost:5173` (or the port shown in your terminal).
+
+## Scripts
+
+- `npm run dev`: Starts the Vite development server.
+- `npm run build`: Builds the project for production.
+- `npm run lint`: Runs ESLint to check for code style and potential errors.
+- `npm run preview`: Locally previews the production build.
+- `npm run generate-routes`: Generates TanStack Router routes.
+
+## Local Testing
+
+Before submitting a pull request, please ensure:
+1. The project builds successfully: `npm run build`
+2. There are no linting errors: `npm run lint`
+3. If you changed routes, ensure they are correctly generated: `npm run generate-routes`
+
+We recommend using a Chromium-based browser (Chrome, Edge) for development as they have robust developer tools.
