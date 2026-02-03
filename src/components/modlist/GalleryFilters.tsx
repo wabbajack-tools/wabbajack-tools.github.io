@@ -73,7 +73,7 @@ export function GalleryFilters({
     selectedTags.some((t) => t.toLowerCase() === tag.toLowerCase());
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" >
       {/* Filter bar */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -109,23 +109,26 @@ export function GalleryFilters({
         <div className="h-6 w-px bg-neon-purple/20 hidden sm:block" />
 
         <div className="flex items-center gap-4">
+
           <label className="flex items-center gap-2 cursor-pointer group">
+              <span className="text-sm text-text-secondary">NSFW:</span>
             <Checkbox
               checked={nsfwChecked}
               onCheckedChange={() => onNsfwChange(cycleTriState(nsfwChecked))}
             />
             <span className="text-sm text-text-secondary group-hover:text-text-primary transition-colors min-w-[80px]">
-              {nsfwChecked === true ? 'Only NSFW' : nsfwChecked === 'indeterminate' ? 'Include NSFW' : 'NSFW Hidden'}
+              {nsfwChecked === true ? 'Exclusively' : nsfwChecked === 'indeterminate' ? 'Included' : 'Hidden'}
             </span>
           </label>
 
           <label className="flex items-center gap-2 cursor-pointer group">
+              <span className="text-sm text-text-secondary">Featured Lists:</span>
             <Checkbox
               checked={featuredChecked}
               onCheckedChange={() => onFeaturedChange(cycleTriState(featuredChecked))}
             />
             <span className="text-sm text-text-secondary group-hover:text-text-primary transition-colors min-w-[100px]">
-              {featuredChecked === true ? 'Featured Only' : featuredChecked === 'indeterminate' ? 'Unofficial Only' : 'All Lists'}
+              {featuredChecked === true ? 'Exclusively' : featuredChecked === 'indeterminate' ? 'Included' : 'Hidden'}
             </span>
           </label>
         </div>

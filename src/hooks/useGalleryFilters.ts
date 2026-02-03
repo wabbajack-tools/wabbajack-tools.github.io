@@ -32,7 +32,7 @@ export function useGalleryFilters() {
 
   const filters: GalleryFilters = {
     nsfw: (search.nsfw as TriState) || 'false',
-    featured: (search.featured as TriState) || 'false',
+    featured: (search.featured as TriState) || 'indeterminate',
     game: search.game || 'all',
     tags: search.tags ? (Array.isArray(search.tags) ? search.tags : [search.tags]) : [],
     search: (search.search as string) || '',
@@ -128,11 +128,11 @@ export function useFilteredModlists(
       .filter((m) => {
         // Featured filter
         switch (filters.featured) {
-          case 'false': // All lists
+          case 'indeterminate': // All lists
             return true;
           case 'true': // Featured only
             return m.official;
-          case 'indeterminate': // Non-featured only
+          case 'false': // Non-featured only
             return !m.official;
           default:
             return true;
