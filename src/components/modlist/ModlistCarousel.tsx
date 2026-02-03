@@ -10,26 +10,23 @@ import { FALLBACK_CAROUSEL_IMAGE } from '@/lib/constants';
 import { useFeaturedModlists } from '@/hooks/useModlists';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
-function stableHash(input: string): number {
-  let hash = 5381;
-  for (let i = 0; i < input.length; i++) {
-    hash = (hash * 33) ^ input.charCodeAt(i);
-  }
-  // Ensure positive 32-bit integer
-  return hash >>> 0;
+function shuffleArray<T>(array: T[]): T[] {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
 }
 
 export function ModlistCarousel() {
-  const { data: modlists, isLoading } = useFeaturedModlists();
-  const [[currentIndex, direction], setPage] = useState([0, 0]);
+    const { data: modlists, isLoading } = useFeaturedModlists();
+    const [[currentIndex, direction], setPage] = useState([0, 0]);
 
-  const finalModlists = useMemo(() => {
-    if (!modlists || modlists.length === 0) return [];
-    // Deterministic pseudo-random order based on id fields
-    return [...modlists]
-      .map((m) => ({ m, k: stableHash(`${m.repositoryName}|${m.links?.machineURL || ''}`) }))
-      .sort((a, b) => a.k - b.k)
-      .map((x) => x.m);
+    const finalModlists = useMemo(() => {
+        if (!modlists || modlists.length === 0) return [];
+        // Shuffle modlists using Fisher-Yates algorithm for true randomness
+        return shuffleArray(modlists);
   }, [modlists]);
 
   if (isLoading) {

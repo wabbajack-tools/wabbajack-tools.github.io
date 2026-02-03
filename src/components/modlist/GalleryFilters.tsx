@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/select';
 import { getGameDisplayName } from '@/types/game';
 import type { CheckedState } from '@/components/ui/checkbox';
+import type { GameWithCount } from '@/hooks/useGalleryFilters';
 import { cn } from '@/lib/utils';
 
 interface GalleryFiltersProps {
@@ -25,12 +26,14 @@ interface GalleryFiltersProps {
   featuredChecked: CheckedState;
   selectedGame: string;
   selectedTags: string[];
-  availableGames: string[];
+  searchText: string;
+  availableGames: GameWithCount[];
   availableTags: Map<string, number>;
   onNsfwChange: (checked: CheckedState) => void;
   onFeaturedChange: (checked: CheckedState) => void;
   onGameChange: (game: string) => void;
   onTagToggle: (tag: string) => void;
+  onSearchChange: (search: string) => void;
 }
 
 function cycleTriState(current: CheckedState): CheckedState {
@@ -44,12 +47,14 @@ export function GalleryFilters({
   featuredChecked,
   selectedGame,
   selectedTags,
+  searchText,
   availableGames,
   availableTags,
   onNsfwChange,
   onFeaturedChange,
   onGameChange,
   onTagToggle,
+  onSearchChange,
 }: GalleryFiltersProps) {
   const [tagSearch, setTagSearch] = useState('');
   const [tagPopoverOpen, setTagPopoverOpen] = useState(false);
@@ -68,7 +73,7 @@ export function GalleryFilters({
     selectedTags.some((t) => t.toLowerCase() === tag.toLowerCase());
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" >
       {/* Filter bar */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -82,24 +87,48 @@ export function GalleryFilters({
 
         <div className="h-6 w-px bg-neon-purple/20 hidden sm:block" />
 
+        {/* Search input */}
+        <div className="relative flex-1 min-w-[200px] max-w-[300px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
+          <Input
+            placeholder="Search modlists..."
+            value={searchText}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="pl-9 h-9"
+          />
+          {searchText && (
+            <button
+              onClick={() => onSearchChange('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-surface-light transition-colors"
+            >
+              <X className="h-3 w-3 text-text-muted hover:text-text-primary" />
+            </button>
+          )}
+        </div>
+
+        <div className="h-6 w-px bg-neon-purple/20 hidden sm:block" />
+
         <div className="flex items-center gap-4">
+
           <label className="flex items-center gap-2 cursor-pointer group">
+              <span className="text-sm text-text-secondary">NSFW:</span>
             <Checkbox
               checked={nsfwChecked}
               onCheckedChange={() => onNsfwChange(cycleTriState(nsfwChecked))}
             />
             <span className="text-sm text-text-secondary group-hover:text-text-primary transition-colors min-w-[80px]">
-              {nsfwChecked === true ? 'Only NSFW' : nsfwChecked === 'indeterminate' ? 'Include NSFW' : 'NSFW Hidden'}
+              {nsfwChecked === true ? 'Exclusively' : nsfwChecked === 'indeterminate' ? 'Included' : 'Hidden'}
             </span>
           </label>
 
           <label className="flex items-center gap-2 cursor-pointer group">
+              <span className="text-sm text-text-secondary">Featured Lists:</span>
             <Checkbox
               checked={featuredChecked}
               onCheckedChange={() => onFeaturedChange(cycleTriState(featuredChecked))}
             />
             <span className="text-sm text-text-secondary group-hover:text-text-primary transition-colors min-w-[100px]">
-              {featuredChecked === true ? 'Featured Only' : featuredChecked === 'indeterminate' ? 'Unofficial Only' : 'All Lists'}
+              {featuredChecked === true ? 'Exclusively' : featuredChecked === 'indeterminate' ? 'Included' : 'Hidden'}
             </span>
           </label>
         </div>
@@ -109,14 +138,14 @@ export function GalleryFilters({
         <div className="flex items-center gap-2">
           <span className="text-sm text-text-secondary">Game:</span>
           <Select value={selectedGame} onValueChange={onGameChange}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-[220px]">
               <SelectValue placeholder="All Games" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Games</SelectItem>
-              {availableGames.map((game) => (
-                <SelectItem key={game} value={game}>
-                  {getGameDisplayName(game)}
+              {availableGames.map(({ gameId, count }) => (
+                <SelectItem key={gameId} value={gameId}>
+                  {getGameDisplayName(gameId)} ({count})
                 </SelectItem>
               ))}
             </SelectContent>
