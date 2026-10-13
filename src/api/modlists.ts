@@ -22,6 +22,11 @@ export async function fetchRepositories(): Promise<Repositories> {
   return fetchJson<Repositories>(buildApiUrl('/repositories.json'));
 }
 
+export async function fetchFeaturedLists(): Promise<Set<string>> {
+  const featuredLists = await fetchJson<string[]>(buildApiUrl('/featured_lists.json'));
+  return new Set(featuredLists.map(name => name.toLowerCase()));
+}
+
 export async function fetchModlistsFromRepo(repoUrl: string): Promise<ModlistMetadata[]> {
   const data = await fetchJson<ModlistMetadata | ModlistMetadata[]>(repoUrl);
   // Some repos return a single object, others return an array
@@ -56,9 +61,10 @@ export async function fetchModlistSummaries(): Promise<Map<string, ModlistSummar
 }
 
 export async function fetchAllModlists(): Promise<ModlistMetadata[]> {
-  // Fetch repositories and summaries in parallel
-  const [repositories, summaryMap] = await Promise.all([
+  // Fetch repositories, featured lists, and summaries in parallel
+  const [repositories, featuredLists, summaryMap] = await Promise.all([
     fetchRepositories(),
+    fetchFeaturedLists(),
     fetchModlistSummaries(),
   ]);
 
@@ -73,6 +79,7 @@ export async function fetchAllModlists(): Promise<ModlistMetadata[]> {
 
         return {
           ...m,
+          official: repoName === 'wj-featured' || featuredLists.has(namespacedName.toLowerCase()),
           repositoryName: repoName,
           namespacedName,
           validationSummary: summary,
