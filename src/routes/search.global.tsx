@@ -1,31 +1,34 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { motion } from 'framer-motion';
-import { Search, Database, Eye, EyeOff } from 'lucide-react';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useGlobalArchiveSearch, useFilteredArchives, useMultiArchiveSearch } from '@/hooks/useGlobalArchiveSearch';
 import { useArchiveSearchFilters } from '@/hooks/useArchiveSearchFilters';
 import { SearchLoadingProgress } from '@/components/search/SearchLoadingProgress';
 import { GlobalSearchResults } from '@/components/search/GlobalSearchResults';
 import { MultiArchiveResults } from '@/components/search/MultiArchiveResults';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { SearchInput } from '@/components/search/ArchiveRow';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { ErrorDisplay } from '@/components/common/ErrorDisplay';
-import { pageTransition } from '@/lib/animations';
 
 interface GlobalSearchParams {
   q?: string;
   nsfw?: string;
 }
 
+/**
+ * The router JSON-parses search values, so `?q=2077` arrives as a number and `?nsfw=true` as a
+ * boolean. Coerce back to strings so the page never sees a non-string query.
+ */
+function asSearchString(value: unknown): string | undefined {
+  if (value === undefined || value === null || value === '') return undefined;
+  return typeof value === 'string' ? value : String(value);
+}
+
 export const Route = createFileRoute('/search/global')({
   component: GlobalSearchPage,
-  validateSearch: (search: Record<string, unknown>): GlobalSearchParams => {
-    return {
-      q: search.q as string | undefined,
-      nsfw: search.nsfw as string | undefined,
-    };
-  },
+  validateSearch: (search: Record<string, unknown>): GlobalSearchParams => ({
+    q: asSearchString(search.q),
+    nsfw: asSearchString(search.nsfw),
+  }),
 });
 
 function GlobalSearchPage() {
@@ -59,127 +62,52 @@ function GlobalSearchPage() {
   // Multi-archive search (when using commas)
   const multiSearchResults = useMultiArchiveSearch(allArchives, searchTerms, filters.nsfw);
 
-  // Determine if we're still searching (loading and have a query)
-  const isSearching = useMemo(() => {
-    return !loadingState.isComplete && filters.q.trim().length > 0;
-  }, [loadingState.isComplete, filters.q]);
+  // Still streaming the index while a query is active
+  const isSearching = !loadingState.isComplete && filters.q.trim().length > 0;
 
   return (
-    <motion.div
-      className="flex-grow"
-      variants={pageTransition}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-    >
-      {/* Hero section */}
-      <section className="relative py-16 overflow-hidden">
-        {/* Background effects */}
-        <div className="absolute inset-0 grid-bg opacity-30" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-neon-cyan/10 rounded-full blur-3xl" />
+    <div className="mx-auto flex max-w-[1080px] flex-col gap-5 px-[clamp(16px,4vw,40px)] pt-8 pb-[72px]">
+      <div>
+        <h1 className="m-0 text-[36px] leading-[1.23] font-bold">Archive search</h1>
+        <p className="mt-1.5 max-w-[640px] text-[16px] text-fg-66">
+          Find which modlists include a specific mod, tool or resource.
+        </p>
+      </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center gap-3 mb-4"
-          >
-            <Database className="h-8 w-8 text-neon-cyan" />
-            <h1 className="font-display font-bold text-4xl md:text-5xl gradient-text">
-              Archive Search
-            </h1>
-          </motion.div>
+      <div className="flex flex-wrap gap-2">
+        <SearchInput
+          value={inputValue}
+          onChange={setInputValue}
+          placeholder="Search archives, e.g. SkyUI"
+          className="flex-[1_1_320px]"
+        />
+        <button
+          type="button"
+          onClick={() => setNsfw(!filters.nsfw)}
+          aria-pressed={filters.nsfw}
+          className="h-11 cursor-pointer rounded bg-surface px-3.5 text-[14px] text-fg hover:bg-hover hover:text-primary"
+        >
+          {filters.nsfw ? 'NSFW shown' : 'NSFW hidden'}
+        </button>
+      </div>
+      <div className="-mt-3 text-fg-66">
+        Separate terms with commas to find lists that contain all of them, e.g. “SKSE, SkyUI”.
+      </div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-lg text-text-secondary max-w-2xl mx-auto mb-8"
-          >
-            Search for archives across all modlists. Find which modlists include specific mods, tools, or resources.
-          </motion.p>
+      {isLoadingSummaries && <LoadingSpinner message="Loading modlist index..." />}
 
-          {/* Search input */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="max-w-2xl mx-auto"
-          >
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-text-muted" />
-              <Input
-                type="text"
-                placeholder="Search archives (use commas for multi-search: SKSE, SkyUI)"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                className="pl-12 pr-4 h-14 text-lg"
-              />
-            </div>
+      {error && <ErrorDisplay message="Unable to load modlist data. Please try again later." />}
 
-            {/* Filters */}
-            <div className="flex items-center justify-center gap-4 mt-4">
-              <Button
-                variant={filters.nsfw ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setNsfw(!filters.nsfw)}
-                className="gap-2"
-              >
-                {filters.nsfw ? (
-                  <Eye className="h-4 w-4" />
-                ) : (
-                  <EyeOff className="h-4 w-4" />
-                )}
-                {filters.nsfw ? 'NSFW Shown' : 'NSFW Hidden'}
-              </Button>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Main content */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        {/* Loading state for summaries */}
-        {isLoadingSummaries && (
-          <div className="mt-8">
-            <LoadingSpinner message="Loading modlist index..." />
-          </div>
-        )}
-
-        {/* Error state */}
-        {error && (
-          <div className="mt-8">
-            <ErrorDisplay message="Unable to load modlist data. Please try again later." />
-          </div>
-        )}
-
-        {/* Progress indicator */}
-        {!isLoadingSummaries && !error && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <SearchLoadingProgress loadingState={loadingState} />
-          </motion.div>
-        )}
-
-        {/* Search results */}
-        {!isLoadingSummaries && !error && (
-          isMultiSearch ? (
-            <MultiArchiveResults
-              results={multiSearchResults}
-              searchTerms={searchTerms}
-            />
+      {!isLoadingSummaries && !error && (
+        <>
+          <SearchLoadingProgress loadingState={loadingState} />
+          {isMultiSearch ? (
+            <MultiArchiveResults results={multiSearchResults} searchTerms={searchTerms} isSearching={isSearching} />
           ) : (
-            <GlobalSearchResults
-              results={searchResults}
-              query={filters.q}
-              isSearching={isSearching}
-            />
-          )
-        )}
-      </section>
-    </motion.div>
+            <GlobalSearchResults results={searchResults} query={filters.q} isSearching={isSearching} />
+          )}
+        </>
+      )}
+    </div>
   );
 }

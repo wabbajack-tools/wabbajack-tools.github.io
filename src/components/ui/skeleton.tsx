@@ -7,7 +7,7 @@ function Skeleton({
   return (
     <div
       className={cn(
-        'animate-pulse rounded-md bg-wabbajack-cards-background-hover',
+        'animate-pulse rounded bg-surface',
         className
       )}
       {...props}

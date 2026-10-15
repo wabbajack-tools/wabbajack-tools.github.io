@@ -11,8 +11,8 @@ export function useArchiveSearchFilters() {
   const navigate = useNavigate();
 
   const filters: ArchiveSearchFilters = {
-    q: (search.q as string) || '',
-    nsfw: search.nsfw === 'true',
+    q: search.q == null ? '' : String(search.q),
+    nsfw: String(search.nsfw) === 'true',
   };
 
   const setFilters = useCallback(

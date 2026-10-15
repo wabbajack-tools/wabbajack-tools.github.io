@@ -1,22 +1,31 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { useEffect } from 'react';
-import { motion } from 'framer-motion';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { ArrowLeft, User, Tag, Gamepad2, ExternalLink, Search } from 'lucide-react';
+import { useEffect, type ReactNode } from 'react';
 import { useModlist, useReadme } from '@/hooks/useModlists';
-import { LoadingSpinner } from '@/components/common/LoadingSpinner';
-import { ErrorDisplay } from '@/components/common/ErrorDisplay';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { pageTransition } from '@/lib/animations';
-import { canRenderReadme, isValidDiscordUrl } from '@/lib/utils';
-import { getGameDisplayName } from '@/types/game';
-import { FALLBACK_MODLIST_IMAGE } from '@/lib/constants';
+import { Icon } from '@/components/common/Icon';
+import { ModlistHero } from '@/components/modlist/detail/ModlistHero';
+import { ModlistAside } from '@/components/modlist/detail/ModlistAside';
+import { ModlistReadme } from '@/components/modlist/detail/ModlistReadme';
+import { canRenderReadme } from '@/lib/utils';
 
 export const Route = createFileRoute('/modlist/$repo/$id')({
   component: ModlistInfoPage,
 });
+
+function StatePanel({ children }: { children: ReactNode }) {
+  return <div className="mx-auto max-w-[1280px] px-[clamp(16px,4vw,40px)] pt-7 pb-20">{children}</div>;
+}
+
+function BackToGallery() {
+  return (
+    <Link
+      to="/gallery"
+      className="inline-flex h-8 items-center gap-1 rounded-[4px] bg-surface pr-3 pl-2 text-fg hover:bg-hover hover:text-primary"
+    >
+      <Icon name="chevron_right" flip className="size-4" />
+      Back to gallery
+    </Link>
+  );
+}
 
 function ModlistInfoPage() {
   const { repo, id } = Route.useParams();
@@ -42,233 +51,77 @@ function ModlistInfoPage() {
 
   if (modlistError) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16">
-        <ErrorDisplay message="Unable to load Modlists from GitHub!" />
-      </div>
+      <StatePanel>
+        <div className="flex flex-col items-start gap-5">
+          <BackToGallery />
+          <div className="flex w-full items-start gap-3 rounded-lg bg-error p-5 text-on-error">
+            <Icon name="warning" className="size-[22px]" />
+            <div className="flex flex-col gap-1.5">
+              <strong className="text-[16px]">Unable to load Modlists from GitHub!</strong>
+              <span className="text-[14px] leading-[21px]">The modlist repositories didn't respond. Try again later.</span>
+            </div>
+          </div>
+        </div>
+      </StatePanel>
     );
   }
 
   if (isLoadingModlist) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16">
-        <LoadingSpinner message="Loading Modlist" />
+      <div aria-busy="true">
+        <div className="h-[clamp(260px,38vw,520px)] bg-tile" />
+        <StatePanel>
+          <div className="text-fg-66">Loading modlist…</div>
+        </StatePanel>
       </div>
     );
   }
 
   if (!modlist) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16">
-        <ErrorDisplay message={`Found no matching Modlist "${repo}/${id}"`} />
-      </div>
+      <StatePanel>
+        <div className="flex flex-col items-start gap-5">
+          <BackToGallery />
+          <div className="flex w-full flex-col items-center gap-2 rounded-lg border border-dashed border-surface px-5 py-12 text-center">
+            <Icon name="question_circle" className="size-7 text-fg-66" />
+            <strong className="text-[16px]">Modlist not found</strong>
+            <span className="text-fg-66">Found no matching Modlist "{`${repo}/${id}`}"</span>
+          </div>
+        </div>
+      </StatePanel>
     );
   }
 
   return (
-    <motion.div
-      className="flex-grow"
-      variants={pageTransition}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-    >
-      <title>{modlist.title} | Wabbajack</title>
+    <div>
+      <title>{`${modlist.title} | Wabbajack`}</title>
 
-      {/* Hero image */}
-      <div className="relative h-[40vh] min-h-[300px] overflow-hidden">
-        <img
-          src={modlist.links.image || FALLBACK_MODLIST_IMAGE}
-          alt={`Image of the Modlist ${modlist.title}`}
-          className="w-full h-full object-cover"
-          loading="eager"
-          crossOrigin="anonymous"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = FALLBACK_MODLIST_IMAGE;
-          }}
-        />
-        {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-void via-void/50 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-void/30 via-transparent to-void/30" />
+      <ModlistHero modlist={modlist} />
 
-        {/* Back button */}
-        <div className="absolute top-6 left-6">
-          <Button
-            variant="secondary"
-            size="sm"
-            asChild
-            className="backdrop-blur-sm"
-          >
-            <Link to="/gallery">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Gallery
-            </Link>
-          </Button>
-        </div>
-      </div>
+      <div className="mx-auto flex max-w-[1280px] flex-col-reverse gap-10 min-[1000px]:flex-row min-[1000px]:items-start px-[clamp(16px,4vw,40px)] pt-6 pb-20">
+        <div className="flex min-w-0 flex-1 flex-col gap-7">
+          {modlist.description && (
+            <p className="m-0 max-w-[760px] text-[18px] leading-[1.5] text-pretty text-fg-88">{modlist.description}</p>
+          )}
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 relative z-10 pb-16">
-        {/* Header card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl bg-surface/80 backdrop-blur-xl border border-neon-purple/20 p-6 md:p-8 shadow-[0_0_60px_rgba(168,85,247,0.15)]"
-        >
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-            <div>
-              <h1 className="font-display font-bold text-3xl md:text-4xl text-text-primary">
-                {modlist.title}
-              </h1>
-
-              <div className="flex flex-wrap items-center gap-4 mt-3 text-text-secondary">
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-neon-purple" />
-                  <span>{modlist.author}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Tag className="h-4 w-4 text-neon-purple" />
-                  <span>v{modlist.version}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Gamepad2 className="h-4 w-4 text-neon-purple" />
-                  <span>{getGameDisplayName(modlist.game)}</span>
-                </div>
+          {canRender && (
+            <>
+              <div className="flex items-center gap-3">
+                <span className="text-[12px] tracking-[.08em] text-fg-66 uppercase">Readme</span>
+                <span className="h-px flex-1 bg-surface" />
               </div>
-
-              {modlist.description && (
-                <p className="mt-4 text-text-secondary">
-                  {modlist.description}
-                </p>
-              )}
-
-              {/* Tags */}
-              {modlist.tags && modlist.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {[...new Set(modlist.tags)].map((tag) => (
-                    <Badge key={tag} variant="outline">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Action buttons */}
-            <div className="flex flex-col gap-2 min-w-[160px]">
-              <Button variant="default" size="sm" asChild>
-                <Link
-                  to="/search/$repo/$id"
-                  params={{ repo: modlist.repositoryName, id: modlist.links.machineURL }}
-                >
-                  <Search className="h-4 w-4 mr-2" />
-                  Archive Search
-                </Link>
-              </Button>
-
-              {isValidDiscordUrl(modlist.links.discordURL) && (
-                <Button variant="secondary" size="sm" asChild>
-                  <a
-                    href={modlist.links.discordURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    Discord
-                  </a>
-                </Button>
-              )}
-
-              {modlist.links.websiteURL && (
-                <Button variant="outline" size="sm" asChild>
-                  <a
-                    href={modlist.links.websiteURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    Website
-                  </a>
-                </Button>
-              )}
-            </div>
-          </div>
-        </motion.div>
-
-        {/* README content */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mt-8 rounded-2xl bg-surface/60 backdrop-blur-sm border border-neon-purple/10 p-6 md:p-8"
-        >
-          {isLoadingReadme && <LoadingSpinner message="Loading README..." />}
-
-          {readmeError && (
-            <ErrorDisplay message="Unable to load README" />
+              <ModlistReadme
+                readme={readme}
+                isLoading={isLoadingReadme}
+                failed={!!readmeError}
+                readmeUrl={readmeUrl}
+              />
+            </>
           )}
+        </div>
 
-          {readme && (
-            <div className="prose prose-invert prose-purple max-w-none">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  a: ({ ...props }) => (
-                    <a
-                      {...props}
-                      className="text-neon-purple hover:text-neon-pink transition-colors"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    />
-                  ),
-                  h1: ({ ...props }) => (
-                    <h1 {...props} className="text-text-primary font-display border-b border-neon-purple/20 pb-2" />
-                  ),
-                  h2: ({ ...props }) => (
-                    <h2 {...props} className="text-text-primary font-display border-b border-neon-purple/10 pb-2" />
-                  ),
-                  h3: ({ ...props }) => (
-                    <h3 {...props} className="text-text-primary font-display" />
-                  ),
-                  p: ({ ...props }) => (
-                    <p {...props} className="text-text-secondary" />
-                  ),
-                  li: ({ ...props }) => (
-                    <li {...props} className="text-text-secondary" />
-                  ),
-                  code: ({ className, ...props }) => (
-                    <code
-                      {...props}
-                      className={`${className || ''} bg-void/50 px-1.5 py-0.5 rounded text-neon-cyan`}
-                    />
-                  ),
-                  pre: ({ ...props }) => (
-                    <pre {...props} className="bg-void/50 border border-neon-purple/20 rounded-lg overflow-x-auto" />
-                  ),
-                  blockquote: ({ ...props }) => (
-                    <blockquote {...props} className="border-l-4 border-neon-purple/50 pl-4 italic text-text-muted" />
-                  ),
-                  img: ({ ...props }) => (
-                    <img {...props} className="rounded-lg max-w-full" />
-                  ),
-                  table: ({ ...props }) => (
-                    <div className="overflow-x-auto">
-                      <table {...props} className="w-full" />
-                    </div>
-                  ),
-                  th: ({ ...props }) => (
-                    <th {...props} className="text-left p-2 border-b border-neon-purple/20 text-text-primary" />
-                  ),
-                  td: ({ ...props }) => (
-                    <td {...props} className="p-2 border-b border-neon-purple/10 text-text-secondary" />
-                  ),
-                }}
-              >
-                {readme}
-              </ReactMarkdown>
-            </div>
-          )}
-        </motion.div>
+        <ModlistAside modlist={modlist} className="min-[1000px]:sticky min-[1000px]:top-[88px] min-[1000px]:w-[300px] min-[1000px]:flex-none" />
       </div>
-    </motion.div>
+    </div>
   );
 }

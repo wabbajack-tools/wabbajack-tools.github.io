@@ -1,4 +1,5 @@
-export type ListStatus = 'Valid' | 'Failed' | 'ForcedDown';
+// A passing list's report says 'Available'; older reports said 'Valid'.
+export type ListStatus = 'Available' | 'Valid' | 'Failed' | 'ForcedDown';
 
 export interface ArchiveState {
   $type: string;

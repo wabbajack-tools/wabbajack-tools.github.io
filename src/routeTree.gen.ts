@@ -9,20 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as StatusRouteImport } from './routes/status'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as DiscordRouteImport } from './routes/discord'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StatusIndexRouteImport } from './routes/status.index'
 import { Route as SearchGlobalRouteImport } from './routes/search.global'
 import { Route as StatusRepoIdRouteImport } from './routes/status.$repo.$id'
 import { Route as SearchRepoIdRouteImport } from './routes/search.$repo.$id'
 import { Route as ModlistRepoIdRouteImport } from './routes/modlist.$repo.$id'
 
-const StatusRoute = StatusRouteImport.update({
-  id: '/status',
-  path: '/status',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const GalleryRoute = GalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
@@ -38,15 +33,20 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StatusIndexRoute = StatusIndexRouteImport.update({
+  id: '/status/',
+  path: '/status/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchGlobalRoute = SearchGlobalRouteImport.update({
   id: '/search/global',
   path: '/search/global',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StatusRepoIdRoute = StatusRepoIdRouteImport.update({
-  id: '/$repo/$id',
-  path: '/$repo/$id',
-  getParentRoute: () => StatusRoute,
+  id: '/status/$repo/$id',
+  path: '/status/$repo/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const SearchRepoIdRoute = SearchRepoIdRouteImport.update({
   id: '/search/$repo/$id',
@@ -63,8 +63,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/discord': typeof DiscordRoute
   '/gallery': typeof GalleryRoute
-  '/status': typeof StatusRouteWithChildren
   '/search/global': typeof SearchGlobalRoute
+  '/status/': typeof StatusIndexRoute
   '/modlist/$repo/$id': typeof ModlistRepoIdRoute
   '/search/$repo/$id': typeof SearchRepoIdRoute
   '/status/$repo/$id': typeof StatusRepoIdRoute
@@ -73,8 +73,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/discord': typeof DiscordRoute
   '/gallery': typeof GalleryRoute
-  '/status': typeof StatusRouteWithChildren
   '/search/global': typeof SearchGlobalRoute
+  '/status': typeof StatusIndexRoute
   '/modlist/$repo/$id': typeof ModlistRepoIdRoute
   '/search/$repo/$id': typeof SearchRepoIdRoute
   '/status/$repo/$id': typeof StatusRepoIdRoute
@@ -84,8 +84,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/discord': typeof DiscordRoute
   '/gallery': typeof GalleryRoute
-  '/status': typeof StatusRouteWithChildren
   '/search/global': typeof SearchGlobalRoute
+  '/status/': typeof StatusIndexRoute
   '/modlist/$repo/$id': typeof ModlistRepoIdRoute
   '/search/$repo/$id': typeof SearchRepoIdRoute
   '/status/$repo/$id': typeof StatusRepoIdRoute
@@ -96,8 +96,8 @@ export interface FileRouteTypes {
     | '/'
     | '/discord'
     | '/gallery'
-    | '/status'
     | '/search/global'
+    | '/status/'
     | '/modlist/$repo/$id'
     | '/search/$repo/$id'
     | '/status/$repo/$id'
@@ -106,8 +106,8 @@ export interface FileRouteTypes {
     | '/'
     | '/discord'
     | '/gallery'
-    | '/status'
     | '/search/global'
+    | '/status'
     | '/modlist/$repo/$id'
     | '/search/$repo/$id'
     | '/status/$repo/$id'
@@ -116,8 +116,8 @@ export interface FileRouteTypes {
     | '/'
     | '/discord'
     | '/gallery'
-    | '/status'
     | '/search/global'
+    | '/status/'
     | '/modlist/$repo/$id'
     | '/search/$repo/$id'
     | '/status/$repo/$id'
@@ -127,21 +127,15 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DiscordRoute: typeof DiscordRoute
   GalleryRoute: typeof GalleryRoute
-  StatusRoute: typeof StatusRouteWithChildren
   SearchGlobalRoute: typeof SearchGlobalRoute
+  StatusIndexRoute: typeof StatusIndexRoute
   ModlistRepoIdRoute: typeof ModlistRepoIdRoute
   SearchRepoIdRoute: typeof SearchRepoIdRoute
+  StatusRepoIdRoute: typeof StatusRepoIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/status': {
-      id: '/status'
-      path: '/status'
-      fullPath: '/status'
-      preLoaderRoute: typeof StatusRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/gallery': {
       id: '/gallery'
       path: '/gallery'
@@ -163,6 +157,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/status/': {
+      id: '/status/'
+      path: '/status'
+      fullPath: '/status/'
+      preLoaderRoute: typeof StatusIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/search/global': {
       id: '/search/global'
       path: '/search/global'
@@ -172,10 +173,10 @@ declare module '@tanstack/react-router' {
     }
     '/status/$repo/$id': {
       id: '/status/$repo/$id'
-      path: '/$repo/$id'
+      path: '/status/$repo/$id'
       fullPath: '/status/$repo/$id'
       preLoaderRoute: typeof StatusRepoIdRouteImport
-      parentRoute: typeof StatusRoute
+      parentRoute: typeof rootRouteImport
     }
     '/search/$repo/$id': {
       id: '/search/$repo/$id'
@@ -194,25 +195,15 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface StatusRouteChildren {
-  StatusRepoIdRoute: typeof StatusRepoIdRoute
-}
-
-const StatusRouteChildren: StatusRouteChildren = {
-  StatusRepoIdRoute: StatusRepoIdRoute,
-}
-
-const StatusRouteWithChildren =
-  StatusRoute._addFileChildren(StatusRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DiscordRoute: DiscordRoute,
   GalleryRoute: GalleryRoute,
-  StatusRoute: StatusRouteWithChildren,
   SearchGlobalRoute: SearchGlobalRoute,
+  StatusIndexRoute: StatusIndexRoute,
   ModlistRepoIdRoute: ModlistRepoIdRoute,
   SearchRepoIdRoute: SearchRepoIdRoute,
+  StatusRepoIdRoute: StatusRepoIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

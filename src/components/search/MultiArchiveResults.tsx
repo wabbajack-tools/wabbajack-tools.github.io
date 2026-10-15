@@ -1,56 +1,30 @@
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { motion } from 'framer-motion';
-import { ChevronDown, ChevronRight, FileArchive, Layers } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { isNexusArchive } from '@/types/search';
+import { Icon } from '@/components/common/Icon';
+import { cn } from '@/lib/utils';
+import { SearchMessageBox } from './ArchiveRow';
+import { formatSize } from './format';
 import type { ModlistWithMatchedArchives } from '@/hooks/useGlobalArchiveSearch';
 import type { Archive } from '@/types';
 
 interface MultiArchiveResultsProps {
   results: ModlistWithMatchedArchives[];
   searchTerms: string[];
+  isSearching: boolean;
 }
 
-function formatSize(bytes: number): string {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
-}
+const MAX_PREVIEW = 5;
 
 function ArchivePreview({ archive }: { archive: Archive }) {
-  const state = archive.State;
-  const isNexus = isNexusArchive(state);
-  const imageUrl = isNexus ? state.ImageURL : undefined;
-  const [imageError, setImageError] = useState(false);
-  const hasImage = imageUrl && !imageError;
-
+  const modName = archive.State?.Name && archive.State.Name !== archive.Name ? archive.State.Name : undefined;
   return (
-    <div className="flex items-center gap-3 py-2 px-3 rounded-lg bg-void/30 border border-neon-purple/10">
-      {hasImage ? (
-        <div className="flex-shrink-0 w-12 aspect-video rounded overflow-hidden border border-neon-purple/20 bg-void/50">
-          <img
-            src={imageUrl}
-            alt=""
-            className="w-full h-full object-cover"
-            loading="lazy"
-            onError={() => setImageError(true)}
-          />
-        </div>
-      ) : (
-        <div className="flex-shrink-0 w-8 h-8 rounded bg-neon-purple/10 border border-neon-purple/20 flex items-center justify-center">
-          <FileArchive className="h-4 w-4 text-neon-purple" />
-        </div>
-      )}
-      <div className="flex-grow min-w-0">
-        <p className="text-sm text-text-primary truncate">{archive.Name}</p>
-        {state?.Name && state.Name !== archive.Name && (
-          <p className="text-xs text-text-muted truncate">{state.Name}</p>
-        )}
+    <div className="flex items-center gap-2.5 rounded bg-ground px-2.5 py-2">
+      <Icon name="document_one_page_multiple" className="size-4 text-surface-50" />
+      <div className="min-w-0 flex-1">
+        <div className="[overflow-wrap:anywhere]">{archive.Name}</div>
+        {modName && <div className="text-[12px] text-fg-66 [overflow-wrap:anywhere]">{modName}</div>}
       </div>
-      <span className="text-xs text-text-muted">{formatSize(archive.Size)}</span>
+      <span className="text-[12px] whitespace-nowrap text-fg-66">{formatSize(archive.Size)}</span>
     </div>
   );
 }
@@ -60,162 +34,103 @@ function ModlistResultCard({ result, searchTerms }: { result: ModlistWithMatched
   const [imageError, setImageError] = useState(false);
   const { modlist, matchedArchives } = result;
 
-  const totalMatches = Array.from(matchedArchives.values()).reduce(
-    (sum, arr) => sum + arr.length,
-    0
-  );
-
-  const hasImage = modlist.smallImage && !imageError;
+  const totalMatches = Array.from(matchedArchives.values()).reduce((sum, arr) => sum + arr.length, 0);
+  const hasImage = !!modlist.smallImage && !imageError;
 
   return (
-    <div className="rounded-xl bg-surface/60 backdrop-blur-sm border border-neon-purple/10 overflow-hidden transition-all duration-300 hover:border-neon-purple/30">
-      {/* Header */}
+    <div className="overflow-hidden rounded-lg bg-ground-raised">
       <button
+        type="button"
         onClick={() => setExpanded(!expanded)}
-        className="w-full p-4 flex items-center gap-4 text-left hover:bg-surface-light/50 transition-colors"
+        aria-expanded={expanded}
+        className="flex w-full cursor-pointer items-center gap-3 py-2.5 pr-3.5 pl-2.5 text-left hover:bg-surface"
       >
-        <div className="flex-shrink-0 text-neon-purple">
-          {expanded ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
-        </div>
-
-        {/* Modlist thumbnail */}
-        {hasImage ? (
-          <div className="flex-shrink-0 w-16 aspect-video rounded-lg overflow-hidden border border-neon-purple/20 bg-void/50">
+        <Icon
+          name="chevron_right"
+          className={cn('size-4 text-primary transition-transform duration-[80ms]', expanded && 'rotate-90')}
+        />
+        <div className={cn('aspect-video w-16 flex-none overflow-hidden rounded bg-tile', !hasImage && 'no-image')}>
+          {hasImage && (
             <img
               src={modlist.smallImage}
               alt=""
-              className="w-full h-full object-cover"
+              className="size-full object-cover"
               loading="lazy"
               onError={() => setImageError(true)}
             />
-          </div>
-        ) : (
-          <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-neon-purple/10 border border-neon-purple/20 flex items-center justify-center">
-            <Layers className="h-5 w-5 text-neon-purple" />
-          </div>
-        )}
-
-        <div className="flex-grow min-w-0">
-          <h3 className="font-semibold text-text-primary truncate">
-            {modlist.name}
-          </h3>
-          <div className="flex flex-wrap items-center gap-2 mt-1">
-            {searchTerms.map((term) => {
-              const count = matchedArchives.get(term)?.length || 0;
-              return (
-                <Badge key={term} variant="secondary" className="text-xs">
-                  {term}: {count}
-                </Badge>
-              );
-            })}
+          )}
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <div className="text-[15px] font-semibold">{modlist.name}</div>
+          <div className="flex flex-wrap gap-1">
+            {searchTerms.map((term) => (
+              <span key={term} className="h-5 rounded bg-surface-16 px-1.5 text-[12px] leading-5">
+                {term}: {matchedArchives.get(term)?.length || 0}
+              </span>
+            ))}
           </div>
         </div>
-
-        <div className="flex-shrink-0 flex items-center gap-2 text-sm text-text-muted">
-          <Layers className="h-4 w-4" />
-          <span>{totalMatches} matches</span>
+        <div className="whitespace-nowrap text-fg-66">
+          {totalMatches} {totalMatches === 1 ? 'match' : 'matches'}
         </div>
       </button>
 
-      {/* Expanded content */}
       {expanded && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          className="border-t border-neon-purple/10"
-        >
-          <div className="p-4 space-y-4">
-            {searchTerms.map((term) => {
-              const archives = matchedArchives.get(term) || [];
-              return (
-                <div key={term}>
-                  <h4 className="text-sm font-medium text-neon-cyan mb-2">
-                    &quot;{term}&quot; ({archives.length} match{archives.length !== 1 ? 'es' : ''})
-                  </h4>
-                  <div className="space-y-1.5">
-                    {archives.slice(0, 5).map((archive) => (
-                      <ArchivePreview key={archive.Hash} archive={archive} />
-                    ))}
-                    {archives.length > 5 && (
-                      <p className="text-xs text-text-muted pl-3">
-                        +{archives.length - 5} more archives
-                      </p>
-                    )}
-                  </div>
+        <div className="flex flex-col gap-3 px-3.5 pt-1 pb-3.5">
+          {searchTerms.map((term) => {
+            const archives = matchedArchives.get(term) || [];
+            return (
+              <div key={term} className="flex flex-col gap-1">
+                <div className="mb-0.5 font-bold text-primary">
+                  “{term}” · {archives.length} {archives.length === 1 ? 'match' : 'matches'}
                 </div>
-              );
-            })}
-
-            <Link
-              to="/modlist/$repo/$id"
-              params={{ repo: modlist.repo, id: modlist.machineURL }}
-              className="inline-flex items-center gap-2 text-sm text-neon-purple hover:text-neon-cyan transition-colors"
-            >
-              View modlist details &rarr;
+                {archives.slice(0, MAX_PREVIEW).map((archive) => (
+                  <ArchivePreview key={archive.Hash} archive={archive} />
+                ))}
+                {archives.length > MAX_PREVIEW && (
+                  <div className="pl-0.5 text-[12px] text-fg-66">+{archives.length - MAX_PREVIEW} more archives</div>
+                )}
+              </div>
+            );
+          })}
+          <div>
+            <Link to="/modlist/$repo/$id" params={{ repo: modlist.repo, id: modlist.machineURL }} className="link">
+              View modlist details
             </Link>
           </div>
-        </motion.div>
+        </div>
       )}
     </div>
   );
 }
 
-export function MultiArchiveResults({ results, searchTerms }: MultiArchiveResultsProps) {
-  if (results.length === 0) {
+export function MultiArchiveResults({ results, searchTerms, isSearching }: MultiArchiveResultsProps) {
+  const termsLabel = searchTerms.map((t) => `“${t}”`).join(' + ');
+
+  if (results.length === 0 && !isSearching) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="text-center py-16"
-      >
-        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-surface/60 border border-neon-purple/20 mb-4">
-          <Layers className="h-10 w-10 text-text-muted" />
-        </div>
-        <h3 className="text-xl font-semibold text-text-primary mb-2">
-          No modlists found
-        </h3>
-        <p className="text-text-secondary max-w-md mx-auto">
-          No modlists contain archives matching all of: {searchTerms.map((t) => `"${t}"`).join(', ')}
-        </p>
-      </motion.div>
+      <SearchMessageBox
+        title="No modlists match"
+        message={<>No modlist contains archives matching all of: {termsLabel}</>}
+      />
     );
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-text-secondary">
-          Found{' '}
-          <span className="font-semibold text-text-primary">{results.length}</span>{' '}
-          modlist{results.length !== 1 ? 's' : ''} containing all: {searchTerms.map((t) => `"${t}"`).join(' + ')}
-        </p>
+    <>
+      <div className="text-fg-66">
+        Found <span className="font-bold text-primary">{results.length.toLocaleString()}</span>{' '}
+        {results.length === 1 ? 'modlist' : 'modlists'} containing all of: {termsLabel}
       </div>
-
-      <motion.div
-        className="space-y-3"
-        initial="hidden"
-        animate="visible"
-        variants={{
-          visible: {
-            transition: {
-              staggerChildren: 0.02,
-            },
-          },
-        }}
-      >
+      <div className="flex flex-col gap-1.5">
         {results.map((result) => (
-          <motion.div
+          <ModlistResultCard
             key={`${result.modlist.repo}/${result.modlist.machineURL}`}
-            variants={{
-              hidden: { opacity: 0, y: 10 },
-              visible: { opacity: 1, y: 0 },
-            }}
-          >
-            <ModlistResultCard result={result} searchTerms={searchTerms} />
-          </motion.div>
+            result={result}
+            searchTerms={searchTerms}
+          />
         ))}
-      </motion.div>
-    </div>
+      </div>
+    </>
   );
 }

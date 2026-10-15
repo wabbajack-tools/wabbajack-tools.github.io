@@ -1,51 +1,40 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { motion } from 'framer-motion';
-import { Grid3X3, Sparkles } from 'lucide-react';
 import { useModlists } from '@/hooks/useModlists';
 import {
   useGalleryFilters,
   useFilteredModlists,
   useAvailableTags,
   useAvailableGames,
+  parseGallerySearch,
 } from '@/hooks/useGalleryFilters';
-import { ModlistGrid } from '@/components/modlist/ModlistGrid';
-import { GalleryFilters } from '@/components/modlist/GalleryFilters';
-import { LoadingSpinner } from '@/components/common/LoadingSpinner';
-import { ErrorDisplay } from '@/components/common/ErrorDisplay';
-import { pageTransition } from '@/lib/animations';
-
-interface GallerySearch {
-  nsfw?: string;
-  featured?: string;
-  game?: string;
-  tags?: string | string[];
-  search?: string;
-}
+import { ModlistGrid, ModlistGridSkeleton } from '@/components/modlist/ModlistGrid';
+import {
+  GalleryFiltersAside,
+  GalleryFiltersInline,
+  type GalleryFiltersProps,
+} from '@/components/modlist/GalleryFilters';
+import { Icon } from '@/components/common/Icon';
 
 export const Route = createFileRoute('/gallery')({
   component: GalleryPage,
-  validateSearch: (search: Record<string, unknown>): GallerySearch => {
-    return {
-      nsfw: search.nsfw as string | undefined,
-      featured: search.featured as string | undefined,
-      game: search.game as string | undefined,
-      tags: search.tags as string | string[] | undefined,
-      search: search.search as string | undefined,
-    };
-  },
+  validateSearch: parseGallerySearch,
 });
 
+const buttonClass =
+  'h-8 px-3 rounded-[4px] bg-surface text-fg cursor-pointer transition-colors duration-[80ms] hover:bg-hover hover:text-primary';
+
 function GalleryPage() {
-  const { data: modlists, isLoading, error } = useModlists();
+  const { data: modlists, isLoading, error, refetch, isRefetching } = useModlists();
   const {
     filters,
-    nsfwChecked,
-    featuredChecked,
+    activeCount,
     setNsfw,
     setFeatured,
     setGame,
     toggleTag,
+    clearTags,
     setSearch,
+    resetFilters,
   } = useGalleryFilters();
 
   const filteredModlists = useFilteredModlists(modlists, filters);
@@ -54,110 +43,92 @@ function GalleryPage() {
   const availableTags = useAvailableTags(filteredModlists);
   const availableGames = useAvailableGames(modlistsWithoutGameFilter);
 
+  const filterProps: GalleryFiltersProps = {
+    filters,
+    activeCount,
+    baseCount: modlistsWithoutGameFilter.length,
+    availableGames,
+    availableTags,
+    onNsfwChange: setNsfw,
+    onFeaturedChange: setFeatured,
+    onGameChange: setGame,
+    onTagToggle: toggleTag,
+    onClearTags: clearTags,
+    onSearchChange: setSearch,
+    onReset: resetFilters,
+  };
+
+  const showEmpty = !isLoading && !error && filteredModlists.length === 0;
+  const showGrid = !isLoading && !error && filteredModlists.length > 0;
+
   return (
-    <motion.div
-      className="flex-grow"
-      variants={pageTransition}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-    >
-      {/* Hero section */}
-      <section className="relative py-16 overflow-hidden">
-        {/* Background effects */}
-        <div className="absolute inset-0 grid-bg opacity-30" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-neon-purple/10 rounded-full blur-3xl" />
+    <div className="mx-auto flex max-w-[1440px] items-start gap-8 px-[clamp(16px,3vw,32px)] pt-8 pb-16">
+      <GalleryFiltersAside {...filterProps} />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center gap-3 mb-4"
-          >
-            <Grid3X3 className="h-8 w-8 text-neon-purple" />
-            <h1 className="font-display font-bold text-4xl md:text-5xl gradient-text">
-              Modlist Gallery
-            </h1>
-          </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-lg text-text-secondary max-w-2xl mx-auto"
-          >
-            Browse our collection of curated modlists for your favorite games
-          </motion.p>
-
-          {!isLoading && !error && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface/60 backdrop-blur-sm border border-neon-purple/20"
-            >
-              <Sparkles className="h-4 w-4 text-neon-purple" />
-              <span className="text-sm text-text-secondary">
-                <span className="font-semibold text-text-primary">{filteredModlists.length}</span> modlists available
-              </span>
-            </motion.div>
-          )}
+      <div className="flex min-w-0 flex-1 flex-col gap-5">
+        <div className="flex flex-col gap-1.5">
+          <h1 className="m-0 text-[36px] leading-[1.23] font-bold">Modlist gallery</h1>
+          <p className="m-0 text-[16px] text-fg-66">
+            <span className="font-semibold text-primary">
+              {isLoading ? '…' : error ? 0 : filteredModlists.length.toLocaleString('en-US')}
+            </span>{' '}
+            modlists available
+          </p>
         </div>
-      </section>
 
-      {/* Main content */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <GalleryFilters
-          nsfwChecked={nsfwChecked}
-          featuredChecked={featuredChecked}
-          selectedGame={filters.game}
-          selectedTags={filters.tags}
-          searchText={filters.search}
-          availableGames={availableGames}
-          availableTags={availableTags}
-          onNsfwChange={setNsfw}
-          onFeaturedChange={setFeatured}
-          onGameChange={setGame}
-          onTagToggle={toggleTag}
-          onSearchChange={setSearch}
-        />
+        <GalleryFiltersInline {...filterProps} />
 
-        {error && (
-          <div className="mt-8">
-            <ErrorDisplay message="Unable to load Modlists from GitHub!" />
+        {filters.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {filters.tags.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => toggleTag(tag)}
+                aria-label={`Remove tag ${tag}`}
+                className="inline-flex h-7 cursor-pointer items-center gap-1.5 rounded-[4px] bg-hover pr-2 pl-2.5 text-primary transition-colors duration-[80ms] hover:bg-surface-32"
+              >
+                {tag}
+                <Icon name="dismiss" className="size-3" />
+              </button>
+            ))}
           </div>
         )}
 
-        {isLoading && (
-          <div className="mt-8">
-            <LoadingSpinner message="Loading Modlists..." />
-          </div>
-        )}
+        {isLoading && <ModlistGridSkeleton />}
 
-        {!isLoading && !error && filteredModlists.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mt-16 text-center"
-          >
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-surface/60 border border-neon-purple/20 mb-4">
-              <Grid3X3 className="h-10 w-10 text-text-muted" />
-            </div>
-            <h3 className="text-xl font-semibold text-text-primary mb-2">
-              No modlists found
-            </h3>
-            <p className="text-text-secondary">
-              Try adjusting your filters to see more results
+        {error && !isLoading && (
+          <div className="flex flex-col items-start gap-3 rounded-lg bg-error px-6 py-12 text-on-error">
+            <Icon name="warning" className="size-7" />
+            <div className="text-[24px] leading-[1.23] font-semibold">The gallery couldn't load</div>
+            <p className="m-0 max-w-[560px] text-[14px] leading-[21px]">
+              Unable to load Modlists from GitHub! Check your connection, then try again. If it keeps
+              happening, GitHub may be down.
             </p>
-          </motion.div>
-        )}
-
-        {!isLoading && !error && filteredModlists.length > 0 && (
-          <div className="mt-8">
-            <ModlistGrid modlists={filteredModlists} />
+            <button
+              type="button"
+              onClick={() => refetch()}
+              disabled={isRefetching}
+              className="h-8 cursor-pointer rounded-[4px] bg-on-error px-3 text-error disabled:cursor-default disabled:opacity-70"
+            >
+              {isRefetching ? 'Retrying…' : 'Try again'}
+            </button>
           </div>
         )}
-      </section>
-    </motion.div>
+
+        {showEmpty && (
+          <div className="flex flex-col items-center gap-3 rounded-2xl border-[3px] border-surface px-6 py-16 text-center">
+            <Icon name="search" className="size-9 text-primary" />
+            <div className="text-[24px] leading-[1.23] font-semibold">No modlists found</div>
+            <p className="m-0 text-[14px] text-fg-66">Try adjusting your filters.</p>
+            <button type="button" onClick={resetFilters} className={buttonClass}>
+              Reset filters
+            </button>
+          </div>
+        )}
+
+        {showGrid && <ModlistGrid modlists={filteredModlists} />}
+      </div>
+    </div>
   );
 }

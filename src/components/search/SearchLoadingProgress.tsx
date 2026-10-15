@@ -1,68 +1,43 @@
-import { motion } from 'framer-motion';
-import { Database, Loader2 } from 'lucide-react';
+import { Icon } from '@/components/common/Icon';
 import type { SearchLoadingState } from '@/types/search';
 
 interface SearchLoadingProgressProps {
   loadingState: SearchLoadingState;
 }
 
-function formatNumber(num: number): string {
-  return num.toLocaleString();
-}
-
+/** The streaming-index panel: a primary fill that grows with the share of modlists loaded. */
 export function SearchLoadingProgress({ loadingState }: SearchLoadingProgressProps) {
   const { totalModlists, loadedModlists, loadedArchives, isComplete } = loadingState;
-
   const progress = totalModlists > 0 ? (loadedModlists / totalModlists) * 100 : 0;
+  const width = `${isComplete ? 100 : progress}%`;
 
   return (
-    <div className="rounded-xl bg-surface/60 backdrop-blur-sm border border-neon-purple/20 p-4">
-      <div className="flex items-center gap-3 mb-3">
-        {isComplete ? (
-          <Database className="h-5 w-5 text-neon-cyan" />
-        ) : (
-          <Loader2 className="h-5 w-5 text-neon-purple animate-spin" />
-        )}
-        <span className="text-sm text-text-secondary">
-          {isComplete ? (
-            <>
-              Loaded{' '}
-              <span className="font-semibold text-neon-cyan">
-                {formatNumber(loadedArchives)}
-              </span>{' '}
-              archives from{' '}
-              <span className="font-semibold text-text-primary">{loadedModlists}</span>{' '}
-              modlists
-            </>
-          ) : (
-            <>
-              Loading{' '}
-              <span className="font-semibold text-neon-purple">
-                {formatNumber(loadedArchives)}
-              </span>{' '}
-              archives from{' '}
-              <span className="font-semibold text-text-primary">{loadedModlists}</span>
-              <span className="text-text-muted">/{totalModlists}</span> modlists...
-            </>
-          )}
-        </span>
-      </div>
-
-      <div className="relative h-2 bg-void/50 rounded-full overflow-hidden">
-        <motion.div
-          className="absolute inset-y-0 left-0 bg-gradient-to-r from-neon-purple to-neon-cyan rounded-full"
-          initial={{ width: 0 }}
-          animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
-        />
-        {!isComplete && (
-          <motion.div
-            className="absolute inset-y-0 w-20 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-            animate={{ x: ['-100%', '500%'] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-          />
-        )}
-      </div>
+    <div
+      role="progressbar"
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={Math.round(isComplete ? 100 : progress)}
+      aria-label="Archive index loading progress"
+      className="relative flex items-center gap-2.5 overflow-hidden rounded-lg bg-surface px-3.5 py-3"
+    >
+      <div
+        className="absolute inset-y-0 left-0 bg-primary/16 transition-[width] duration-300"
+        style={{ width }}
+      />
+      <div
+        className="absolute bottom-0 left-0 h-0.5 bg-primary/80 transition-[width] duration-300"
+        style={{ width }}
+      />
+      {isComplete && <Icon name="checkmark_circle" filled className="relative size-4 text-success" />}
+      <span className="relative">
+        {isComplete ? 'Loaded ' : 'Loading '}
+        <span className="font-bold text-primary">{loadedArchives.toLocaleString()}</span> archives
+        from{' '}
+        <span className="font-bold text-primary">
+          {isComplete ? totalModlists.toLocaleString() : `${loadedModlists}/${totalModlists}`}
+        </span>{' '}
+        modlists{!isComplete && '…'}
+      </span>
     </div>
   );
 }

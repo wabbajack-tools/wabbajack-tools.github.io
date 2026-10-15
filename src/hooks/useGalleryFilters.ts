@@ -1,9 +1,13 @@
 import { useMemo, useCallback } from 'react';
 import { useSearch, useNavigate } from '@tanstack/react-router';
 import type { ModlistMetadata } from '@/types';
-import type { CheckedState } from '@/components/ui/checkbox';
 import { getGameDisplayName } from '@/types/game';
 
+/**
+ * URL value of the NSFW and Featured filters.
+ * nsfw:     'false' = hidden (default), 'true' = exclusively, 'indeterminate' = included.
+ * featured: 'indeterminate' = included (default), 'true' = exclusively, 'false' = hidden.
+ */
 export type TriState = 'true' | 'false' | 'indeterminate';
 
 interface GalleryFilters {
@@ -14,29 +18,68 @@ interface GalleryFilters {
   search: string;
 }
 
-function triStateToChecked(state: TriState): CheckedState {
-  if (state === 'true') return true;
-  if (state === 'false') return false;
-  return 'indeterminate';
+export const DEFAULT_NSFW: TriState = 'false';
+export const DEFAULT_FEATURED: TriState = 'indeterminate';
+
+/**
+ * TanStack Router JSON-parses each query value, so a hand-written or shared URL such as
+ * `?nsfw=true&search=2077` arrives as a boolean / number rather than the strings the app writes
+ * (the router quotes those as `%22true%22`). Normalise everything back to strings.
+ */
+function asString(value: unknown): string | undefined {
+  if (value === undefined || value === null || value === '') return undefined;
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  return undefined;
 }
 
-function checkedToTriState(checked: CheckedState): TriState {
-  if (checked === true) return 'true';
-  if (checked === false) return 'false';
-  return 'indeterminate';
+function asTriState(value: unknown, fallback: TriState): TriState {
+  const s = asString(value);
+  return s === 'true' || s === 'false' || s === 'indeterminate' ? s : fallback;
+}
+
+function asTags(value: unknown): string[] | undefined {
+  const list = (Array.isArray(value) ? value : [value]).map(asString).filter((t): t is string => !!t);
+  return list.length ? list : undefined;
+}
+
+/** The /gallery query params, as written by setFilters below. */
+export interface GallerySearch {
+  nsfw?: TriState;
+  featured?: TriState;
+  game?: string;
+  tags?: string[];
+  search?: string;
+}
+
+/** validateSearch for the /gallery route: accepts both app-written and hand-written URLs. */
+export function parseGallerySearch(search: Record<string, unknown>): GallerySearch {
+  const nsfw = asString(search.nsfw);
+  const featured = asString(search.featured);
+  return {
+    nsfw: nsfw ? asTriState(nsfw, DEFAULT_NSFW) : undefined,
+    featured: featured ? asTriState(featured, DEFAULT_FEATURED) : undefined,
+    game: asString(search.game),
+    tags: asTags(search.tags),
+    search: asString(search.search),
+  };
 }
 
 export function useGalleryFilters() {
   const search = useSearch({ from: '/gallery' });
   const navigate = useNavigate();
 
-  const filters: GalleryFilters = {
-    nsfw: (search.nsfw as TriState) || 'false',
-    featured: (search.featured as TriState) || 'indeterminate',
-    game: search.game || 'all',
-    tags: search.tags ? (Array.isArray(search.tags) ? search.tags : [search.tags]) : [],
-    search: (search.search as string) || '',
-  };
+  const { nsfw, featured, game, tags, search: text } = search;
+  const filters: GalleryFilters = useMemo(
+    () => ({
+      nsfw: nsfw ?? DEFAULT_NSFW,
+      featured: featured ?? DEFAULT_FEATURED,
+      game: game || 'all',
+      tags: tags ?? [],
+      search: text || '',
+    }),
+    [nsfw, featured, game, tags, text]
+  );
 
   const setFilters = useCallback(
     (newFilters: Partial<GalleryFilters>) => {
@@ -52,46 +95,56 @@ export function useGalleryFilters() {
     [navigate]
   );
 
-  const setNsfw = useCallback(
-    (checked: CheckedState) => setFilters({ nsfw: checkedToTriState(checked) }),
-    [setFilters]
-  );
+  const setNsfw = useCallback((value: TriState) => setFilters({ nsfw: value }), [setFilters]);
 
   const setFeatured = useCallback(
-    (checked: CheckedState) => setFilters({ featured: checkedToTriState(checked) }),
+    (value: TriState) => setFilters({ featured: value }),
     [setFilters]
   );
 
-  const setGame = useCallback(
-    (game: string) => setFilters({ game }),
-    [setFilters]
-  );
+  const setGame = useCallback((game: string) => setFilters({ game }), [setFilters]);
 
   const toggleTag = useCallback(
     (tag: string) => {
       const currentTags = filters.tags;
-      const newTags = currentTags.includes(tag)
-        ? currentTags.filter((t) => t !== tag)
+      const selected = currentTags.some((t) => t.toLowerCase() === tag.toLowerCase());
+      const newTags = selected
+        ? currentTags.filter((t) => t.toLowerCase() !== tag.toLowerCase())
         : [...currentTags, tag];
       setFilters({ tags: newTags });
     },
     [filters.tags, setFilters]
   );
 
+  const clearTags = useCallback(() => setFilters({ tags: [] }), [setFilters]);
+
   const setSearch = useCallback(
     (searchText: string) => setFilters({ search: searchText || undefined }),
     [setFilters]
   );
 
+  const resetFilters = useCallback(() => {
+    navigate({ to: '/gallery', search: {}, replace: true });
+  }, [navigate]);
+
+  /** Number of filters that differ from their defaults (search, game, each tag, nsfw, featured). */
+  const activeCount =
+    (filters.search ? 1 : 0) +
+    (filters.game !== 'all' ? 1 : 0) +
+    filters.tags.length +
+    (filters.nsfw !== DEFAULT_NSFW ? 1 : 0) +
+    (filters.featured !== DEFAULT_FEATURED ? 1 : 0);
+
   return {
     filters,
-    nsfwChecked: triStateToChecked(filters.nsfw),
-    featuredChecked: triStateToChecked(filters.featured),
+    activeCount,
     setNsfw,
     setFeatured,
     setGame,
     toggleTag,
+    clearTags,
     setSearch,
+    resetFilters,
     setFilters,
   };
 }

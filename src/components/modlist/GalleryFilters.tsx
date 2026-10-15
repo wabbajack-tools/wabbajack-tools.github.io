@@ -1,53 +1,260 @@
 import { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { Filter, X, Tags, Search, Check } from 'lucide-react';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Icon } from '@/components/common/Icon';
 import { getGameDisplayName } from '@/types/game';
-import type { CheckedState } from '@/components/ui/checkbox';
-import type { GameWithCount } from '@/hooks/useGalleryFilters';
+import type { GameWithCount, TriState } from '@/hooks/useGalleryFilters';
 import { cn } from '@/lib/utils';
 
-interface GalleryFiltersProps {
-  nsfwChecked: CheckedState;
-  featuredChecked: CheckedState;
-  selectedGame: string;
-  selectedTags: string[];
-  searchText: string;
+export interface GalleryFiltersProps {
+  filters: {
+    nsfw: TriState;
+    featured: TriState;
+    game: string;
+    tags: string[];
+    search: string;
+  };
+  /** Number of filters that differ from their defaults. */
+  activeCount: number;
+  /** Modlists matching every filter except the game (the "All games" count). */
+  baseCount: number;
   availableGames: GameWithCount[];
   availableTags: Map<string, number>;
-  onNsfwChange: (checked: CheckedState) => void;
-  onFeaturedChange: (checked: CheckedState) => void;
+  onNsfwChange: (value: TriState) => void;
+  onFeaturedChange: (value: TriState) => void;
   onGameChange: (game: string) => void;
   onTagToggle: (tag: string) => void;
+  onClearTags: () => void;
   onSearchChange: (search: string) => void;
+  onReset: () => void;
 }
 
-function cycleTriState(current: CheckedState): CheckedState {
-  if (current === false) return true;
-  if (current === true) return 'indeterminate';
-  return false;
+const NSFW_OPTIONS: [TriState, string][] = [
+  ['false', 'Hidden'],
+  ['true', 'Exclusively'],
+  ['indeterminate', 'Included'],
+];
+
+const FEATURED_OPTIONS: [TriState, string][] = [
+  ['indeterminate', 'Included'],
+  ['true', 'Exclusively'],
+  ['false', 'Hidden'],
+];
+
+const fieldClass =
+  'w-full rounded-[4px] border border-surface bg-surface px-2 text-fg outline-none placeholder:text-fg-66 focus:border-surface-50';
+
+function isTagSelected(selectedTags: string[], tag: string) {
+  return selectedTags.some((t) => t.toLowerCase() === tag.toLowerCase());
 }
 
-export function GalleryFilters({
-  nsfwChecked,
-  featuredChecked,
-  selectedGame,
-  selectedTags,
-  searchText,
+function SegmentedControl({
+  label,
+  options,
+  value,
+  onChange,
+  large,
+}: {
+  label: string;
+  options: [TriState, string][];
+  value: TriState;
+  onChange: (value: TriState) => void;
+  large?: boolean;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div className="text-[12px] text-fg-66">{label}</div>
+      <div role="radiogroup" aria-label={label} className="grid grid-cols-3 gap-0.5 rounded-[4px] bg-ground p-0.5">
+        {options.map(([optionValue, optionLabel]) => {
+          const on = optionValue === value;
+          return (
+            <button
+              key={optionValue}
+              type="button"
+              role="radio"
+              aria-checked={on}
+              onClick={() => onChange(optionValue)}
+              className={cn(
+                'cursor-pointer rounded-[3px] transition-colors duration-[80ms]',
+                large ? 'h-10 text-[13px]' : 'h-7 text-[12px]',
+                on ? 'bg-primary text-ground' : 'text-fg hover:bg-hover hover:text-primary'
+              )}
+            >
+              {optionLabel}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function GameSelect({
+  value,
+  baseCount,
+  availableGames,
+  onChange,
+  className,
+}: {
+  value: string;
+  baseCount: number;
+  availableGames: GameWithCount[];
+  onChange: (game: string) => void;
+  className?: string;
+}) {
+  // Keep a selected game that no longer matches anything visible in the list.
+  const selectedMissing =
+    value !== 'all' && !availableGames.some((g) => g.gameId.toLowerCase() === value.toLowerCase());
+  return (
+    <select
+      aria-label="Game"
+      value={availableGames.find((g) => g.gameId.toLowerCase() === value.toLowerCase())?.gameId ?? value}
+      onChange={(e) => onChange(e.target.value)}
+      className={cn('cursor-pointer [&>option]:bg-surface', className)}
+    >
+      <option value="all">All games ({baseCount})</option>
+      {selectedMissing && <option value={value}>{getGameDisplayName(value)} (0)</option>}
+      {availableGames.map(({ gameId, count }) => (
+        <option key={gameId} value={gameId}>
+          {getGameDisplayName(gameId)} ({count})
+        </option>
+      ))}
+    </select>
+  );
+}
+
+const resetButtonClass =
+  'flex cursor-pointer items-center justify-center gap-1.5 rounded-[4px] transition-colors duration-[80ms] hover:bg-hover hover:text-primary';
+
+/** Wide layout (>= 1000px): sticky 270px filter column. */
+export function GalleryFiltersAside({
+  filters,
+  baseCount,
+  availableGames,
+  availableTags,
+  onNsfwChange,
+  onFeaturedChange,
+  onGameChange,
+  onTagToggle,
+  onClearTags,
+  onSearchChange,
+  onReset,
+}: GalleryFiltersProps) {
+  const [tagSearch, setTagSearch] = useState('');
+
+  const sortedTags = useMemo(() => {
+    const query = tagSearch.trim().toLowerCase();
+    return [...availableTags.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .filter(([tag]) => tag.toLowerCase().includes(query));
+  }, [availableTags, tagSearch]);
+
+  return (
+    <aside className="sticky top-[88px] hidden max-h-[calc(100vh-104px)] w-[270px] flex-none flex-col gap-6 overflow-auto pr-1 [scrollbar-color:var(--color-surface-16)_var(--color-ground)] min-[1000px]:flex">
+      <div className="flex flex-col gap-2">
+        <label htmlFor="gallery-search">Search</label>
+        <div className="relative flex">
+          <input
+            id="gallery-search"
+            value={filters.search}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Title, author, tag…"
+            className={cn(fieldClass, 'h-9 pr-[34px] text-[13px]')}
+          />
+          {filters.search ? (
+            <button
+              type="button"
+              onClick={() => onSearchChange('')}
+              aria-label="Clear search"
+              className="absolute inset-y-0 right-0 grid w-8 cursor-pointer place-items-center text-primary"
+            >
+              <Icon name="dismiss" className="size-3.5" />
+            </button>
+          ) : (
+            <span className="pointer-events-none absolute inset-y-0 right-0 grid w-8 place-items-center text-primary">
+              <Icon name="search" className="size-4" />
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div>Game</div>
+        <GameSelect
+          value={filters.game}
+          baseCount={baseCount}
+          availableGames={availableGames}
+          onChange={onGameChange}
+          className={cn(fieldClass, 'h-9 text-[13px]')}
+        />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div>Include</div>
+        <div className="flex flex-col gap-3 rounded-lg bg-surface p-3">
+          <SegmentedControl label="NSFW" options={NSFW_OPTIONS} value={filters.nsfw} onChange={onNsfwChange} />
+          <SegmentedControl
+            label="Featured lists"
+            options={FEATURED_OPTIONS}
+            value={filters.featured}
+            onChange={onFeaturedChange}
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <span>Tags</span>
+          {filters.tags.length > 0 && (
+            <button type="button" onClick={onClearTags} className="link cursor-pointer text-[12px]">
+              Clear all
+            </button>
+          )}
+        </div>
+        <input
+          aria-label="Filter tags"
+          value={tagSearch}
+          onChange={(e) => setTagSearch(e.target.value)}
+          placeholder="Filter tags"
+          className={cn(fieldClass, 'h-8 text-[13px]')}
+        />
+        <div className="flex max-h-[280px] flex-col gap-0.5 overflow-auto [scrollbar-color:var(--color-surface-16)_var(--color-ground)]">
+          {sortedTags.length === 0 ? (
+            <p className="m-0 px-1.5 py-2 text-fg-66">No tags found</p>
+          ) : (
+            sortedTags.map(([tag, count]) => {
+              const on = isTagSelected(filters.tags, tag);
+              return (
+                <label
+                  key={tag}
+                  className="flex h-7 flex-none cursor-pointer items-center gap-2 rounded-[4px] px-1.5 hover:bg-surface"
+                >
+                  <input
+                    type="checkbox"
+                    checked={on}
+                    onChange={() => onTagToggle(tag)}
+                    className="m-0 size-4 accent-primary"
+                  />
+                  <span className={cn('flex-1 truncate', on ? 'text-primary' : 'text-fg')}>{tag}</span>
+                  <span className="text-[12px] text-fg-25">{count}</span>
+                </label>
+              );
+            })
+          )}
+        </div>
+      </div>
+
+      <button type="button" onClick={onReset} className={cn(resetButtonClass, 'h-8 flex-none bg-surface text-fg')}>
+        <Icon name="filter_dismiss" className="size-4" />
+        Reset filters
+      </button>
+    </aside>
+  );
+}
+
+/** Narrow layout (< 1000px): search + "Filters" toggle with an inline panel. */
+export function GalleryFiltersInline({
+  filters,
+  activeCount,
+  baseCount,
   availableGames,
   availableTags,
   onNsfwChange,
@@ -55,221 +262,93 @@ export function GalleryFilters({
   onGameChange,
   onTagToggle,
   onSearchChange,
+  onReset,
 }: GalleryFiltersProps) {
-  const [tagSearch, setTagSearch] = useState('');
-  const [tagPopoverOpen, setTagPopoverOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  // Sort tags by count (descending) and filter by search
-  const sortedTags = useMemo(() => {
-    const entries = [...availableTags.entries()];
-    return entries
-      .sort((a, b) => b[1] - a[1])
-      .filter(([tag]) =>
-        tag.toLowerCase().includes(tagSearch.toLowerCase())
-      );
-  }, [availableTags, tagSearch]);
-
-  const isTagSelected = (tag: string) =>
-    selectedTags.some((t) => t.toLowerCase() === tag.toLowerCase());
+  const topTags = useMemo(
+    () => [...availableTags.entries()].sort((a, b) => b[1] - a[1]).slice(0, 16),
+    [availableTags]
+  );
 
   return (
-    <div className="space-y-4" >
-      {/* Filter bar */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-wrap items-center gap-4 p-4 rounded-xl bg-surface/60 backdrop-blur-sm border border-neon-purple/20"
-      >
-        <div className="flex items-center gap-2 text-neon-purple">
-          <Filter className="h-5 w-5" />
-          <span className="font-medium text-text-primary">Filters</span>
-        </div>
-
-        <div className="h-6 w-px bg-neon-purple/20 hidden sm:block" />
-
-        {/* Search input */}
-        <div className="relative flex-1 min-w-[200px] max-w-[300px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
-          <Input
-            placeholder="Search modlists..."
-            value={searchText}
+    <div className="flex flex-col gap-3 min-[1000px]:hidden">
+      <div className="flex gap-2">
+        <div className="relative flex flex-1">
+          <input
+            aria-label="Search modlists"
+            value={filters.search}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-9 h-9"
+            placeholder="Search modlists"
+            className={cn(fieldClass, 'h-11 min-w-0 flex-1 px-2.5 text-[15px]', filters.search && 'pr-10')}
           />
-          {searchText && (
+          {filters.search && (
             <button
+              type="button"
               onClick={() => onSearchChange('')}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-surface-light transition-colors"
+              aria-label="Clear search"
+              className="absolute inset-y-0 right-0 grid w-10 cursor-pointer place-items-center text-primary"
             >
-              <X className="h-3 w-3 text-text-muted hover:text-text-primary" />
+              <Icon name="dismiss" className="size-4" />
             </button>
           )}
         </div>
-
-        <div className="h-6 w-px bg-neon-purple/20 hidden sm:block" />
-
-        <div className="flex items-center gap-4">
-
-          <label className="flex items-center gap-2 cursor-pointer group">
-              <span className="text-sm text-text-secondary">NSFW:</span>
-            <Checkbox
-              checked={nsfwChecked}
-              onCheckedChange={() => onNsfwChange(cycleTriState(nsfwChecked))}
-            />
-            <span className="text-sm text-text-secondary group-hover:text-text-primary transition-colors min-w-[80px]">
-              {nsfwChecked === true ? 'Exclusively' : nsfwChecked === 'indeterminate' ? 'Included' : 'Hidden'}
-            </span>
-          </label>
-
-          <label className="flex items-center gap-2 cursor-pointer group">
-              <span className="text-sm text-text-secondary">Featured Lists:</span>
-            <Checkbox
-              checked={featuredChecked}
-              onCheckedChange={() => onFeaturedChange(cycleTriState(featuredChecked))}
-            />
-            <span className="text-sm text-text-secondary group-hover:text-text-primary transition-colors min-w-[100px]">
-              {featuredChecked === true ? 'Exclusively' : featuredChecked === 'indeterminate' ? 'Included' : 'Hidden'}
-            </span>
-          </label>
-        </div>
-
-        <div className="h-6 w-px bg-neon-purple/20 hidden sm:block" />
-
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-text-secondary">Game:</span>
-          <Select value={selectedGame} onValueChange={onGameChange}>
-            <SelectTrigger className="w-[220px]">
-              <SelectValue placeholder="All Games" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Games</SelectItem>
-              {availableGames.map(({ gameId, count }) => (
-                <SelectItem key={gameId} value={gameId}>
-                  {getGameDisplayName(gameId)} ({count})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="h-6 w-px bg-neon-purple/20 hidden sm:block" />
-
-        {/* Tags popover */}
-        <Popover open={tagPopoverOpen} onOpenChange={setTagPopoverOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className={cn(
-                'gap-2',
-                selectedTags.length > 0 && 'border-neon-purple/50 text-neon-purple'
-              )}
-            >
-              <Tags className="h-4 w-4" />
-              Tags
-              {selectedTags.length > 0 && (
-                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-neon-purple text-white text-xs">
-                  {selectedTags.length}
-                </span>
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-80 p-0" align="start">
-            {/* Search input */}
-            <div className="p-3 border-b border-neon-purple/10">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
-                <Input
-                  placeholder="Search tags..."
-                  value={tagSearch}
-                  onChange={(e) => setTagSearch(e.target.value)}
-                  className="pl-9 h-9"
-                />
-              </div>
-            </div>
-
-            {/* Tags list */}
-            <div className="max-h-64 overflow-y-auto p-2">
-              {sortedTags.length === 0 ? (
-                <p className="text-sm text-text-muted text-center py-4">
-                  No tags found
-                </p>
-              ) : (
-                <div className="space-y-1">
-                  {sortedTags.map(([tag, count]) => {
-                    const selected = isTagSelected(tag);
-                    return (
-                      <button
-                        key={tag}
-                        onClick={() => onTagToggle(tag)}
-                        className={cn(
-                          'w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors',
-                          selected
-                            ? 'bg-neon-purple/20 text-neon-purple'
-                            : 'text-text-secondary hover:bg-surface-light hover:text-text-primary'
-                        )}
-                      >
-                        <span className="flex items-center gap-2">
-                          <div
-                            className={cn(
-                              'w-4 h-4 rounded border flex items-center justify-center transition-colors',
-                              selected
-                                ? 'bg-neon-purple border-neon-purple'
-                                : 'border-text-muted'
-                            )}
-                          >
-                            {selected && <Check className="h-3 w-3 text-white" />}
-                          </div>
-                          {tag}
-                        </span>
-                        <span className="text-xs text-text-muted">
-                          {count}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* Footer with clear button */}
-            {selectedTags.length > 0 && (
-              <div className="p-2 border-t border-neon-purple/10">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full text-text-muted hover:text-text-primary"
-                  onClick={() => {
-                    selectedTags.forEach((tag) => onTagToggle(tag));
-                  }}
-                >
-                  Clear all tags
-                </Button>
-              </div>
-            )}
-          </PopoverContent>
-        </Popover>
-      </motion.div>
-
-      {/* Selected tags display */}
-      {selectedTags.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-wrap items-center gap-2"
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          aria-expanded={open}
+          className="flex h-11 cursor-pointer items-center gap-1.5 rounded-[4px] bg-surface px-3.5 text-[14px] text-fg transition-colors duration-[80ms] hover:bg-hover hover:text-primary"
         >
-          <span className="text-sm text-text-muted">Active tags:</span>
-          {selectedTags.map((tag) => (
-            <button
-              key={tag}
-              onClick={() => onTagToggle(tag)}
-              className="group flex items-center gap-1 px-2.5 py-1 rounded-full text-sm bg-neon-purple/20 text-neon-purple border border-neon-purple/30 hover:bg-neon-purple/30 transition-colors"
-            >
-              {tag}
-              <X className="h-3 w-3 opacity-60 group-hover:opacity-100" />
-            </button>
-          ))}
-        </motion.div>
+          Filters
+          {activeCount > 0 && (
+            <span className="h-5 min-w-5 rounded-[4px] bg-primary px-1.5 text-center text-[12px] leading-5 text-ground">
+              {activeCount}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {open && (
+        <div className="flex flex-col gap-4 rounded-lg bg-surface p-3">
+          <GameSelect
+            value={filters.game}
+            baseCount={baseCount}
+            availableGames={availableGames}
+            onChange={onGameChange}
+            className="h-11 rounded-[4px] border-0 bg-ground px-2 text-[15px] text-fg"
+          />
+          <SegmentedControl label="NSFW" options={NSFW_OPTIONS} value={filters.nsfw} onChange={onNsfwChange} large />
+          <SegmentedControl
+            label="Featured lists"
+            options={FEATURED_OPTIONS}
+            value={filters.featured}
+            onChange={onFeaturedChange}
+            large
+          />
+          <div className="text-[12px] text-fg-66">Tags</div>
+          <div className="flex flex-wrap gap-1.5">
+            {topTags.map(([tag, count]) => {
+              const on = isTagSelected(filters.tags, tag);
+              return (
+                <button
+                  key={tag}
+                  type="button"
+                  aria-pressed={on}
+                  onClick={() => onTagToggle(tag)}
+                  className={cn(
+                    'h-9 cursor-pointer rounded-[4px] px-2.5 text-[13px]',
+                    on ? 'bg-primary text-ground' : 'bg-ground text-fg'
+                  )}
+                >
+                  {tag} <span className="opacity-60">{count}</span>
+                </button>
+              );
+            })}
+          </div>
+          <button type="button" onClick={onReset} className={cn(resetButtonClass, 'h-10 bg-ground text-[14px] text-fg')}>
+            Reset filters
+          </button>
+        </div>
       )}
     </div>
   );
