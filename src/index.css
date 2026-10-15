@@ -1,263 +1,209 @@
 @import "tailwindcss";
 
-/* Darksynth Color Theme */
+/* Wabbajack app theme: the desktop app's palette (Wabbajack.App.Avalonia/Themes/Palette.axaml),
+   lilac on slate, one typeface. */
 @theme {
-  /* Core colors */
-  --color-void: #0a0a0f;
-  --color-void-light: #12121a;
-  --color-surface: #1a1a2e;
-  --color-surface-light: #252542;
+  /* Grounds and surfaces */
+  --color-ground: #222531;          /* WindowBackground: page, header, footer */
+  --color-ground-raised: #2a2b41;   /* WindowHoverBackground: active nav, list rows */
+  --color-surface: #383750;         /* ComplementaryPrimary08: controls, panels, card outlines */
+  --color-surface-16: #46425f;      /* selected rows, chips, scrollbar thumb */
+  --color-surface-32: #62597c;
+  --color-surface-50: #81739d;      /* link hover, file icons */
+  --color-dark-bg: #3c3652;         /* transparent-button hover */
+  --color-hover: #4e4571;           /* every control's hover and pressed fill */
+  --color-tile: #363952;            /* image wells while loading */
+  --color-backdrop: #2d2e45;        /* tiki backdrop drawing */
 
-  /* Neon accents */
-  --color-neon-purple: #a855f7;
-  --color-neon-pink: #ec4899;
-  --color-neon-cyan: #22d3ee;
-  --color-neon-blue: #3b82f6;
+  /* Text */
+  --color-fg: #e5e5e8;
+  --color-fg-88: #e5e5e8e0;
+  --color-fg-66: #e5e5e8a8;
+  --color-fg-25: #5f6071;
 
-  /* Gradients defined as colors for easy use */
-  --color-accent-start: #a855f7;
-  --color-accent-end: #ec4899;
+  /* Brand */
+  --color-primary: #d8baf8;
 
-  /* Text colors */
-  --color-text-primary: #f8fafc;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #64748b;
+  /* Status */
+  --color-success: #5fad56;
+  --color-warning: #ffc400;
+  --color-error: #5e2c2b;           /* a fill, with on-error text */
+  --color-on-error: #ebe5e5;
+  --color-nsfw: #a70000ab;
+  --color-unavailable: #b17405ab;
+  --color-unavailable-dark: #6d4f23;
+  --color-fail-border: #700d1c;
+  --color-fail-border-hot: #ff0026;
+  --color-fail-bg: #1c0307;
+  --color-fail-bg-hot: #540914;
 
-  /* Status colors */
-  --color-success: #10b981;
-  --color-error: #ef4444;
-  --color-warning: #f59e0b;
+  --font-sans: Gabarito, system-ui, sans-serif;
+  --font-mono: ui-monospace, Consolas, monospace;
 
-  /* Fonts */
-  --font-family-display: "Montserrat", system-ui, sans-serif;
-  --font-family-body: "Open Sans", system-ui, sans-serif;
+  --shadow-tile: 2px 2px 25px 0 #00000040;
 
   --breakpoint-3xl: 1930px;
 }
 
-/* Base Styles */
+@font-face { font-family: Gabarito; src: url("/fonts/Gabarito-Regular.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: Gabarito; src: url("/fonts/Gabarito-Medium.ttf") format("truetype"); font-weight: 500; font-display: swap; }
+@font-face { font-family: Gabarito; src: url("/fonts/Gabarito-SemiBold.ttf") format("truetype"); font-weight: 600; font-display: swap; }
+@font-face { font-family: Gabarito; src: url("/fonts/Gabarito-Bold.ttf") format("truetype"); font-weight: 700; font-display: swap; }
+
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
 }
 
 body {
-  font-family: var(--font-family-body);
-  background: linear-gradient(180deg, var(--color-void) 0%, var(--color-void-light) 100%);
-  min-height: 100vh;
-  color: var(--color-text-primary);
+  margin: 0;
+  background: var(--color-ground);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 16px;
 }
 
-/* Utility classes for gradients */
-.gradient-text {
-  background: linear-gradient(135deg, var(--color-neon-purple) 0%, var(--color-neon-pink) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.gradient-border {
-  position: relative;
-  background: var(--color-surface);
-  border-radius: 1rem;
-}
-
-.gradient-border::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg, var(--color-neon-purple), var(--color-neon-pink), var(--color-neon-cyan));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* Glass effect */
-.glass {
-  background: rgba(26, 26, 46, 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(168, 85, 247, 0.1);
-}
-
-/* Glow effects */
-.glow-sm {
-  box-shadow: 0 0 20px rgba(168, 85, 247, 0.15);
-}
-
-.glow-md {
-  box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
-}
-
-.glow-lg {
-  box-shadow: 0 0 50px rgba(168, 85, 247, 0.25);
-}
-
-.glow-text {
-  text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
-}
-
-/* Neon button glow on hover */
-.neon-glow {
-  transition: all 0.3s ease;
-}
-
-.neon-glow:hover {
-  box-shadow:
-    0 0 20px rgba(168, 85, 247, 0.4),
-    0 0 40px rgba(168, 85, 247, 0.2),
-    0 0 60px rgba(168, 85, 247, 0.1);
-}
-
-/* Grid background pattern */
-.grid-bg {
-  background-image:
-    linear-gradient(rgba(168, 85, 247, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(168, 85, 247, 0.03) 1px, transparent 1px);
-  background-size: 50px 50px;
-}
-
-/* Scanline effect (subtle) */
-.scanlines::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.03) 2px,
-    rgba(0, 0, 0, 0.03) 4px
-  );
-  pointer-events: none;
-}
-
-/* Markdown Styles */
-.markdown-body {
-  background: transparent !important;
-  color: var(--color-text-primary);
-  line-height: 1.7;
-}
-
-.markdown-body a {
-  color: var(--color-neon-cyan) !important;
+/* Inline links: primary, bold, never underlined; surface-50 on hover. */
+.link {
+  color: var(--color-primary);
+  font-weight: 700;
   text-decoration: none;
-  transition: all 0.2s;
+  cursor: pointer;
+}
+.link:hover {
+  color: var(--color-surface-50);
 }
 
-.markdown-body a:hover {
-  text-shadow: 0 0 10px var(--color-neon-cyan);
+input::placeholder {
+  color: var(--color-fg);
+  opacity: 0.5;
 }
 
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: #d8baf829;
+}
+
+/* Scrollbar: surface-16 thumb on the ground, surface-50 on hover, primary when dragged. */
+* {
+  scrollbar-color: var(--color-surface-16) var(--color-ground);
+}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--color-ground); }
+::-webkit-scrollbar-thumb { background: var(--color-surface-16); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-surface-50); }
+::-webkit-scrollbar-thumb:active { background: var(--color-primary); }
+
+/* Placeholder for a missing modlist image: 1px primary stripes on the tile ground. */
+.no-image {
+  background: repeating-linear-gradient(135deg, transparent 0 9px, #d8baf826 9px 10px);
+}
+
+/* The failure attention border: pulses until hovered. */
+@keyframes wj-pulse-fail {
+  to {
+    border-color: var(--color-fail-border-hot);
+    background: var(--color-fail-bg-hot);
+  }
+}
+.attention-fail {
+  border: 1px solid var(--color-fail-border);
+  background: var(--color-fail-bg);
+  animation: wj-pulse-fail 1.5s infinite alternate;
+}
+.attention-fail:hover {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .attention-fail { animation: none; }
+}
+
+/* Modlist readmes (GitHub-flavoured markdown). */
+.markdown-body {
+  max-width: 760px;
+  font-size: 15px;
+  line-height: 25px;
+  color: var(--color-fg-88);
+  overflow-wrap: anywhere;
+}
+.markdown-body > :first-child { margin-top: 0; }
+.markdown-body p,
+.markdown-body ul,
 .markdown-body ol,
-.markdown-body ul {
-  list-style: disc !important;
-  padding-left: 2em;
-}
-
+.markdown-body pre,
+.markdown-body table,
+.markdown-body blockquote,
+.markdown-body details { margin: 0 0 16px; }
 .markdown-body h1,
 .markdown-body h2,
 .markdown-body h3,
 .markdown-body h4,
 .markdown-body h5,
 .markdown-body h6 {
-  color: var(--color-text-primary);
-  border-bottom-color: rgba(168, 85, 247, 0.2);
-  font-family: var(--font-family-display);
+  color: var(--color-fg);
+  line-height: 1.23;
+  text-wrap: balance;
 }
-
-.markdown-body code {
-  background: rgba(168, 85, 247, 0.1);
-  border: 1px solid rgba(168, 85, 247, 0.2);
-  border-radius: 4px;
-  padding: 0.2em 0.4em;
-}
-
-.markdown-body pre {
-  background: var(--color-void) !important;
-  border: 1px solid rgba(168, 85, 247, 0.2);
-  border-radius: 8px;
-}
-
+.markdown-body h1 { margin: 36px 0 16px; font-size: 36px; font-weight: 700; }
+.markdown-body h2 { margin: 36px 0 12px; font-size: 24px; font-weight: 600; }
+.markdown-body h3 { margin: 28px 0 8px; font-size: 18px; font-weight: 600; }
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 { margin: 24px 0 8px; font-size: 15px; font-weight: 600; }
+.markdown-body a { color: var(--color-primary); font-weight: 700; text-decoration: none; }
+.markdown-body a:hover { color: var(--color-surface-50); }
+.markdown-body strong { color: var(--color-fg); }
+.markdown-body ul { list-style: disc; padding-left: 20px; }
+.markdown-body ol { list-style: decimal; padding-left: 22px; }
+.markdown-body li + li { margin-top: 2px; }
+.markdown-body li > ul,
+.markdown-body li > ol { margin: 2px 0 0; }
 .markdown-body blockquote {
-  border-left-color: var(--color-neon-purple);
-  color: var(--color-text-secondary);
-  background: rgba(168, 85, 247, 0.05);
-  padding: 1rem;
-  border-radius: 0 8px 8px 0;
+  padding: 4px 0 4px 18px;
+  border-left: 4px solid var(--color-surface-16);
+  color: var(--color-fg);
 }
-
-.markdown-body table th,
-.markdown-body table td {
-  border-color: rgba(168, 85, 247, 0.2);
+.markdown-body blockquote > :last-child { margin-bottom: 0; }
+.markdown-body code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--color-surface);
+  color: var(--color-fg);
 }
-
-.markdown-body hr {
-  background: linear-gradient(90deg, transparent, var(--color-neon-purple), transparent);
-  height: 1px;
-  border: none;
+.markdown-body pre {
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: var(--color-surface);
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 20px;
 }
-
-.markdown-body img {
+.markdown-body pre code { padding: 0; background: none; }
+.markdown-body table {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 20px;
+  border: 1px solid var(--color-surface);
   border-radius: 8px;
 }
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--color-void);
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--color-neon-purple), var(--color-neon-pink));
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--color-neon-pink), var(--color-neon-purple));
-}
-
-/* Selection */
-::selection {
-  background: rgba(168, 85, 247, 0.3);
-  color: white;
-}
-
-/* Focus styles */
-:focus-visible {
-  outline: 2px solid var(--color-neon-purple);
-  outline-offset: 2px;
-}
-
-/* Animations */
-@keyframes pulse-glow {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient-shift 8s ease infinite;
-}
+.markdown-body thead tr { background: var(--color-surface); text-align: left; }
+.markdown-body th { padding: 10px 14px; font-weight: 600; color: var(--color-fg); }
+.markdown-body td { padding: 10px 14px; border-top: 1px solid var(--color-surface); }
+.markdown-body img { max-width: 100%; border-radius: 8px; }
+.markdown-body hr { border: 0; height: 1px; background: var(--color-surface); margin: 32px 0; }
+.markdown-body details { border-radius: 8px; background: var(--color-ground-raised); }
+.markdown-body summary { padding: 12px 16px; cursor: pointer; font-weight: 600; color: var(--color-fg); }
+.markdown-body details > :not(summary) { padding: 0 16px; }

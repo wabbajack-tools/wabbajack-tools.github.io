@@ -1,16 +1,12 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { useState, useMemo, useRef, useEffect } from 'react';
-import { useVirtualizer } from '@tanstack/react-virtual';
-import { motion } from 'framer-motion';
-import { Search, ArrowLeft, FileArchive, Database } from 'lucide-react';
+import { useState, useMemo, useRef, useEffect, useLayoutEffect, type ReactNode } from 'react';
+import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import { useDetailedStatus } from '@/hooks/useModlistStatus';
 import { useModlist } from '@/hooks/useModlists';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { ModlistArchiveCard } from '@/components/search/ModlistArchiveCard';
+import { ArchiveRow, SearchInput, SearchMessageBox } from '@/components/search/ArchiveRow';
+import { Icon } from '@/components/common/Icon';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { ErrorDisplay } from '@/components/common/ErrorDisplay';
-import { pageTransition } from '@/lib/animations';
 import type { Archive, ValidatedArchive } from '@/types';
 
 function useDebounce<T>(value: T, delay: number): T {
@@ -31,6 +27,17 @@ export const Route = createFileRoute('/search/$repo/$id')({
   component: ArchiveSearchPage,
 });
 
+/** Gap between rows; the virtualizer measures each row including it. */
+const ROW_GAP = 6;
+
+function PageShell({ children }: { children: ReactNode }) {
+  return (
+    <div className="mx-auto flex max-w-[1080px] flex-col gap-5 px-[clamp(16px,4vw,40px)] pt-7 pb-[72px]">
+      {children}
+    </div>
+  );
+}
+
 function ArchiveSearchPage() {
   const { repo, id } = Route.useParams();
   const { data: status, isLoading, error } = useDetailedStatus(repo, id);
@@ -39,7 +46,8 @@ function ArchiveSearchPage() {
   const [searchString, setSearchString] = useState('');
   const debouncedSearch = useDebounce(searchString, 200);
 
-  const parentRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const [scrollMargin, setScrollMargin] = useState(0);
 
   const archives = useMemo(() => {
     if (!status?.Archives) return [];
@@ -61,208 +69,126 @@ function ArchiveSearchPage() {
       .sort((a: Archive, b: Archive) => a.Name.localeCompare(b.Name));
   }, [status, debouncedSearch]);
 
-  // TanStack Virtual's `useVirtualizer` returns functions that are not safely memoizable by the React Compiler.
-  // This is a known incompatibility where the compiler skips memoization for this component to prevent stale UIs.
-  // We ignore this warning as the virtualization logic remains functional and stable without compiler-driven memoization.
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const virtualizer = useVirtualizer({
+  const virtualizer = useWindowVirtualizer({
     count: archives.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 100,
+    estimateSize: () => 96,
     overscan: 10,
+    scrollMargin,
   });
 
+  // The list scrolls with the page: tell the virtualizer where it starts in the document.
+  const hasList = archives.length > 0;
+  useLayoutEffect(() => {
+    if (!listRef.current) return;
+    const el = listRef.current;
+    const update = () => setScrollMargin(el.getBoundingClientRect().top + window.scrollY);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(document.body);
+    return () => observer.disconnect();
+  }, [hasList, isLoading]);
+
   const totalArchives = status?.Archives?.length || 0;
+  const title = modlist?.title || status?.Name || id;
 
   if (error) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16">
+      <PageShell>
         <ErrorDisplay message={`Error loading archives for ${repo}/${id}`} />
-      </div>
+      </PageShell>
     );
   }
 
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16">
+      <PageShell>
         <LoadingSpinner message="Loading archives..." />
-      </div>
+      </PageShell>
     );
   }
 
   if (status?.Status === 'ForcedDown') {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16">
+      <PageShell>
         <ErrorDisplay message="Modlist has been forced down. Archives are not available." />
-      </div>
+      </PageShell>
     );
   }
 
   if (!status) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16">
+      <PageShell>
         <ErrorDisplay message={`Could not find archives for ${repo}/${id}`} />
-      </div>
+      </PageShell>
     );
   }
 
+  const query = debouncedSearch.trim();
+  const image = modlist?.links?.image;
+
   return (
-    <motion.div
-      className="flex-grow"
-      variants={pageTransition}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-    >
-      {/* Hero section */}
-      <section className="relative py-16 overflow-hidden">
-        {/* Background effects */}
-        <div className="absolute inset-0 grid-bg opacity-30" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-neon-purple/10 rounded-full blur-3xl" />
+    <PageShell>
+      <div>
+        <Link
+          to="/modlist/$repo/$id"
+          params={{ repo, id }}
+          className="inline-flex h-8 items-center gap-1 rounded bg-surface pr-3 pl-2 text-fg hover:bg-hover hover:text-primary"
+        >
+          <Icon name="chevron_right" flip />
+          Back to {title}
+        </Link>
+      </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Button
-            variant="ghost"
-            size="sm"
-            asChild
-            className="mb-6"
-          >
-            <Link to="/modlist/$repo/$id" params={{ repo, id }}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to {modlist?.title || status.Name}
-            </Link>
-          </Button>
-
-          <div className="text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-center justify-center gap-3 mb-4"
-            >
-              <Database className="h-8 w-8 text-neon-purple" />
-              <h1 className="font-display font-bold text-4xl md:text-5xl gradient-text">
-                Archive Search
-              </h1>
-            </motion.div>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-xl text-text-secondary mb-2"
-            >
-              {modlist?.title || status.Name}
-            </motion.p>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
-              className="text-text-muted"
-            >
-              Search through {totalArchives.toLocaleString()} archives in this modlist
-            </motion.p>
-
-            {/* Search input */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="max-w-2xl mx-auto mt-8"
-            >
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-text-muted" />
-                <Input
-                  type="text"
-                  placeholder="Search by name, author, or description..."
-                  value={searchString}
-                  onChange={(e) => setSearchString(e.target.value)}
-                  className="pl-12 pr-4 h-14 text-lg"
-                />
-              </div>
-            </motion.div>
-          </div>
+      <div className="flex items-center gap-4">
+        <div className="relative aspect-video w-32 flex-none overflow-hidden rounded-lg bg-tile">
+          {image && <img src={image} alt="" className="absolute inset-0 size-full object-cover" />}
         </div>
-      </section>
-
-      {/* Results */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        {/* Results count */}
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-sm text-text-secondary">
-            {debouncedSearch.trim() ? (
-              <>
-                Found{' '}
-                <span className="font-semibold text-text-primary">
-                  {archives.length.toLocaleString()}
-                </span>{' '}
-                of {totalArchives.toLocaleString()} archives
-              </>
-            ) : (
-              <>
-                Showing all{' '}
-                <span className="font-semibold text-text-primary">
-                  {totalArchives.toLocaleString()}
-                </span>{' '}
-                archives
-              </>
-            )}
+        <div className="min-w-0">
+          <h1 className="m-0 text-[clamp(28px,4vw,36px)] leading-[1.23] font-bold [overflow-wrap:anywhere]">
+            {title}
+          </h1>
+          <p className="mt-1 text-[15px] text-fg-66">
+            Search through{' '}
+            <span className="font-semibold text-primary">{totalArchives.toLocaleString()}</span> archives in this
+            modlist
           </p>
         </div>
+      </div>
 
-        {/* Archive cards */}
-        {archives.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-16"
-          >
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-surface/60 border border-neon-purple/20 mb-4">
-              <FileArchive className="h-10 w-10 text-text-muted" />
-            </div>
-            <h3 className="text-xl font-semibold text-text-primary mb-2">
-              No archives found
-            </h3>
-            <p className="text-text-secondary">
-              No archives match &quot;{searchString}&quot;
-            </p>
-          </motion.div>
-        ) : (
-          <div
-            ref={parentRef}
-            className="h-[600px] overflow-auto rounded-lg"
-          >
+      <div className="sticky top-16 z-[2] flex flex-col gap-2 bg-ground py-2">
+        <SearchInput value={searchString} onChange={setSearchString} placeholder="Search by file, mod or author" />
+        <div className="text-fg-66">
+          {query
+            ? `Found ${archives.length.toLocaleString()} of ${totalArchives.toLocaleString()}`
+            : `Showing all ${totalArchives.toLocaleString()}`}
+        </div>
+      </div>
+
+      {hasList ? (
+        <div ref={listRef} className="relative w-full" style={{ height: `${virtualizer.getTotalSize()}px` }}>
+          {virtualizer.getVirtualItems().map((virtualItem) => (
             <div
+              key={virtualItem.key}
+              data-index={virtualItem.index}
+              ref={virtualizer.measureElement}
+              className="absolute top-0 left-0 w-full"
               style={{
-                height: `${virtualizer.getTotalSize()}px`,
-                width: '100%',
-                position: 'relative',
+                transform: `translateY(${virtualItem.start - virtualizer.options.scrollMargin}px)`,
+                paddingBottom: ROW_GAP,
               }}
             >
-              {virtualizer.getVirtualItems().map((virtualItem) => {
-                const archive = archives[virtualItem.index];
-                return (
-                  <div
-                    key={virtualItem.key}
-                    data-index={virtualItem.index}
-                    ref={virtualizer.measureElement}
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      transform: `translateY(${virtualItem.start}px)`,
-                    }}
-                    className="pb-3"
-                  >
-                    <ModlistArchiveCard archive={archive} />
-                  </div>
-                );
-              })}
+              <ArchiveRow archive={archives[virtualItem.index]} />
             </div>
-          </div>
-        )}
-      </section>
-    </motion.div>
+          ))}
+        </div>
+      ) : query ? (
+        <SearchMessageBox
+          title={<>No archives match “{query}”</>}
+          message="Check the spelling, or search for part of the file name."
+        />
+      ) : (
+        <SearchMessageBox title="No archives" message="This modlist has no archives to search." />
+      )}
+    </PageShell>
   );
 }

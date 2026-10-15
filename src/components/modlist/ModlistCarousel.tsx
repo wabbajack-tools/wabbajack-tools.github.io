@@ -1,166 +1,108 @@
 import { useState, useMemo } from 'react';
 import { Link } from '@tanstack/react-router';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { carouselSlide, defaultTransition } from '@/lib/animations';
 import { getGameDisplayName } from '@/types/game';
 import { FALLBACK_CAROUSEL_IMAGE } from '@/lib/constants';
 import { useFeaturedModlists } from '@/hooks/useModlists';
-import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { Icon } from '@/components/common/Icon';
+import { cn } from '@/lib/utils';
+
+const MAX_DOTS = 10;
 
 function shuffleArray<T>(array: T[]): T[] {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 }
 
-export function ModlistCarousel() {
-    const { data: modlists, isLoading } = useFeaturedModlists();
-    const [[currentIndex, direction], setPage] = useState([0, 0]);
+const navButton =
+  'grid size-9 cursor-pointer place-items-center rounded-[4px] bg-surface text-fg hover:bg-hover hover:text-primary';
 
-    const finalModlists = useMemo(() => {
-        if (!modlists || modlists.length === 0) return [];
-        // Shuffle modlists using Fisher-Yates algorithm for true randomness
-        return shuffleArray(modlists);
-  }, [modlists]);
+export function ModlistCarousel() {
+  const { data: modlists, isLoading } = useFeaturedModlists();
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Fisher-Yates shuffle so every visit starts on a different featured list.
+  const finalModlists = useMemo(() => (modlists?.length ? shuffleArray(modlists) : []), [modlists]);
 
   if (isLoading) {
-    return (
-      <div className="max-w-6xl mx-auto">
-        <LoadingSpinner message="Loading featured modlists..." />
-      </div>
-    );
+    return <div className="aspect-video max-h-[640px] w-full rounded-lg bg-tile" aria-label="Loading featured modlists" />;
   }
 
   if (!finalModlists.length) {
     return null;
   }
 
-  const currentModlist = finalModlists[currentIndex];
-  const imageUrl = currentModlist.validationSummary?.LargeImage || currentModlist.links.image || FALLBACK_CAROUSEL_IMAGE;
-
-  const paginate = (newDirection: number) => {
-    let newIndex = currentIndex + newDirection;
-    if (newIndex < 0) newIndex = finalModlists.length - 1;
-    if (newIndex >= finalModlists.length) newIndex = 0;
-    setPage([newIndex, newDirection]);
-  };
+  const count = finalModlists.length;
+  const index = ((currentIndex % count) + count) % count;
+  const current = finalModlists[index];
+  const imageUrl = current.validationSummary?.LargeImage || current.links.image || FALLBACK_CAROUSEL_IMAGE;
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="relative rounded-2xl overflow-hidden border border-neon-purple/20 shadow-[0_0_60px_rgba(168,85,247,0.15)]">
-        {/* Main image area */}
-        <Link
-          to="/modlist/$repo/$id"
-          params={{ repo: currentModlist.repositoryName, id: currentModlist.links.machineURL }}
-          className="block"
-        >
-          <div className="relative aspect-video overflow-hidden bg-void">
-            <AnimatePresence initial={false} custom={direction}>
-              <motion.img
-                key={currentIndex}
-                custom={direction}
-                variants={carouselSlide}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={defaultTransition}
-                src={imageUrl}
-                alt={`Image of Modlist ${currentModlist.title}`}
-                className="absolute inset-0 w-full h-full object-cover"
-                loading="eager"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = FALLBACK_CAROUSEL_IMAGE;
-                }}
-              />
-            </AnimatePresence>
-
-            {/* Gradient overlays */}
-            <div className="absolute inset-0 bg-gradient-to-t from-void via-transparent to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-void/30 via-transparent to-void/30" />
-          </div>
-        </Link>
-
-        {/* Info bar */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-void via-void/95 to-transparent">
-          <Link
-            to="/modlist/$repo/$id"
-            params={{ repo: currentModlist.repositoryName, id: currentModlist.links.machineURL }}
-            className="block group"
-          >
-            <div className="flex items-end justify-between gap-4">
-              <div>
-                <Badge variant="secondary" className="mb-2">
-                  {getGameDisplayName(currentModlist.game)}
-                </Badge>
-                <h3 className="text-2xl md:text-3xl font-display font-bold text-text-primary group-hover:text-neon-purple transition-colors">
-                  {currentModlist.title}
-                </h3>
-                <p className="text-text-secondary mt-1">
-                  by {currentModlist.author}
-                </p>
-              </div>
-
-              <Button variant="glow" size="sm" className="hidden sm:flex">
-                View Details
-              </Button>
+    <div>
+      <Link
+        to="/modlist/$repo/$id"
+        params={{ repo: current.repositoryName, id: current.links.machineURL }}
+        className="relative block aspect-video max-h-[640px] w-full overflow-hidden rounded-lg bg-tile shadow-[2px_2px_25px_0_#00000040]"
+      >
+        <img
+          key={imageUrl}
+          src={imageUrl}
+          alt={`Image of Modlist ${current.title}`}
+          className="absolute inset-0 size-full object-cover"
+          loading="eager"
+          onError={(e) => {
+            const img = e.currentTarget;
+            if (!img.src.endsWith(FALLBACK_CAROUSEL_IMAGE)) img.src = FALLBACK_CAROUSEL_IMAGE;
+          }}
+        />
+        <div className="absolute -inset-x-[10%] -bottom-[30%] h-[70%] bg-black opacity-75 blur-[80px]" />
+        <div className="absolute top-3 left-3 flex gap-1">
+          <span className="inline-flex h-[26px] items-center rounded-[4px] bg-ground/66 px-2">
+            {getGameDisplayName(current.game)}
+          </span>
+        </div>
+        <div className="absolute inset-x-[clamp(12px,3vw,32px)] bottom-[clamp(12px,3vw,28px)] flex flex-wrap items-end justify-between gap-3">
+          <div className="min-w-0">
+            <div className="text-[clamp(24px,4.4vw,48px)] leading-[1.15] font-bold [text-shadow:0_1px_12px_#0008]">
+              {current.title}
             </div>
-          </Link>
+            <div className="mt-1 text-[clamp(14px,1.6vw,18px)] leading-[1.3]">
+              <span className="text-fg-66">by </span>
+              {current.author}
+            </div>
+          </div>
+          <span className="inline-flex h-8 items-center gap-1 rounded-[4px] bg-primary px-3 text-ground">
+            View details
+            <Icon name="chevron_right" />
+          </span>
         </div>
+      </Link>
 
-        {/* Navigation arrows */}
-        <div className="absolute inset-y-0 left-0 flex items-center pl-4">
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              paginate(-1);
-            }}
-            className="rounded-full w-12 h-12 bg-void/80 backdrop-blur-sm border border-neon-purple/30 hover:border-neon-purple hover:bg-neon-purple/20 transition-all"
-            variant="ghost"
-            size="icon"
-            aria-label="Previous Modlist"
-          >
-            <ChevronLeft className="h-6 w-6 text-neon-purple" />
-          </Button>
-        </div>
-
-        <div className="absolute inset-y-0 right-0 flex items-center pr-4">
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              paginate(1);
-            }}
-            className="rounded-full w-12 h-12 bg-void/80 backdrop-blur-sm border border-neon-purple/30 hover:border-neon-purple hover:bg-neon-purple/20 transition-all"
-            variant="ghost"
-            size="icon"
-            aria-label="Next Modlist"
-          >
-            <ChevronRight className="h-6 w-6 text-neon-purple" />
-          </Button>
-        </div>
-
-        {/* Pagination dots */}
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
-          {finalModlists.slice(0, 10).map((_, index) => (
+      <div className="mt-3.5 flex items-center gap-3">
+        <button type="button" onClick={() => setCurrentIndex(index - 1)} className={navButton} aria-label="Previous modlist">
+          <Icon name="chevron_right" flip />
+        </button>
+        <button type="button" onClick={() => setCurrentIndex(index + 1)} className={navButton} aria-label="Next modlist">
+          <Icon name="chevron_right" />
+        </button>
+        <div className="ml-2 flex flex-wrap items-center gap-1.5">
+          {finalModlists.slice(0, MAX_DOTS).map((m, i) => (
             <button
-              key={index}
-              onClick={() => setPage([index, index > currentIndex ? 1 : -1])}
-              className={`w-2 h-2 rounded-full transition-all ${
-                index === currentIndex
-                  ? 'bg-neon-purple w-6'
-                  : 'bg-text-muted/50 hover:bg-text-muted'
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
+              key={`${m.repositoryName}/${m.links.machineURL}`}
+              type="button"
+              onClick={() => setCurrentIndex(i)}
+              className={cn(
+                'h-1.5 cursor-pointer rounded-[3px] transition-[width] duration-80',
+                i === index ? 'w-6 bg-primary' : 'w-2 bg-surface-16',
+              )}
+              aria-label={`Go to slide ${i + 1}`}
+              aria-current={i === index}
             />
           ))}
-          {finalModlists.length > 10 && (
-            <span className="text-xs text-text-muted">+{finalModlists.length - 10}</span>
-          )}
+          {count > MAX_DOTS && <span className="ml-1 text-fg-66">+{count - MAX_DOTS}</span>}
         </div>
       </div>
     </div>

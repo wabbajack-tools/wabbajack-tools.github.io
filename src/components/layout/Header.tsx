@@ -1,120 +1,103 @@
 import { Link, useLocation } from '@tanstack/react-router';
-import { motion } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { Icon, WabbajackMark, type IconName } from '@/components/common/Icon';
+import { EXTERNAL_LINKS } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
-const navLinks = [
-  { to: '/' as const, label: 'Home' },
-  { to: '/gallery' as const, label: 'Gallery' },
-  { to: '/search/global' as const, label: 'Archive Search' },
-  { to: '/status' as const, label: 'Status' },
+const navLinks: { to: '/' | '/gallery' | '/search/global' | '/status'; label: string; icon: IconName; matches: string[] }[] = [
+  { to: '/', label: 'Home', icon: 'home', matches: [] },
+  { to: '/gallery', label: 'Gallery', icon: 'games', matches: ['/gallery', '/modlist'] },
+  { to: '/search/global', label: 'Archive search', icon: 'search', matches: ['/search'] },
+  { to: '/status', label: 'Status', icon: 'checkmark_circle', matches: ['/status'] },
 ];
 
+function isActive(pathname: string, link: (typeof navLinks)[number]) {
+  if (link.to === '/') return pathname === '/';
+  return link.matches.some(prefix => pathname.startsWith(prefix));
+}
+
 export function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { pathname } = useLocation();
 
   return (
-    <header className="sticky top-0 z-50">
-      {/* Gradient line at top */}
-      <div className="h-[2px] bg-gradient-to-r from-transparent via-neon-purple to-transparent" />
+    <header className="sticky top-0 z-20 border-b border-surface bg-ground">
+      <div className="mx-auto flex h-16 max-w-[1280px] items-center gap-6 px-[clamp(16px,4vw,40px)]">
+        <Link to="/" className="flex items-center gap-2.5" onClick={() => setMenuOpen(false)}>
+          <WabbajackMark className="h-[31px] w-7" />
+          <span className="text-xl leading-[1.23] font-bold text-fg">Wabbajack</span>
+        </Link>
 
-      <nav className="glass border-b border-neon-purple/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-3 group">
-              <motion.div
-                className="relative"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: 'spring', stiffness: 400 }}
+        {/* Wide: inline nav and a Download button */}
+        <nav className="hidden flex-1 gap-1 min-[1000px]:flex">
+          {navLinks.map(link => {
+            const active = isActive(pathname, link);
+            return (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={cn(
+                  'relative flex h-10 flex-none items-center gap-2 rounded-lg px-3 whitespace-nowrap',
+                  active ? 'bg-ground-raised text-primary hover:bg-hover' : 'text-fg hover:bg-hover hover:text-primary'
+                )}
               >
-                <img
-                  src="/wabbajack_transparent.webp"
-                  alt="Wabbajack"
-                  className="h-10 w-10"
-                />
-                <div className="absolute inset-0 bg-neon-purple/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-              </motion.div>
-              <span className="font-display font-bold text-xl gradient-text hidden sm:block">
-                Wabbajack
-              </span>
-            </Link>
+                <Icon name={link.icon} filled={active} className="size-[18px]" />
+                <span className="text-sm">{link.label}</span>
+                {active && <span className="absolute right-3.5 -bottom-3 left-3.5 h-[3px] rounded-[3px] bg-primary" />}
+              </Link>
+            );
+          })}
+        </nav>
+        <a
+          href={EXTERNAL_LINKS.download}
+          className="hidden h-8 flex-none items-center gap-1.5 rounded px-3 whitespace-nowrap bg-primary text-ground hover:bg-hover hover:text-primary min-[1000px]:inline-flex"
+        >
+          <Icon name="arrow_download" />
+          Download
+        </a>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-1">
-              {navLinks.map(({ to, label }) => {
-                const isActive = location.pathname === to ||
-                  (to !== '/' && location.pathname.startsWith(to));
+        {/* Narrow: a menu button */}
+        <div className="flex-1 min-[1000px]:hidden" />
+        <button
+          type="button"
+          onClick={() => setMenuOpen(open => !open)}
+          aria-label="Menu"
+          aria-expanded={menuOpen}
+          className="flex size-11 cursor-pointer flex-col justify-center gap-1 rounded bg-surface px-3 text-fg hover:bg-hover hover:text-primary min-[1000px]:hidden"
+        >
+          <span className="h-0.5 rounded-sm bg-current" />
+          <span className="h-0.5 rounded-sm bg-current" />
+          <span className="h-0.5 rounded-sm bg-current" />
+        </button>
+      </div>
 
-                return (
-                  <Link
-                    key={to}
-                    to={to}
-                    className={cn(
-                      'relative px-4 py-2 text-sm font-medium transition-colors rounded-lg',
-                      isActive
-                        ? 'text-neon-purple'
-                        : 'text-text-secondary hover:text-text-primary'
-                    )}
-                  >
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeNav"
-                        className="absolute inset-0 bg-neon-purple/10 rounded-lg border border-neon-purple/30"
-                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                      />
-                    )}
-                    <span className="relative z-10">{label}</span>
-                  </Link>
-                );
-              })}
-            </div>
-
-            {/* Mobile menu button */}
-            <button
-              className="md:hidden p-2 text-text-secondary hover:text-neon-purple transition-colors"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="md:hidden border-t border-neon-purple/10"
+      {menuOpen && (
+        <div className="flex flex-col gap-1 border-t border-surface px-4 pt-2 pb-4 min-[1000px]:hidden">
+          {navLinks.map(link => {
+            const active = isActive(pathname, link);
+            return (
+              <Link
+                key={link.to}
+                to={link.to}
+                onClick={() => setMenuOpen(false)}
+                className={cn(
+                  'flex h-12 items-center gap-3 rounded-lg px-3.5 text-base hover:bg-hover hover:text-primary',
+                  active ? 'bg-ground-raised text-primary' : 'text-fg'
+                )}
+              >
+                <Icon name={link.icon} filled={active} className="size-5" />
+                {link.label}
+              </Link>
+            );
+          })}
+          <a
+            href={EXTERNAL_LINKS.download}
+            className="mt-2 flex h-12 items-center justify-center gap-2 rounded-2xl bg-primary text-base font-semibold text-ground"
           >
-            <div className="px-4 py-3 space-y-1">
-              {navLinks.map(({ to, label }) => {
-                const isActive = location.pathname === to;
-
-                return (
-                  <Link
-                    key={to}
-                    to={to}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={cn(
-                      'block px-4 py-3 rounded-lg text-sm font-medium transition-colors',
-                      isActive
-                        ? 'bg-neon-purple/10 text-neon-purple border border-neon-purple/30'
-                        : 'text-text-secondary hover:bg-surface-light hover:text-text-primary'
-                    )}
-                  >
-                    {label}
-                  </Link>
-                );
-              })}
-            </div>
-          </motion.div>
-        )}
-      </nav>
+            Download Wabbajack
+          </a>
+        </div>
+      )}
     </header>
   );
 }
