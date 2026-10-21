@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { Link } from '@tanstack/react-router';
 import { getGameDisplayName } from '@/types/game';
+import type { ModlistMetadata } from '@/types/modlist';
 import { FALLBACK_CAROUSEL_IMAGE } from '@/lib/constants';
 import { useFeaturedModlists } from '@/hooks/useModlists';
 import { Icon } from '@/components/common/Icon';
@@ -23,9 +24,32 @@ const navButton =
 export function ModlistCarousel() {
   const { data: modlists, isLoading } = useFeaturedModlists();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [finalModlists, setFinalModlists] = useState<ModlistMetadata[]>([]);
+  const previousOrderKeyRef = useRef('');
 
-  // Fisher-Yates shuffle so every visit starts on a different featured list.
-  const finalModlists = useMemo(() => (modlists?.length ? shuffleArray(modlists) : []), [modlists]);
+  const orderKey = useMemo(() => {
+    if (!modlists?.length) return '';
+    return modlists.map((m) => `${m.repositoryName}/${m.links.machineURL}`).join('|');
+  }, [modlists]);
+
+  useEffect(() => {
+    if (!modlists?.length) {
+      setFinalModlists([]);
+      previousOrderKeyRef.current = '';
+      return;
+    }
+
+    if (orderKey === previousOrderKeyRef.current) {
+      return;
+    }
+
+    previousOrderKeyRef.current = orderKey;
+    setFinalModlists(shuffleArray(modlists));
+  }, [modlists, orderKey]);
+
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [orderKey]);
 
   if (isLoading) {
     return <div className="aspect-video max-h-[640px] w-full rounded-lg bg-tile" aria-label="Loading featured modlists" />;
